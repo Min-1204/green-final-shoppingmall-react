@@ -8,7 +8,7 @@ export default function WishListToolbar({
   totalCount,
   onToggleAll,
   onRemoveSelected,
-  onAddSelectedToCart,
+  onAddSelectedToCart
 }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">

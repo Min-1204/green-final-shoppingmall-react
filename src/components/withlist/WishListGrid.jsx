@@ -6,7 +6,7 @@ export default function WishListGrid({
   selected,
   onToggleOne,
   onRemoveOne,
-  onAddToCart,
+  onAddToCart
 }) {
   return (
     <div className="space-y-3">
