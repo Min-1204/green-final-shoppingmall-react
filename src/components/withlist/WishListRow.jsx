@@ -6,7 +6,7 @@ export default function WishListRow({
   onCheck,
   onRemove,
   onAddToCart,
-  item,
+  item
 }) {
   const { name, subtitle, price, originalPrice, thumb } = item;
 

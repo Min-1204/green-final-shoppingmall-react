@@ -1,6 +1,7 @@
 // src/pages/help/HelpInquiryPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const inquiryTypes = [
   "배송문의",
@@ -8,17 +9,40 @@ const inquiryTypes = [
   "반품/교환/취소",
   "적립금/쿠폰",
   "회원정보",
-  "기타문의",
+  "기타문의"
 ];
 
 export default function HelpInquiryPage() {
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { user } = useSelector((state) => state.userSlice);
+
+  // ✅ 폼 데이터 상태 관리 (테이블 구조에 맞춤)
+  const [formData, setFormData] = useState({
+    user_id: user?.login_Id || "",
+    title: "", // 제목
+    inquiry_type: "",
+    content: "", // 내용
+    is_answered: false, // 답변 여부 (초기값 false)
+    is_visible: true, // 노출 여부 (초기값 true)
+    agree_email_contact: user?.marketingEmail || false, // 이메일 알림 동의
+    agree_sms_contact: user?.marketingSms || false // SMS 알림 동의
+  });
+
+  // ✅ 입력 값 변경 핸들러
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }));
+  };
+
+  // ✅ 폼 제출 핸들러
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: axios.post(...) 자리
-    setSubmitted(true);
+    console.log("현재 제출 미구현 입니다.");
   };
 
   // ✅ 등록 완료 화면
@@ -87,18 +111,19 @@ export default function HelpInquiryPage() {
           </p>
         </div>
 
-        {/* 작성자 */}
-        <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-slate-700">
-            작성자 <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="writer"
-            className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-slate-900"
-            placeholder="홍길동"
-            required
-          />
+        {/* 작성자 정보 (읽기 전용) */}
+        <div className="bg-blue-50 border border-blue-100 rounded-sm px-4 py-3">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <p className="text-xs text-slate-500 mb-1">작성자</p>
+              <p className="text-sm font-medium text-slate-900">
+                {user?.name || "사용자"} ({user?.login_Id || "ID 없음"})
+              </p>
+            </div>
+            <div className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">
+              로그인 계정
+            </div>
+          </div>
         </div>
 
         {/* 문의유형 */}
@@ -107,10 +132,11 @@ export default function HelpInquiryPage() {
             문의유형 <span className="text-red-500">*</span>
           </label>
           <select
-            name="type"
+            name="inquiry_type"
+            value={formData.inquiry_type}
+            onChange={handleChange}
             className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-slate-900"
             required
-            defaultValue=""
           >
             <option value="" disabled>
               선택해 주세요.
@@ -123,6 +149,23 @@ export default function HelpInquiryPage() {
           </select>
         </div>
 
+        {/* 제목 */}
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">
+            제목 <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-slate-900"
+            placeholder="문의 제목을 입력해주세요"
+            maxLength={100}
+            required
+          />
+        </div>
+
         {/* 내용 */}
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-slate-700">
@@ -130,6 +173,8 @@ export default function HelpInquiryPage() {
           </label>
           <textarea
             name="content"
+            value={formData.content}
+            onChange={handleChange}
             rows={7}
             className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-slate-900 resize-none"
             placeholder="문의하실 내용을 자세히 작성해 주세요."
@@ -140,44 +185,42 @@ export default function HelpInquiryPage() {
           </p>
         </div>
 
-        {/* ✅ 알림 영역 (하단으로 이동) */}
-        <div className="pt-3 border border-slate-100 rounded-md bg-slate-50 px-4 py-4 space-y-2">
+        {/* ✅ 알림 영역 (체크박스로 변경) */}
+        <div className="pt-3 border border-slate-100 rounded-md bg-slate-50 px-4 py-4 space-y-3">
           <p className="text-sm font-medium text-slate-800">답변 알림 받기</p>
           <p className="text-xs text-slate-500">
             등록해 주신 문의에 대한 답변이 등록되면 알림을 보내드립니다.
             (운영시간에 순차적으로 답변드려요)
           </p>
 
-          <div className="flex flex-wrap gap-4 mt-2">
-            <label className="flex items-center gap-2 text-sm text-slate-700">
+          <div className="space-y-2 mt-3">
+            <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
               <input
-                type="radio"
-                name="notify"
-                value="sms"
-                defaultChecked
-                className="w-4 h-4"
+                type="checkbox"
+                name="agree_sms_contact"
+                checked={formData.agree_sms_contact}
+                onChange={handleChange}
+                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
               />
               SMS로 알림 받기
             </label>
-            <label className="flex items-center gap-2 text-sm text-slate-700">
+            <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
               <input
-                type="radio"
-                name="notify"
-                value="email"
-                className="w-4 h-4"
+                type="checkbox"
+                name="agree_email_contact"
+                checked={formData.agree_email_contact}
+                onChange={handleChange}
+                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
               />
               E-mail로 알림 받기
             </label>
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input
-                type="radio"
-                name="notify"
-                value="none"
-                className="w-4 h-4"
-              />
-              알림 안 받기
-            </label>
           </div>
+
+          {!formData.agree_sms_contact && !formData.agree_email_contact && (
+            <p className="text-xs text-amber-600 mt-2">
+              ⚠️ 알림을 받지 않으시면 답변 등록 시 알려드릴 수 없습니다.
+            </p>
+          )}
         </div>
 
         {/* 버튼 영역 */}
