@@ -10,7 +10,7 @@ export const signupSlice = {
 
     // prettier-ignore
     // .some() 조건을 하나라도 만족하는 요소가 있으면 즉시 true가 되어 그 요소를 반환한다. 논리연산자기능
-    const isDuplicate = users.some((u) => u.login_Id === newUserData.login_Id); // users에 some 메서드를 사용해서 같은아이디가 존재하는지 검증
+    const isDuplicate = users.some((u) => u.loginId === newUserData.loginId); // users에 some 메서드를 사용해서 같은아이디가 존재하는지 검증
     if (isDuplicate) { // 만약에 true라면
       state.error = "이미 존재하는 아이디입니다."; // 해당 State에 error에 해당 문자열을 저장
       return; // 중복이면 여기서 Reducer 종료
@@ -20,9 +20,6 @@ export const signupSlice = {
     const userWithId = {
       ...newUserData, // newUserData의 기존데이터를 객체를 벗긴 후에 데이터를 넣고
       terms: action.payload.terms, // terms: 속성에 action.payload로 받은 .terms를 저장
-      user_Level: "Bronze", // 생성 시 유저등급을 기본 Bronze로 생성
-      user_Role: "user", // 기본권한 지정
-      createdAt: new Date().toISOString(), // 생성일자를 new Date 생성자를 실행과 동시에 toISOString으로 변환
     };
     users.push(userWithId);
 

@@ -30,7 +30,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
     if (!form.login_Id || form.login_Id.length < 4)
       e.login_Id = "아이디는 4자 이상 입력하세요.";
     if (!form.password || form.password.length < 6)
-      e.password = "비밀번호는 6자 이상 입력하세요.";
+      e.password = "비밀번호는 8자 이상 입력하세요.";
     if (form.confirmPassword !== form.password)
       e.confirmPassword = "비밀번호가 일치하지 않습니다.";
     if (!form.name) e.name = "이름을 입력하세요.";
