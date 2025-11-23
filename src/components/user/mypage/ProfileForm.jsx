@@ -5,10 +5,10 @@ export default function ProfileForm() {
   const { user } = useSelector((state) => state.userSlice);
 
   // prettier-ignore
-  const [form, setForm] = useState({
+  const [modifyform, setModifyForm] = useState({
     ...(user || {}),
     // Y, M, D가 분리되어 있는상태로 문자열 결합하기
-    birth_date: // birth_date 속성 추가
+    birthDate: // birth_date 속성 추가
       user?.birthY && user?.birthM && user?.birthD // user 데이터의 birth Y , M , D 데이터가 전부 있는지
         ? `${user.birthY} - ${String(user.birthM).padStart(2, "0")} - ${String( user.birthD).padStart(2, "0")}` // 있다면 백틱 객체리터럴사용해서 문자열 결합
         : "",
@@ -16,7 +16,7 @@ export default function ProfileForm() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
+    setModifyForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
@@ -24,11 +24,11 @@ export default function ProfileForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.password) {
+    if (!modifyform.password) {
       alert("수정하려면 현재 비밀번호를 입력하세요.");
       return;
     }
-    console.log("profile update payload:", form);
+    console.log("profile update payload:", modifyform);
     alert("지금은 스케치 단계입니다. 백엔드 붙인 후 실제로 저장하세요 🙂");
   };
 
@@ -45,7 +45,7 @@ export default function ProfileForm() {
           <input
             name="name"
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={form.name}
+            value={modifyform.name}
             readOnly
           />
         </div>
@@ -55,7 +55,7 @@ export default function ProfileForm() {
             name="email"
             type="email"
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={form.email}
+            value={modifyform.email}
             onChange={handleChange}
             readOnly
           />
@@ -66,7 +66,7 @@ export default function ProfileForm() {
             name="phone_Number"
             maxLength={11}
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={form.phone_Number}
+            value={modifyform.phoneNumber}
             onChange={handleChange}
             readOnly
           />
@@ -76,10 +76,10 @@ export default function ProfileForm() {
             생년월일 (8자리)
           </label>
           <input
-            name="birth_date"
+            name="birthDate"
             maxLength={8}
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={form.birth_date}
+            value={modifyform.birthDate}
             readOnly
           />
         </div>
@@ -91,10 +91,10 @@ export default function ProfileForm() {
         <p className="text-sm font-semibold mb-3 text-zinc-800">거주지 주소</p>
         <div className="flex flex-col sm:flex-row gap-2 mb-3">
           <input
-            name="postal_Code"
+            name="postalCode"
             placeholder="우편번호"
             className="sm:w-48 border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={form.postal_Code}
+            value={modifyform.postalCode}
             onChange={handleChange}
             readOnly
           />
@@ -111,16 +111,16 @@ export default function ProfileForm() {
             name="address"
             placeholder="도로명주소"
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={form.address}
+            value={modifyform.address}
             onChange={handleChange}
           />
         </div>
         <div>
           <input
-            name="address_Detail"
+            name="addressDetail"
             placeholder="상세주소"
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={form.address_Detail}
+            value={modifyform.addressDetail}
             onChange={handleChange}
           />
         </div>
@@ -131,8 +131,8 @@ export default function ProfileForm() {
         <label className="flex items-center gap-2 text-sm text-zinc-700">
           <input
             type="checkbox"
-            name="marketingSms"
-            checked={form.marketingSms}
+            name="smsAgreement"
+            checked={modifyform.smsAgreement}
             onChange={handleChange}
             className="w-4 h-4"
           />
@@ -141,8 +141,8 @@ export default function ProfileForm() {
         <label className="flex items-center gap-2 text-sm text-zinc-700">
           <input
             type="checkbox"
-            name="marketingEmail"
-            checked={form.marketingEmail}
+            name="emailAgreement"
+            checked={modifyform.emailAgreement}
             onChange={handleChange}
             className="w-4 h-4"
           />
@@ -160,7 +160,7 @@ export default function ProfileForm() {
           name="password"
           placeholder="정보를 수정하려면 현재 비밀번호를 입력하세요."
           className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-red-400/30"
-          value={form.password}
+          value={modifyform.password}
           onChange={handleChange}
         />
         <p className="text-xs text-zinc-400 mt-1">

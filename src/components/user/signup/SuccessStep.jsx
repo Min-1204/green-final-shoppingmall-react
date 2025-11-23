@@ -1,9 +1,23 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Stepper from "./Stepper";
+import { useDispatch } from "react-redux";
+import { resetSignUpSuccess } from "../../../redux/slices/features/user/userSlice";
 
 export default function SuccessStep() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleHomeClick = () => {
+    dispatch(resetSignUpSuccess);
+    navigate("/");
+  };
+
+  const handleLoginClick = () => {
+    dispatch(resetSignUpSuccess);
+    navigate("/loginpage");
+  };
+
   return (
     <div className="space-y-6 text-center">
       <Stepper step={3} />
@@ -17,13 +31,13 @@ export default function SuccessStep() {
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <button
-            onClick={() => navigate("/")}
+            onClick={handleHomeClick}
             className="px-6 h-11 rounded-md border text-sm font-semibold hover:bg-zinc-50"
           >
             홈으로
           </button>
           <button
-            onClick={() => navigate("/loginpage")}
+            onClick={handleLoginClick}
             className="px-6 h-11 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700" // 📌 에메랄드 적용
           >
             로그인하기
