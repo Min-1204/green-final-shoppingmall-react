@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-// 프로젝트 구조에 맞게 경로를 수정해 주세요.
 import { loginSlice } from "./loginSlice";
 import { signupSlice } from "./signUpSlice";
 
@@ -8,6 +7,8 @@ const initialState = {
   isLoggedIn: false, // 로그인 상태
   token: null, // 인증 토큰
   error: null, // 에러 메시지
+  loading: false, // 11-23 추가
+  signUpSuccess: false // 11-23 추가
 };
 
 const userSlice = createSlice({
@@ -18,17 +19,20 @@ const userSlice = createSlice({
       state.error = null;
     },
     ...loginSlice,
-    ...signupSlice,
-  },
+    ...signupSlice
+  }
 });
 
 export const {
-  signUp,
+  signUpPending, // 11 - 23 추가
+  signUpFulfilled, // 11 - 23 추가
+  signUpRejected, // 11 - 23 추가
+  resetSignUpSuccess, // 11 - 23 추가
   login,
   logout,
   clearError,
   restoreLogin,
-  updateUserRole,
+  updateUserRole
 } = userSlice.actions;
 
 export default userSlice.reducer;
