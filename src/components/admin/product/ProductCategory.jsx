@@ -1,36 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
-
-// 임시 데이터
-const categoriesData = [
-  {
-    id: 1,
-    name: "의류",
-    depth: 1,
-    subCategories: [
-      {
-        id: 2,
-        name: "탑",
-        depth: 2,
-        subCategories: [
-          { id: 3, name: "티셔츠", depth: 3 },
-          { id: 4, name: "블라우스", depth: 3 },
-          { id: 5, name: "후드티", depth: 3 },
-        ],
-      },
-      { id: 6, depth: 2, name: "아우터" },
-      { id: 7, depth: 2, name: "드레스" },
-      { id: 8, depth: 2, name: "스커트" },
-      { id: 9, depth: 2, name: "팬츠" },
-    ],
-  },
-  { id: 10, depth: 1, name: "유아동" },
-  { id: 11, depth: 1, name: "화장품" },
-  { id: 12, depth: 1, name: "인테리어" },
-  { id: 13, depth: 1, name: "가전" },
-  { id: 14, depth: 1, name: "악세사리" },
-  { id: 15, depth: 1, name: "티켓" },
-];
+import { getCategoryList } from "../../../api/admin/category/categoryApi";
 
 // 카테고리 경로를 문자열로 변환하는 헬퍼 함수
 const getCategoryPath = (path) => path.map((c) => c.name).join(" > ");
@@ -57,30 +27,6 @@ const CategoryColumn = ({ categories, selectedCategory, onSelect }) => (
   </div>
 );
 
-// 4개의 열을 만들어내는 컴포넌트
-// 첫번째 열은 1차 카테고리, depth=0 , 두번째 열은 2차 카테고리, depth=1
-// selectedPath : currentSelectedPath, onSelect: onSelectCategory, columns:4
-const CategorySelector = ({ selectedPath, onSelect, columns }) => {
-  const getSubCategories = (depth) => {
-    if (depth === 0) return categoriesData;
-    let current = selectedPath[depth - 1];
-    return current?.subCategories || [];
-  };
-
-  return (
-    <div className="flex space-x-2">
-      {Array.from({ length: columns }).map((_, depth) => (
-        <CategoryColumn
-          key={depth}
-          categories={getSubCategories(depth)}
-          selectedCategory={selectedPath[depth]}
-          onSelect={(category) => onSelect(category, depth)}
-        />
-      ))}
-    </div>
-  );
-};
-
 export default function ProductCategory({ onChangeForm }) {
   const [isOpen, setIsOpen] = useState(true);
   // 선택된 경로: [{ id: '1', name: '의류', ... }, { id: '2', name: '탑', ... }]
@@ -88,11 +34,44 @@ export default function ProductCategory({ onChangeForm }) {
   // 백엔드로 넘길 등록 카테고리 정보 : selectedCategories (실제로는 1개만 선택되서 1개만 등록할 예정)
   const [selectedCategories, setSelectedCategories] = useState([
     {
-      id: 2,
-      name: "의류 > 탑",
+      id: 8,
+      name: "메이크업 > 베이스",
       isRepresentative: true,
     },
   ]);
+  const [categoriesData, setCategoriesData] = useState([]);
+
+  useEffect(() => {
+    const getCategories = async () => {
+      const data = await getCategoryList();
+      setCategoriesData(data);
+    };
+    getCategories();
+  }, []);
+
+  // 4개의 열을 만들어내는 컴포넌트
+  // 첫번째 열은 1차 카테고리, depth=0 , 두번째 열은 2차 카테고리, depth=1
+  // selectedPath : currentSelectedPath, onSelect: onSelectCategory, columns:4
+  const CategorySelector = ({ selectedPath, onSelect, columns }) => {
+    const getSubCategories = (depth) => {
+      if (depth === 0) return categoriesData;
+      let current = selectedPath[depth - 1];
+      return current?.subCategories || [];
+    };
+
+    return (
+      <div className="flex space-x-2">
+        {Array.from({ length: columns }).map((_, depth) => (
+          <CategoryColumn
+            key={depth}
+            categories={getSubCategories(depth)}
+            selectedCategory={selectedPath[depth]}
+            onSelect={(category) => onSelect(category, depth)}
+          />
+        ))}
+      </div>
+    );
+  };
 
   const onSelectCategory = (category, depth) => {
     // 현재 레벨 전까지 자르고 새 카테고리를 추가
@@ -117,7 +96,6 @@ export default function ProductCategory({ onChangeForm }) {
       // props
       onChangeForm({ ...currentSelectedPath[currentSelectedPath.length - 1] });
     }
-    console.log("selectedCategories : ", selectedCategories);
   };
 
   const deleteCategoryHandler = (id) => {

@@ -1,20 +1,12 @@
 import axios from "axios";
 
-const API_SERVER_HOST = "http://localhost:8080";
+export const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/products`;
 
 export const registerProduct = async (productForm) => {
   const product = {
-    category: {
-      id: 1,
-      name: "메이크업",
-      depth: 0,
-      displayOrder: 0,
-    },
-    brand: {
-      id: 1,
-      name: "설화수",
-    },
+    category: productForm?.category,
+    brand: productForm?.brand,
     productName: productForm?.basicInfo?.productName,
     searchKeywords: productForm?.basicInfo?.keywords,
     description: productForm?.basicInfo?.productDescription,
