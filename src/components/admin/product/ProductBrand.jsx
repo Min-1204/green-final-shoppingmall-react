@@ -1,23 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
-
-// 임시 브랜드 데이터
-const brandsData = [
-  { id: 1, name: "라네즈" },
-  { id: 2, name: "이니스프리" },
-  { id: 3, name: "설화수" },
-  { id: 4, name: "미샤" },
-  { id: 5, name: "헤라" },
-  { id: 6, name: "디올" },
-  { id: 7, name: "샤넬" },
-  { id: 8, name: "맥" },
-  { id: 9, name: "크리니크" },
-  { id: 10, name: "로레알" },
-];
+import { getBrandList } from "../../../api/admin/brand/brandApi";
 
 export default function ProductBrand({ onChangeForm }) {
   const [isOpen, setIsOpen] = useState(true);
   const [selectedBrand, setSelectedBrand] = useState(null);
+  const [brandsData, setBrandsData] = useState([]);
+
+  useEffect(() => {
+    const getBrands = async () => {
+      const data = await getBrandList();
+      setBrandsData(data);
+    };
+    getBrands();
+  }, []);
 
   const brandChangeHandler = (e) => {
     const brandId = parseInt(e.target.value);

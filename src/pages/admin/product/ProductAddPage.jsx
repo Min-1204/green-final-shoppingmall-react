@@ -27,8 +27,8 @@ const initForm = {
     thumbnailImage: null,
     galleryImages: [],
   },
-  descriptionImages: [],
-  delivery: {
+  detailImages: [],
+  deliveryInfo: {
     deliveryType: "PAID",
     deliveryFee: 3000,
   },
@@ -104,7 +104,7 @@ const ProductAddPage = () => {
         />
         <DeliveryCharge
           onChangeForm={(data) =>
-            setProductForm((prev) => ({ ...prev, delivery: data }))
+            setProductForm((prev) => ({ ...prev, deliveryInfo: data }))
           }
         />
         <OptionRegistration
