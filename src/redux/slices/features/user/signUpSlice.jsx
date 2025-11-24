@@ -27,5 +27,5 @@ export const signupSlice = {
 
   resetSignUpSuccess: (state) => {
     state.signUpSuccess = false;
-  }
+  },
 };
