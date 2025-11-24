@@ -1,14 +1,17 @@
-import React from "react";
 import { FaStar } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { setReviewRatingData } from "../../redux/slices/features/review/reviewRatingSlice";
 
 const ReviewRatingComponent = () => {
-  const dispatch = useDispatch();
-  const { averageScore, positivePercentage, totalReviews, scoreData } =
-    useSelector((state) => state.reviewRatingSlice);
-
-  //setReviewRatingData, dispatch 현재 상태에선 미사용, 추후 사용할 예정
+  // 임시 데이터
+  const averageScore = 4.3;
+  const positivePercentage = 85;
+  const totalReviews = 120;
+  const scoreData = [
+    { score: 5, label: "★★★★★", count: 80 },
+    { score: 4, label: "★★★★", count: 25 },
+    { score: 3, label: "★★★", count: 10 },
+    { score: 2, label: "★★", count: 3 },
+    { score: 1, label: "★", count: 2 },
+  ];
 
   return (
     <div className="p-6 border border-gray-200 rounded-lg mb-6 bg-white">

@@ -1,27 +1,15 @@
-import React, { useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addReview,
-  addImage,
-  removeImage,
-} from "../../redux/slices/features/review/reviewSlice";
+import axios from "axios";
+import { useRef, useState } from "react";
+import { reviewAdd } from "../../api/review/reviewapi";
 
 const ReviewAddComponent = ({ closeModal }) => {
   const [currentRating, setCurrentRating] = useState(0);
+  const [review, setReview] = useState({});
+  const [images, setImages] = useState([]);
   const uploadRef = useRef();
-  const dispatch = useDispatch();
-  const { images } = useSelector((state) => state.reviewSlice);
 
-  const reviewAddHandler = () => {
-    dispatch(
-      addReview({
-        //임시 데이터
-        rating: currentRating,
-        content: "사용자가 쓴 리뷰 내용",
-        images: images,
-        createAt: "2025-11-11",
-      })
-    );
+  const reviewAddHandler = async () => {
+    reviewAdd(review);
     alert("리뷰가 등록되었습니다");
     closeModal();
   };
@@ -31,11 +19,15 @@ const ReviewAddComponent = ({ closeModal }) => {
     const files = uploadRef.current.files;
     if (!files) return;
 
+    const newImages = [];
     for (let file of files) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        dispatch(addImage(e.target.result));
-        // console.log("addImage", e.target.result);
+        newImages.push(e.target.result);
+
+        if (newImages.length === files.length) {
+          setImages((prev) => [...prev, newImages].slice(0, 5)); //최대 5장
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -43,8 +35,7 @@ const ReviewAddComponent = ({ closeModal }) => {
 
   //첨부 이미지 삭제 핸들러
   const imageRemoveHandler = (idx) => {
-    dispatch(removeImage(idx));
-    // console.log("삭제 이미지 idx", idx);
+    setImages((prev) => prev.filter((review, i) => i !== idx));
   };
 
   return (
@@ -81,7 +72,10 @@ const ReviewAddComponent = ({ closeModal }) => {
                     <span
                       key={star}
                       className={starClass}
-                      onClick={() => setCurrentRating(star)}
+                      onClick={() => {
+                        setCurrentRating(star);
+                        setReview({ ...review, rating: star });
+                      }}
                     >
                       {currentRating >= star ? "★" : "☆"}
                     </span>
@@ -96,6 +90,8 @@ const ReviewAddComponent = ({ closeModal }) => {
         <textarea
           className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:border-green-500 focus:ring-green-500 resize-none placeholder:text-gray-400 mt-4"
           rows={8}
+          value={review.content}
+          onChange={(e) => setReview({ ...review, content: e.target.value })}
           placeholder="상품에 대한 솔직한 의견을 작성해주세요."
         />
 

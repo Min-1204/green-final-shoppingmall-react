@@ -1,26 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReviewRatingComponent from "./ReviewRatingComponent";
-import { useDispatch, useSelector } from "react-redux";
-import { setSort } from "../../redux/slices/features/review/reviewSlice";
-import { setOption } from "../../redux/slices/features/review/reviewSlice";
 
 const ReviewListComponent = () => {
   const [openDropdown, setOpenDropdown] = useState(null); // 'sort', 'option', null
   const [showComments, setShowComments] = useState(false); //리뷰 댓글의 열림/닫힘(on/off) 여부
+  const [selectedSort, setSelectedSort] = useState("최신순");
+  const [selectedOption, setSelectedOption] = useState("옵션");
   const sortRef = useRef();
   const optionRef = useRef();
 
-  const dispatch = useDispatch();
-
-  const { reviewList, selectedSort, sortOptions, selectedOption, options } =
-    useSelector((state) => state.reviewSlice);
-  //reviewList는 현재 사용X, 더미리뷰 없앨때 사용예정
-  console.log(
-    "selectedSort => ",
-    selectedSort,
-    "selectedOption => ",
-    selectedOption
-  );
+  const sortOptions = ["최신순", "좋아요순", "높은별점순", "낮은별점순"];
+  const options = ["옵션1", "옵션2", "옵션3", "옵션4"];
 
   const initialComments = [
     {
@@ -86,7 +76,7 @@ const ReviewListComponent = () => {
                     key={option}
                     className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-xs transition-colors"
                     onClick={() => {
-                      dispatch(setSort(option));
+                      setSelectedSort(option);
                       setOpenDropdown(null);
                     }}
                   >
@@ -115,7 +105,7 @@ const ReviewListComponent = () => {
                     key={option}
                     className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-xs transition-colors"
                     onClick={() => {
-                      dispatch(setOption(option));
+                      setSelectedOption(option);
                       setOpenDropdown(null);
                     }}
                   >
