@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Stepper from "./Stepper";
+import { useDaumPostalCode } from "../../../hooks/useDaumPostalCode";
 
 // Input 컴포넌트: error prop을 받아서 에러 발생 시 빨간색 테두리 적용
 function Input({ label, required, error, className = "", ...props }) {
@@ -21,6 +22,7 @@ function Input({ label, required, error, className = "", ...props }) {
 
 export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
   const [errors, setErrors] = useState({});
+  const { openPostcode } = useDaumPostalCode();
 
   // 콘솔은 개발 중에만 확인하세요
   console.log(form);
@@ -62,6 +64,17 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
 
     setErrors(e);
     return Object.keys(e).length === 0;
+  };
+
+  const handleAddressSearch = () => {
+    openPostcode((data) => {
+      onChange({
+        ...form,
+        postalCode: data.zonecode,
+        address: data.address,
+        addressDetail: "",
+      });
+    });
   };
 
   const handleSubmit = (e) => {
@@ -183,7 +196,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
               onChange={(e) =>
                 onChange({
                   ...form,
-                  phoneNumber: e.target.value.replace(/\D/g, "")
+                  phoneNumber: e.target.value.replace(/\D/g, ""),
                 })
               }
               placeholder="01012345678"
@@ -221,7 +234,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...form,
-                    birthY: e.target.value.replace(/\D/g, "")
+                    birthY: e.target.value.replace(/\D/g, ""),
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
@@ -234,7 +247,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...form,
-                    birthM: e.target.value.replace(/\D/g, "")
+                    birthM: e.target.value.replace(/\D/g, ""),
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
@@ -247,7 +260,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...form,
-                    birthD: e.target.value.replace(/\D/g, "")
+                    birthD: e.target.value.replace(/\D/g, ""),
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
@@ -256,7 +269,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
           </div>
         </div>
 
-        {/* 우편번호 및 주소 찾기  입력란 */}
+        {/* 우편번호 및 주소 찾기 입력란 */}
         <div className="grid gap-2">
           <span className="text-sm font-medium">
             우편번호 <b className="text-rose-600">*</b>
@@ -265,12 +278,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
             <input
               maxLength={5}
               value={form.postalCode || ""}
-              onChange={(e) =>
-                onChange({
-                  ...form,
-                  postalCode: e.target.value.replace(/\D/g, "")
-                })
-              }
+              readOnly
               placeholder="01234"
               className={`h-11 px-3 rounded-md border outline-none focus:ring-2 focus:ring-emerald-600 text-sm w-32 transition ${
                 errors.postalCode ? "border-rose-600" : "border-zinc-300"
@@ -279,44 +287,51 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
             />
             <button
               type="button"
-              onClick={() => alert("주소 검색 API는 아직 구현되지 않았습니다.")}
+              onClick={handleAddressSearch}
               className="px-4 h-11 rounded-md bg-zinc-100 text-zinc-700 text-sm font-semibold hover:bg-zinc-200 transition"
             >
               주소 찾기
             </button>
           </div>
-          {errors.posta_Code && (
+          {errors.postalCode && (
             <p className="text-xs text-rose-600 mt-1">{errors.postalCode}</p>
           )}
         </div>
 
-        {/* 기본 주소  입력란  */}
-        <div>
-          <Input
-            label="기본 주소"
-            required
+        {/* 기본 주소 입력란 */}
+        <div className="grid gap-2">
+          <span className="text-sm font-medium">
+            기본 주소 <b className="text-rose-600">*</b>
+          </span>
+          <input
             value={form.address || ""}
-            onChange={(e) => onChange({ ...form, address: e.target.value })}
+            readOnly
             placeholder="기본 주소 (예: 서울특별시 강남구 테헤란로)"
-            error={errors.address}
-            // readOnly 나중에 API 연결할때 그때 사용하는걸로
+            className={`h-11 px-3 rounded-md border outline-none focus:ring-2 focus:ring-emerald-600 text-sm transition ${
+              errors.address ? "border-rose-600" : "border-zinc-300"
+            }`}
+            type="text"
           />
           {errors.address && (
             <p className="text-xs text-rose-600 mt-1">{errors.address}</p>
           )}
         </div>
 
-        {/* 상세 주소  입력란  */}
-        <div>
-          <Input
-            label="상세 주소"
-            required
+        {/* 상세 주소 입력란 */}
+        <div className="grid gap-2">
+          <span className="text-sm font-medium">
+            상세 주소 <b className="text-rose-600">*</b>
+          </span>
+          <input
             value={form.addressDetail || ""}
             onChange={(e) =>
               onChange({ ...form, addressDetail: e.target.value })
             }
             placeholder="상세 주소 (예: 101동 101호)"
-            error={errors.addressDetail}
+            className={`h-11 px-3 rounded-md border outline-none focus:ring-2 focus:ring-emerald-600 text-sm transition ${
+              errors.addressDetail ? "border-rose-600" : "border-zinc-300"
+            }`}
+            type="text"
           />
           {errors.addressDetail && (
             <p className="text-xs text-rose-600 mt-1">{errors.addressDetail}</p>
