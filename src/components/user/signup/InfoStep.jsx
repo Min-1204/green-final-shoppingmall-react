@@ -29,9 +29,13 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
 
   const validate = () => {
     const e = {};
-    if (!form.loginId || form.loginId.length < 4)
+    const loginIdRegex = /^[a-zA-Z0-9]+$/; // 영어,숫자만 허용
+    if (!form.loginId || form.loginId.length < 4) {
       e.loginId = "아이디는 4자 이상 입력하세요.";
-    if (!form.password || form.password.length < 6)
+    } else if (!loginIdRegex.test(form.loginId)) {
+      e.loginId = "아이디는 영어(대/소문자와)와 숫자만 사용할 수 있습니다.";
+    }
+    if (!form.password || form.password.length < 8)
       e.password = "비밀번호는 8자 이상 입력하세요.";
     if (form.confirmPassword !== form.password)
       e.confirmPassword = "비밀번호가 일치하지 않습니다.";
@@ -63,7 +67,16 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
     if (!form.addressDetail) e.addressDetail = "상세 주소를 입력하세요.";
 
     setErrors(e);
-    return Object.keys(e).length === 0;
+
+    if (Object.keys(e).length > 0) {
+      const firstErrorKey = Object.keys(e)[0];
+      const firstErrorMessage = e[firstErrorKey];
+
+      alert(`입력 오류 입니다 : ${firstErrorMessage}`);
+      return false;
+    }
+
+    return true;
   };
 
   const handleAddressSearch = () => {
@@ -105,7 +118,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
         <div className="grid md:grid-cols-2 gap-5">
           <div>
             <Input
-              label="비밀번호(영문,숫자,특수문자 6~15자)"
+              label="비밀번호(영문,숫자,특수문자 8~15자)"
               required
               type="password"
               value={form.password || ""}

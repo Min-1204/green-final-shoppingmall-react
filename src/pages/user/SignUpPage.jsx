@@ -6,15 +6,16 @@ import HomeBar from "../../layouts/mainpage/HomeBar";
 import SignUpChoiceModal from "../../components/user/signup/SignUpChoiceModal";
 import { useDispatch, useSelector } from "react-redux";
 //prettier-ignore
-import {  signUpPending,  signUpFulfilled, signUpRejected, clearError} from "../../redux/slices/features/user/userSlice";
-import { signUpApi } from "../../api/user/userapi";
-import { useNavigate } from "react-router-dom";
+import {
+  signUpThunk,
+  resetSignUpSuccess,
+  clearError,
+} from "../../redux/slices/features/user/signUpSlice";
 
 export default function SignUpPage() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { error, loading, signUpSuccess } = useSelector(
-    (state) => state.userSlice
+    (state) => state.signUpSlice
   );
 
   const [step, setStep] = useState(1); // 회원가입 Step 1 ~ 3
@@ -24,7 +25,7 @@ export default function SignUpPage() {
   const [terms, setTerms] = useState({
     tos: false, // 약관
     privacy: false, // 개인정보동의
-    age14: false // 만 14세이상 동의
+    age14: false, // 만 14세이상 동의
   });
 
   // 회원가입 form
@@ -42,7 +43,7 @@ export default function SignUpPage() {
     address: "", // 기본주소
     addressDetail: "", // 상세주소
     smsAgreement: false, // SMS 알림 동의
-    emailAgreement: false // Email 알림 동의
+    emailAgreement: false, // Email 알림 동의
   });
 
   // 모달 열릴 때 페이지 스크롤 잠금 overflow-hidden 클래스 추가
@@ -65,41 +66,23 @@ export default function SignUpPage() {
   };
 
   // 11-10 최종데이터 로그인 상태(State) 출력 로그 확인 및 Success 이동
-  const hanldeSignUpSubmit = async () => {
-    console.log("=== 회원가입 최종 데이터 ===");
+  const handleSignUpSubmit = async () => {
+    console.log("=== 여기는 handleSignUpSubmit 버튼 회원가입 최종 데이터 ===");
     console.log("약관 동의", terms);
     console.log("회원 정보", signUpForm);
     console.log("=================");
 
-    try {
-      // 시작
-      dispatch(signUpPending()); // 함수실행
-
-      // api 호출 시작
-      const response = await signUpApi(signUpForm);
-      console.log("백엔드 응답 콘솔", response);
-
-      // Redux 액션 디스패치
-      dispatch(signUpFulfilled(response));
-
-      // 예외처리
-    } catch (apiError) {
-      console.error("API 에러:", apiError);
-      dispatch(
-        signUpRejected(apiError.message || "회원가입에 실패 하였습니다")
-      );
-      alert(
-        "회원가입에 실패: " + (apiError.message || "회원가입에 실패 하였습니다")
-      );
-    }
+    dispatch(signUpThunk(signUpForm)); // 함수실행
   };
 
   useEffect(() => {
     if (signUpSuccess) {
-      console.log("✅ 회원가입 성공! SuccessStep으로 이동");
+      alert("회원가입이 완료되었습니다.");
+      dispatch(resetSignUpSuccess());
+      console.log("✅ SignUpPage 콘솔 회원가입 성공! SuccessStep으로 이동");
       setStep(3);
     }
-  }, [signUpSuccess, dispatch, navigate]);
+  }, [signUpSuccess, dispatch]);
 
   // 에러처리 로직
   useEffect(() => {
@@ -126,11 +109,11 @@ export default function SignUpPage() {
           form={signUpForm} // 회원가입 form 전달
           onChange={setSignUpForm}  // 회원가입 변경 form 전달
           onPrev={() => setStep(1)}  // onPrev -> 이전페이지로 이동함수 전달
-          onSubmit={hanldeSignUpSubmit} // onSubmit 다음버튼 회원가입 Step 3로 넘어갈 수 있는 기능
+          onSubmit={handleSignUpSubmit} // onSubmit 다음버튼 회원가입 Step 3로 넘어갈 수 있는 기능
         />
       );
     return <SuccessStep />; // 위 useMemo가 모든 if문을 거치는 절차로직을 가지고있고 마지막 if문을 실행 후에는 남은 것은 return 그러므로 SuccessStep이 반환됨
-  }, [step, terms, signUpForm, hanldeSignUpSubmit]);
+  }, [step, terms, signUpForm, handleSignUpSubmit]);
 
   return (
     <div className="min-h-screen bg-white">
