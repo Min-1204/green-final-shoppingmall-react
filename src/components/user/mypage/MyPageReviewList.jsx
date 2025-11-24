@@ -1,51 +1,46 @@
-import React, { useState } from "react";
-import ReviewModifyDelete from "../../review/ReviewModifyDelete"; // ✅ 모달 컴포넌트 import
+import { useEffect, useState } from "react";
+import ReviewModifyDelete from "../../review/ReviewModifyDelete";
 import ReviewSee from "../../review/ReviewSee";
+import { getAll } from "../../../api/review/reviewapi";
 
 const MyPageReviewList = () => {
   const [reviewModal, setReviewModal] = useState(false);
   const [seeReviewModal, setSeeReviewModal] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [selectedReview, setSelectedReview] = useState(null);
 
-  // 더미 데이터
-  const initialComments = [
-    {
-      id: 1,
-      image:
-        "https://image.oliveyoung.co.kr/uploads/images/goods/10/0000/0018/A00000018761501ko.jpg",
-      productName: "스트라이덱스",
-      option: "[여드름/습성] 스트라이덱스 맥스플러스패...",
-      date: "2025.07.07",
-      writePeriod: "2025.09.02",
-      review: "좋아요 잘 사용하고 있습니다 매일 사용하기엔 자극...",
-    },
-    {
-      id: 2,
-      image:
-        "https://image.oliveyoung.co.kr/uploads/images/goods/10/0000/0017/A00000017638510ko.jpg",
-      productName: "토론숲",
-      option: "[수분진정] 토론숲 로얄리 크라이먼 물라젠...",
-      date: "2024.03.11",
-      writePeriod: "2024.03.15",
-      review: "솔트때 쓰고 좋아서 재구매하면서 마트팩도 궁금해...",
-    },
-    {
-      id: 3,
-      image:
-        "https://image.oliveyoung.co.kr/uploads/images/goods/10/0000/0015/A00000015241212ko.jpg",
-      productName: "토론숲",
-      option: "[원조오염스크럽] 토론숲 사우나진향 솔트...",
-      date: "2024.03.11",
-      writePeriod: "2024.03.15",
-      review: "2월달에 궁금해서 사본 제품인데 써보니 효과 좋아...",
-    },
-  ];
+  useEffect(() => {
+    const getReviews = async () => {
+      const data = await getAll();
+      setReviews(data);
+      console.log("data => ", data);
+    };
+    getReviews();
+  }, []);
+
+  const reviewUpdatedHandler = (updatedReview) => {
+    if (updatedReview.deleted) {
+      //삭제일때
+      setReviews((prev) =>
+        prev.filter((review) => review.id !== updatedReview.id)
+      );
+    } else {
+      //수정일때
+      setReviews((prev) =>
+        prev.map((review) =>
+          review.id === updatedReview.id ? updatedReview : review
+        )
+      );
+    }
+  };
 
   return (
     <div className="w-full bg-white">
       <div className="px-8 pt-6 pb-8">
         {/* 누적 리뷰 건수 */}
         <h3 className="text-ml text-gray-800 font-semibold mb-6">
-          누적 리뷰 건수 <span className="text-red-500">3</span> 건
+          누적 리뷰 건수 <span className="text-red-500">{reviews.length}</span>{" "}
+          건
         </h3>
 
         {/* 테이블 헤더 */}
@@ -57,7 +52,7 @@ const MyPageReviewList = () => {
 
         {/* 리뷰 목록 */}
         <div className="divide-y divide-zinc-200">
-          {initialComments.map((item) => (
+          {reviews.map((item) => (
             <div
               key={item.id}
               className="grid grid-cols-12 gap-4 py-6 items-start hover:bg-zinc-50 transition"
@@ -88,8 +83,15 @@ const MyPageReviewList = () => {
               {/* 리뷰 정보 */}
               <div className="col-span-3">
                 <div className="flex items-center gap-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-yellow-500">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span
+                      key={star}
+                      className={
+                        star <= item.rating
+                          ? "text-yellow-500"
+                          : "text-gray-300"
+                      }
+                    >
                       ★
                     </span>
                   ))}
@@ -111,7 +113,10 @@ const MyPageReviewList = () => {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setReviewModal(true)} // 모달 열기
+                    onClick={() => {
+                      setSelectedReview(item);
+                      setReviewModal(true);
+                    }}
                     className="px-4 py-1.5 text-xs border border-zinc-300 rounded hover:bg-zinc-50 cursor-pointer"
                   >
                     리뷰수정
@@ -136,8 +141,12 @@ const MyPageReviewList = () => {
         </div>
 
         {/* ReviewModifyDelete 연결 */}
-        {reviewModal && (
-          <ReviewModifyDelete closeModal={() => setReviewModal(false)} />
+        {reviewModal && selectedReview && (
+          <ReviewModifyDelete
+            closeModal={() => setReviewModal(false)}
+            review={selectedReview}
+            update={reviewUpdatedHandler}
+          />
         )}
 
         {/* ReviewSee 연결 */}

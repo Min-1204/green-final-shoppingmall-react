@@ -1,35 +1,46 @@
-import React, { useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addImage,
-  modifyReview,
-  deleteReview,
-  removeImage,
-} from "../../redux/slices/features/review/reviewSlice";
+import { useEffect, useRef, useState } from "react";
+import { reviewDelete, reviewModify } from "../../api/review/reviewapi";
 
-const ReviewModifyDelete = ({ closeModal }) => {
-  const [currentRating, setCurrentRating] = useState(4);
+const ReviewModifyDelete = ({ closeModal, review, update }) => {
+  const [currentRating, setCurrentRating] = useState(0);
+  const [reviewContent, setReviewContent] = useState("");
+  const [images, setImages] = useState([]); // 로컬 상태로 관리
   const uploadRef = useRef();
-  const dispatch = useDispatch();
-  const { images } = useSelector((state) => state.reviewSlice);
+
+  useEffect(() => {
+    if (review) {
+      setReviewContent(review.content || review.review || "");
+      setCurrentRating(review.rating || 0);
+    }
+  }, [review]);
 
   //리뷰 수정(업데이트) 핸들러
-  const reviewUpdatedHandler = (idx, newContent, newRating) => {
-    dispatch(
-      modifyReview({
-        idx,
-        updatedReview: { content: newContent, rating: newRating },
-      })
-    );
+  const reviewUpdatedHandler = async () => {
+    await reviewModify(review.id, {
+      content: reviewContent,
+      rating: currentRating,
+    });
     alert("리뷰가 수정되었습니다.");
+
+    if (update) {
+      update({
+        ...review,
+        content: reviewContent,
+        rating: currentRating,
+      });
+    }
     closeModal();
   };
 
   //리뷰 삭제 핸들러
-  const reviewDeleteHandler = (idx) => {
-    if (confirm("정말 삭제하시겠습니까?")) {
-      dispatch(deleteReview(idx));
+  const reviewDeleteHandler = async (id) => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      await reviewDelete(id);
       alert("리뷰가 삭제되었습니다.");
+    }
+
+    if (update) {
+      update({ deleted: true, id: id });
     }
     closeModal();
   };
@@ -39,10 +50,14 @@ const ReviewModifyDelete = ({ closeModal }) => {
     const files = uploadRef.current.files;
     if (!files) return;
 
+    const newImages = [];
     for (let file of files) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        dispatch(addImage(e.target.result));
+        newImages.push(e.target.result);
+        if (newImages.length === files.length) {
+          setImages((prev) => [...prev, ...newImages].slice(0, 5)); // 최대 5장
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -50,8 +65,7 @@ const ReviewModifyDelete = ({ closeModal }) => {
 
   //첨부 이미지 삭제 핸들러
   const imageRemoveHandler = (idx) => {
-    dispatch(removeImage(idx));
-    // console.log("삭제 이미지 idx", idx);
+    setImages((prev) => prev.filter((review, i) => i !== idx));
   };
 
   return (
@@ -73,9 +87,6 @@ const ReviewModifyDelete = ({ closeModal }) => {
             이미지
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-800">
-              트리플 밸런싱 모이스처 어쩌고 크림 90g (120g 기획세트)
-            </p>
             <div className="flex items-center space-x-2 mt-1">
               <span className="text-gray-600 text-sm">별점:</span>
               <div className="flex space-x-1 text-2xl">
@@ -102,7 +113,8 @@ const ReviewModifyDelete = ({ closeModal }) => {
         <textarea
           className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:border-green-500 focus:ring-green-500 resize-none placeholder:text-gray-400 mt-4"
           rows={8}
-          defaultValue="구매한 상품이 기대 이상으로 만족스러워요. 포장 상태도 좋았고 배송도 빨랐습니다!"
+          value={reviewContent}
+          onChange={(e) => setReviewContent(e.target.value)}
         />
 
         {/* 사진 첨부/수정 */}
@@ -131,16 +143,14 @@ const ReviewModifyDelete = ({ closeModal }) => {
           <div className="flex space-x-3">
             <button
               className="px-4 py-2 text-sm font-semibold text-red-600 border border-red-400 bg-red-50 rounded-lg cursor-pointer"
-              onClick={() => reviewDeleteHandler(0)}
+              onClick={() => reviewDeleteHandler(review.id)}
             >
               삭제하기
             </button>
             <button
               className="px-5 py-2 text-sm font-semibold text-white rounded-lg cursor-pointer"
               style={{ backgroundColor: "#111111" }}
-              onClick={() =>
-                reviewUpdatedHandler(0, "테스트 내용", currentRating)
-              }
+              onClick={reviewUpdatedHandler}
             >
               수정하기
             </button>
@@ -175,5 +185,4 @@ const ReviewModifyDelete = ({ closeModal }) => {
     </div>
   );
 };
-
 export default ReviewModifyDelete;

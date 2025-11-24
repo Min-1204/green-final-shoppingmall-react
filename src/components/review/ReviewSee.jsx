@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
 
 const ReviewSee = ({ closeModal }) => {
   const [currentRating, setCurrentRating] = useState(4);
-  const { images } = useSelector((state) => state.reviewSlice);
+  const [images] = useState([1, 2, 3, 4, 5]); // 임시 이미지 데이터
 
   // 더미 데이터
   const productName = "스트라이덱스";
