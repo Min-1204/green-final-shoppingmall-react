@@ -1,27 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  changeQty,
-  removeItem,
-  clearCart,
-} from "../../redux/slices/features/cart/cartSlice";
 import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
+import useCustomCart from "../../hooks/useCustomCart";
 
+//장바구니 페이지 컴포넌트
 const CartComponent = () => {
   const navigate = useNavigate();
 
   // cartSlice에 action을 전달할 dispatch 불러오기
   const dispatch = useDispatch();
 
+  // 장바구니 기능
+  const { refreshCart, changeCart, removeItem } = useCustomCart();
+
+  // 유저 아이디
+  const [userId, setUserId] = useState(1);
+
+  useEffect(() => {
+    refreshCart(userId);
+  }, []);
+
   //store 전역 저장소에서 장바구니 내역 불러오기
-  const cart = useSelector((state) => state.cart);
-  console.log(cart);
-  // const [cart, setCart] = useState(cartState);
+  const cart = useSelector((state) => state.cartSlice);
+  // console.log("cart", cart);
 
   const [selectedItems, setSelectedItems] = useState(
     cart.map((item) => item.id)
   );
+  console.log("selectedItems", selectedItems);
 
   const toggleSelectAll = () => {
     if (selectedItems.length === cart.length) {
@@ -37,27 +44,27 @@ const CartComponent = () => {
     );
   };
 
-  // const increaseQty = (id) => {
-  //   setCart((prev) =>
-  //     prev.map((i) => (i.id === id ? { ...i, qty: i.qty + 1 } : i))
-  //   );
-  // };
+  const handleChangeQty = (item, delta) => {
+    console.log("handleChangeQty 함수 발생 : item => ", item);
+    const newQuantity = item.quantity + delta;
+    const dto = {
+      userId: userId,
+      id: item.id,
+      productOptionId: item.productOptionId,
+      quantity: newQuantity,
+    };
 
-  // const decreaseQty = (id) => {
-  //   setCart((prev) =>
-  //     prev.map((i) => (i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i))
-  //   );
-  // };
-
-  const handleChangeQty = (id, delta) => {
-    dispatch(changeQty({ id, delta }));
+    changeCart(dto);
   };
 
   const selectedCartItems = cart.filter((item) =>
     selectedItems.includes(item.id)
   );
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const totalPrice = cart.reduce(
+    (sum, item) => sum + item.sellingPrice * item.quantity,
+    0
+  );
 
   const shipping = totalPrice >= 20000 ? 0 : 2500;
 
@@ -170,17 +177,17 @@ const CartComponent = () => {
                       <div className="flex items-center gap-4">
                         <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
                           <img
-                            src={item.image}
-                            alt={item.name}
+                            src={item.imageUrl}
+                            alt={item.productName}
                             className="w-full h-full object-cover"
                           />
                         </div>
                         <div className="min-w-0">
                           <p className="text-xs text-gray-500 mb-1">
-                            {item.brand}
+                            {item.brandName}
                           </p>
                           <p className="font-medium text-gray-900 text-sm leading-snug">
-                            {item.name}
+                            {item.productName} - {item.optionName}
                           </p>
                         </div>
                       </div>
@@ -189,7 +196,7 @@ const CartComponent = () => {
                     {/* 판매가 */}
                     <td className="text-center p-4">
                       <p className="text-[#111111] font-semibold">
-                        {item.price.toLocaleString()}원
+                        {item.sellingPrice.toLocaleString()}원
                       </p>
                     </td>
 
@@ -198,16 +205,16 @@ const CartComponent = () => {
                       <div className="flex items-center justify-center gap-2">
                         <button
                           className="w-8 h-8 border border-[#111111] rounded-md hover:bg-gray-100 flex items-center justify-center transition-colors"
-                          onClick={() => handleChangeQty(item.id, -1)}
+                          onClick={() => handleChangeQty(item, -1)}
                         >
                           <Minus className="w-3.5 h-3.5 text-[#111111]" />
                         </button>
                         <span className="w-10 text-center font-medium text-[#111111]">
-                          {item.qty}
+                          {item.quantity}
                         </span>
                         <button
                           className="w-8 h-8 border border-[#111111] rounded-md hover:bg-gray-100 flex items-center justify-center transition-colors"
-                          onClick={() => handleChangeQty(item.id, +1)}
+                          onClick={() => handleChangeQty(item, +1)}
                         >
                           <Plus className="w-3.5 h-3.5 text-[#111111]" />
                         </button>
@@ -216,13 +223,13 @@ const CartComponent = () => {
 
                     {/* 구매가 */}
                     <td className="text-center p-4 font-semibold">
-                      {(item.price * item.qty).toLocaleString()}원
+                      {(item.sellingPrice * item.quantity).toLocaleString()}원
                     </td>
 
                     <td className="text-center p-4">
                       <button
                         className="inline-flex items-center justify-center w-8 h-8 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                        onClick={() => dispatch(removeItem(item.id))}
+                        onClick={() => removeItem(item.id)}
                         title="삭제"
                       >
                         <Trash2 className="w-4 h-4" />
