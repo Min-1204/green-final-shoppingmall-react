@@ -7,12 +7,10 @@ export const registerProduct = async (productForm) => {
   const product = {
     category: productForm?.category,
     brand: productForm?.brand,
-    productName: productForm?.basicInfo?.productName,
-    searchKeywords: productForm?.basicInfo?.keywords,
-    description: productForm?.basicInfo?.productDescription,
-    exposureStatus: productForm?.saleInfo?.exposureStatus,
-    saleStatus: productForm?.saleInfo?.saleStatus,
-    cancelable: productForm?.saleInfo?.isCancelable,
+    basicInfo: productForm?.basicInfo,
+    saleInfo: productForm?.saleInfo,
+    options: productForm?.options,
+    deliveryPolicy: productForm?.deliveryPolicy,
   };
 
   console.log("product : ", product);

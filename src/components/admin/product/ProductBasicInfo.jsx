@@ -5,8 +5,8 @@ export default function ProductBasicInfo({ onChangeForm }) {
   const [isOpen, setIsOpen] = useState(true);
   const [productBasicInfo, setProductBasicInfo] = useState({
     productName: "",
-    keywords: "",
-    productDescription: "",
+    searchKeywords: "",
+    description: "",
   });
 
   useEffect(() => {
@@ -68,14 +68,14 @@ export default function ProductBasicInfo({ onChangeForm }) {
               <div className="flex items-center flex-grow p-2 gap-2">
                 <input
                   type="text"
-                  name="keywords"
+                  name="searchKeywords"
                   onChange={onChangeHandler}
-                  value={productBasicInfo.keywords}
+                  value={productBasicInfo.searchKeywords}
                   className="border border-gray-300 p-1 w-full max-w-lg rounded-md"
                   placeholder="검색어를 입력하세요"
                 />
                 <span className="text-xs text-gray-500 whitespace-nowrap">
-                  {productBasicInfo.keywords.length} / 255
+                  {productBasicInfo.searchKeywords.length} / 255
                 </span>
               </div>
             </div>
@@ -89,14 +89,14 @@ export default function ProductBasicInfo({ onChangeForm }) {
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
-                    name="productDescription"
+                    name="description"
                     onChange={onChangeHandler}
-                    value={productBasicInfo.productDescription}
+                    value={productBasicInfo.description}
                     placeholder="간략한 상품 설명을 적어주세요"
                     className="border border-gray-300 p-1 w-full max-w-lg rounded-md"
                   />
                   <span className="text-xs text-gray-500 whitespace-nowrap">
-                    {productBasicInfo.productDescription.length} / 255
+                    {productBasicInfo.description.length} / 255
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
