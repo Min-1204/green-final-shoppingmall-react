@@ -1,20 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Stepper from "./Stepper";
-import { useDispatch } from "react-redux";
-import { resetSignUpSuccess } from "../../../redux/slices/features/user/userSlice";
 
 export default function SuccessStep() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleHomeClick = () => {
-    dispatch(resetSignUpSuccess);
     navigate("/");
   };
 
   const handleLoginClick = () => {
-    dispatch(resetSignUpSuccess);
     navigate("/loginpage");
   };
 
