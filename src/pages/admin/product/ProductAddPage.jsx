@@ -4,21 +4,20 @@ import ProductBrand from "../../../components/admin/product/ProductBrand";
 import ProductBasicInfo from "../../../components/admin/product/ProductBasicInfo";
 import ProductSaleInfo from "../../../components/admin/product/ProductSaleInfo";
 import ProductImageRegister from "../../../components/admin/product/ProductImageRegister";
-import DeliveryCharge from "../../../components/admin/product/DeliveryCharge";
 import OptionRegistration from "../../../components/admin/product/OptionRegistration";
 import { registerProduct } from "../../../api/admin/product/productApi";
+import DeliveryPolicy from "../../../components/admin/product/DeliveryPolicy";
 
 const initForm = {
   category: {},
   brand: {},
   basicInfo: {
     productName: "",
-    keywords: "",
-    productDescription: "",
+    searchKeywords: "",
+    description: "",
   },
   saleInfo: {
     saleStatus: "ON_SALE",
-    needRestockNoti: false,
     exposureStatus: "EXPOSURE",
     isCancelable: true,
     useRestockNoti: false,
@@ -28,9 +27,13 @@ const initForm = {
     galleryImages: [],
   },
   detailImages: [],
-  deliveryInfo: {
-    deliveryType: "PAID",
-    deliveryFee: 3000,
+  deliveryPolicy: {
+    id: 2,
+    name: "조건부 무료정책",
+    policyType: "CONDITIONAL_FREE",
+    basicDeliveryFee: 3000,
+    freeConditionAmount: 50000,
+    defaultPolicy: true,
   },
   options: [
     {
@@ -102,9 +105,9 @@ const ProductAddPage = () => {
             setProductForm((prev) => ({ ...prev, mainImages: data }))
           }
         />
-        <DeliveryCharge
+        <DeliveryPolicy
           onChangeForm={(data) =>
-            setProductForm((prev) => ({ ...prev, deliveryInfo: data }))
+            setProductForm((prev) => ({ ...prev, deliveryPolicy: data }))
           }
         />
         <OptionRegistration
