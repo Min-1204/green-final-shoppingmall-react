@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const ReviewSee = ({ closeModal }) => {
-  const [currentRating, setCurrentRating] = useState(4);
+const ReviewSee = ({ closeModal, review }) => {
+  const [currentRating, setCurrentRating] = useState(0);
+  const [reviewContent, setReviewContent] = useState("");
   const [images] = useState([1, 2, 3, 4, 5]); // 임시 이미지 데이터
 
-  // 더미 데이터
+  // 임시 상품 정보
   const productName = "스트라이덱스";
   const productOption = "[여드름/좁쌀] 스트라이덱스 맥스플러스패드 55매";
   const productPrice = "₩12,900";
   const reviewDate = "2025.09.02";
+
+  useEffect(() => {
+    if (review) {
+      setCurrentRating(review.rating || 0);
+      setReviewContent(review.content || "");
+    }
+  }, [review]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -39,13 +47,9 @@ const ReviewSee = ({ closeModal }) => {
                 {[1, 2, 3, 4, 5].map((star) => {
                   let starClass = "cursor-pointer transition text-gray-300";
                   if (currentRating >= star)
-                    starClass = "cursor-pointer transition text-yellow-500";
+                    starClass = "transition text-yellow-500";
                   return (
-                    <span
-                      key={star}
-                      className={starClass}
-                      onClick={() => setCurrentRating(star)}
-                    >
+                    <span key={star} className={starClass}>
                       {currentRating >= star ? "★" : "☆"}
                     </span>
                   );
@@ -61,8 +65,7 @@ const ReviewSee = ({ closeModal }) => {
 
         {/* 리뷰 내용 */}
         <div className="w-full border border-gray-300 rounded-lg p-3 text-sm h-50 text-gray-700 overflow-y-auto">
-          구매한 상품이 기대 이상으로 만족스러워요. 포장 상태도 좋았고 배송도
-          빨랐습니다!
+          {reviewContent}
         </div>
 
         {/* 첨부 이미지: 가로 스크롤 */}

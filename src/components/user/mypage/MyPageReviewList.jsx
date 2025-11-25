@@ -11,12 +11,18 @@ const MyPageReviewList = () => {
 
   useEffect(() => {
     const getReviews = async () => {
-      const data = await getMyReviews(1);
-      setReviews(data);
-      console.log("data => ", data);
+      const review = await getMyReviews(1);
+      setReviews(review);
+      console.log("review => ", review);
     };
     getReviews();
   }, []);
+
+  useEffect(() => {
+    if (selectedReview) {
+      setSeeReviewModal(true);
+    }
+  }, [selectedReview]);
 
   const reviewUpdatedHandler = (updatedReview) => {
     if (updatedReview.deleted) {
@@ -122,7 +128,7 @@ const MyPageReviewList = () => {
                     리뷰수정
                   </button>
                   <button
-                    onClick={() => setSeeReviewModal(true)}
+                    onClick={() => setSelectedReview(item)}
                     className="px-4 py-1.5 text-xs border border-zinc-300 rounded hover:bg-zinc-50 cursor-pointer"
                   >
                     리뷰보기
@@ -151,7 +157,10 @@ const MyPageReviewList = () => {
 
         {/* ReviewSee 연결 */}
         {seeReviewModal && (
-          <ReviewSee closeModal={() => setSeeReviewModal(false)} />
+          <ReviewSee
+            closeModal={() => setSeeReviewModal(false)}
+            review={selectedReview}
+          />
         )}
       </div>
     </div>
