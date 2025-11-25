@@ -5,9 +5,9 @@ import { getMyReviews } from "../../../api/review/reviewapi";
 
 const MyPageReviewList = () => {
   const [reviewModal, setReviewModal] = useState(false);
-  const [seeReviewModal, setSeeReviewModal] = useState(false);
+  const [selectedReviewEdit, setSelectedReviewEdit] = useState(null);
+  const [selectedReviewSee, setSelectedReviewSee] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [selectedReview, setSelectedReview] = useState(null);
 
   useEffect(() => {
     const getReviews = async () => {
@@ -19,10 +19,10 @@ const MyPageReviewList = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedReview) {
-      setSeeReviewModal(true);
+    if (selectedReviewSee) {
+      setSelectedReviewSee(true);
     }
-  }, [selectedReview]);
+  }, [selectedReviewSee]);
 
   const reviewUpdatedHandler = (updatedReview) => {
     if (updatedReview.deleted) {
@@ -120,7 +120,7 @@ const MyPageReviewList = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
-                      setSelectedReview(item);
+                      setSelectedReviewEdit(item);
                       setReviewModal(true);
                     }}
                     className="px-4 py-1.5 text-xs border border-zinc-300 rounded hover:bg-zinc-50 cursor-pointer"
@@ -128,7 +128,7 @@ const MyPageReviewList = () => {
                     리뷰수정
                   </button>
                   <button
-                    onClick={() => setSelectedReview(item)}
+                    onClick={() => setSelectedReviewSee(item)}
                     className="px-4 py-1.5 text-xs border border-zinc-300 rounded hover:bg-zinc-50 cursor-pointer"
                   >
                     리뷰보기
@@ -147,19 +147,19 @@ const MyPageReviewList = () => {
         </div>
 
         {/* ReviewModifyDelete 연결 */}
-        {reviewModal && selectedReview && (
+        {reviewModal && selectedReviewEdit && (
           <ReviewModifyDelete
             closeModal={() => setReviewModal(false)}
-            review={selectedReview}
+            review={setSelectedReviewEdit}
             update={reviewUpdatedHandler}
           />
         )}
 
         {/* ReviewSee 연결 */}
-        {seeReviewModal && (
+        {selectedReviewSee && (
           <ReviewSee
-            closeModal={() => setSeeReviewModal(false)}
-            review={selectedReview}
+            closeModal={() => setSelectedReviewSee(false)}
+            review={setSelectedReviewSee}
           />
         )}
       </div>
