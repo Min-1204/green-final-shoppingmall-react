@@ -4,6 +4,7 @@ import {
   postChangeCartItemAsync,
   getCartItemsAsync,
   deleteCartItemAsync,
+  deleteAllAsync,
 } from "../redux/slices/features/cart/cartSlice";
 import { clearCart } from "../redux/slices/features/cart/cartSlice";
 
@@ -21,8 +22,11 @@ const useCustomCart = () => {
     dispatch(deleteCartItemAsync(id));
     // console.log("removeItem");
   };
+  const removeAll = () => {
+    dispatch(deleteAllAsync());
+  }
 
-  return { refreshCart, changeCart, removeItem };
+  return { refreshCart, changeCart, removeItem, removeAll };
 };
 
 export default useCustomCart;

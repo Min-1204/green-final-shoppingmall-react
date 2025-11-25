@@ -12,23 +12,26 @@ const CartComponent = () => {
   const dispatch = useDispatch();
 
   // 장바구니 기능
-  const { refreshCart, changeCart, removeItem } = useCustomCart();
+  const { refreshCart, changeCart, removeItem, removeAll } = useCustomCart();
 
   // 유저 아이디
   const [userId, setUserId] = useState(1);
-
-  useEffect(() => {
-    refreshCart(userId);
-  }, []);
 
   //store 전역 저장소에서 장바구니 내역 불러오기
   const cart = useSelector((state) => state.cartSlice);
   // console.log("cart", cart);
 
-  const [selectedItems, setSelectedItems] = useState(
-    cart.map((item) => item.id)
-  );
-  console.log("selectedItems", selectedItems);
+  const [selectedItems, setSelectedItems] = useState([]);
+  
+  useEffect(() => {
+    refreshCart(userId);
+  }, [])
+  
+
+  useEffect(() => {
+    setSelectedItems(cart.map((item)=>item.id));
+    console.log("selectedItems", selectedItems)
+  }, [cart]);
 
   const toggleSelectAll = () => {
     if (selectedItems.length === cart.length) {
@@ -61,7 +64,7 @@ const CartComponent = () => {
     selectedItems.includes(item.id)
   );
 
-  const totalPrice = cart.reduce(
+  const totalPrice = selectedCartItems.reduce(
     (sum, item) => sum + item.sellingPrice * item.quantity,
     0
   );
@@ -72,13 +75,15 @@ const CartComponent = () => {
   const handleOrderSelected = () => {
     if (selectedCartItems.length === 0) return alert("상품을 선택해주세요");
     navigate("/order", { state: { items: selectedCartItems } });
-    dispatch(clearCart());
+    //주문 페이지 이동 시 장바구니 전체 비우기
+    removeAll()
   };
 
   // ✅ 전체 주문 시 전체 장바구니 전달
   const handleOrderAll = () => {
     navigate("/order", { state: { items: cart } });
-    dispatch(clearCart());
+    //주문 페이지 이동 시 장바구니 전체 비우기
+    removeAll()
   };
 
   // 빈 장바구니 UI
