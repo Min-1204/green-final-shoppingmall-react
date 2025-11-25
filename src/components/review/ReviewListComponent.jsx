@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import ReviewRatingComponent from "./ReviewRatingComponent";
+import { reviewList } from "../../api/review/reviewapi";
+import { Database } from "lucide-react";
 
 const ReviewListComponent = () => {
+  const [reviews, setReviews] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null); // 'sort', 'option', null
-  const [showComments, setShowComments] = useState(false); //리뷰 댓글의 열림/닫힘(on/off) 여부
+  const [showComments, setShowComments] = useState({}); //리뷰 댓글의 열림/닫힘(on/off) 여부
   const [selectedSort, setSelectedSort] = useState("최신순");
   const [selectedOption, setSelectedOption] = useState("옵션");
   const sortRef = useRef();
@@ -36,6 +39,17 @@ const ReviewListComponent = () => {
     },
   ];
 
+  //리뷰 목록 조회
+  useEffect(() => {
+    const getReviews = async () => {
+      const { data } = await reviewList(1);
+      setReviews(data);
+      console.log("상품 리뷰 => ", data);
+    };
+    getReviews();
+  }, []);
+
+  //정렬, 옵션 드롭다운
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (sortRef.current && !sortRef.current.contains(e.target)) {
@@ -49,6 +63,17 @@ const ReviewListComponent = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  //리뷰별 댓글 열기/닫기
+  const toggleComments = (reviewId) => {
+    setShowComments((current) => {
+      const isOpen = current[reviewId] || false; //현재 상태 확인, 없으면 false
+      return {
+        ...current,
+        [reviewId]: !isOpen, //클릭한 리뷰만 반전
+      };
+    });
+  };
 
   return (
     <div className="w-full min-h-screen">
@@ -119,156 +144,109 @@ const ReviewListComponent = () => {
 
         <div className="border-t border-gray-300 mb-4"></div>
 
-        {/* 리뷰 1 */}
-        <div className="bg-white pb-4 mb-4 border-b border-gray-300">
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center space-x-3">
-                <span className="text-gray-900 font-semibold text-base">
-                  유저아이디1
-                </span>
-                <span className="text-xs text-gray-500">25.09.30</span>
-              </div>
-              <div className="text-yellow-500 text-sm">
-                <span>★★★★★</span>
-              </div>
-            </div>
-
-            <div className="mb-2 text-sm text-gray-500">
-              <p>구매옵션</p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 mb-3">
-              <div className="w-full sm:w-64 sm:flex-shrink-0">
-                <div className="aspect-square bg-gray-300 flex items-center justify-center rounded">
-                  <span className="text-gray-600 text-sm">
-                    리뷰 이미지 (Placeholder)
+        {/* 리뷰 목록 */}
+        {reviews.map((review) => (
+          <div
+            key={review.id}
+            className="bg-white pb-4 mb-4 border-b border-gray-300"
+          >
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center space-x-3">
+                  <span className="text-gray-900 font-semibold text-base">
+                    {review.userName || "유저아이디"}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {review.createdAt?.slice(0, 10).replace(/-/g, ".") ||
+                      "날짜"}
                   </span>
                 </div>
+                <div className="text-yellow-500 text-sm">
+                  <span>{"★".repeat(review.rating)}</span>
+                </div>
               </div>
-              <p className="text-sm text-gray-700 leading-relaxed sm:flex-1">
-                첫 번째 리뷰 내용
-              </p>
-            </div>
 
-            <div className="flex items-center justify-end space-x-4 text-sm text-gray-500 pt-3">
-              <button className="flex items-center space-x-1 cursor-pointer hover:text-gray-900 transition duration-150">
-                <span>👍 도움이 돼요 1</span>
-              </button>
+              <div className="mb-2 text-sm text-gray-500">
+                <p>{review.option || "구매옵션"}</p>
+              </div>
 
-              <button
-                onClick={() => setShowComments(!showComments)}
-                className={`flex items-center space-x-1 cursor-pointer transition duration-150 ${
-                  showComments
-                    ? "text-blue-600 font-semibold"
-                    : "text-gray-900 hover:text-blue-600"
-                }`}
-              >
-                <span>💬 댓글 3</span>
-              </button>
-            </div>
+              <div className="flex flex-col sm:flex-row gap-4 mb-3">
+                <div className="w-full sm:w-64 sm:flex-shrink-0">
+                  <div className="aspect-square bg-gray-300 flex items-center justify-center rounded">
+                    <span className="text-gray-600 text-sm">
+                      리뷰 이미지 (Placeholder)
+                    </span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed sm:flex-1">
+                  {review.content}
+                </p>
+              </div>
 
-            {showComments && (
-              <div className="mt-4 border-t border-gray-200 pt-3">
-                {initialComments.map((comment) => {
-                  const nameColor = comment.isSeller
-                    ? "text-blue-600"
-                    : "text-gray-900";
+              <div className="flex items-center justify-end space-x-4 text-sm text-gray-500 pt-3">
+                <button className="flex items-center space-x-1 cursor-pointer hover:text-gray-900 transition duration-150">
+                  <span>👍 도움이 돼요 1</span> {/* 임시 고정 */}
+                </button>
 
-                  return (
-                    <div
-                      key={comment.id}
-                      className="py-3 border-b border-gray-100"
-                    >
-                      <div className="flex justify-between items-center mb-1">
-                        <div className="flex items-center space-x-2">
-                          <span
-                            className={`${nameColor} font-semibold text-sm`}
-                          >
-                            {comment.author}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {comment.date}
-                          </span>
+                <button
+                  onClick={() => toggleComments(review.id)}
+                  className={`flex items-center space-x-1 cursor-pointer transition duration-150 ${
+                    showComments[review.id]
+                      ? "text-blue-600 font-semibold"
+                      : "text-gray-900 hover:text-blue-600"
+                  }`}
+                >
+                  <span>💬 댓글 {initialComments.length}</span>
+                </button>
+              </div>
+
+              {/* 댓글 영역 (더미) */}
+              {showComments[review.id] && (
+                <div className="mt-4 border-t border-gray-200 pt-3">
+                  {initialComments.map((comment) => {
+                    const nameColor = comment.isSeller
+                      ? "text-blue-600"
+                      : "text-gray-900";
+
+                    return (
+                      <div
+                        key={comment.id}
+                        className="py-3 border-b border-gray-100"
+                      >
+                        <div className="flex justify-between items-center mb-1">
+                          <div className="flex items-center space-x-2">
+                            <span
+                              className={`${nameColor} font-semibold text-sm`}
+                            >
+                              {comment.author}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {comment.date}
+                            </span>
+                          </div>
+                          <div className="flex space-x-2 text-xs text-gray-500">
+                            <button className="cursor-pointer hover:text-gray-800 transition duration-150">
+                              수정
+                            </button>
+                            <span className="text-gray-300">|</span>
+                            <button className="cursor-pointer hover:text-red-500 transition duration-150">
+                              삭제
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex space-x-2 text-xs text-gray-500">
-                          <button className="cursor-pointer hover:text-gray-800 transition duration-150">
-                            수정
-                          </button>
-                          <span className="text-gray-300">|</span>
-                          <button className="cursor-pointer hover:text-red-500 transition duration-150">
-                            삭제
-                          </button>
-                        </div>
+                        <p className="text-sm text-gray-700 leading-normal">
+                          {comment.content}
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-700 leading-normal">
-                        {comment.content}
-                      </p>
-                    </div>
-                  );
-                })}
-
-                <div className="flex justify-center space-x-1 mt-5 text-sm">
-                  <button className="px-2 py-1 text-gray-500 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
-                    이전
-                  </button>
-                  <button className="px-2 py-1 text-white bg-gray-600 rounded-md font-semibold cursor-pointer transition duration-150">
-                    1
-                  </button>
-                  <button className="px-2 py-1 text-gray-700 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
-                    2
-                  </button>
-                  <button className="px-2 py-1 text-gray-500 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
-                    다음
-                  </button>
+                    );
+                  })}
                 </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* 리뷰 2 */}
-        <div className="bg-white pb-4 border-b border-gray-300">
-          <div>
-            <div className="flex justify-between items-center mb-2 pt-4">
-              <div className="flex items-center space-x-3">
-                <span className="text-gray-900 font-semibold">유저아이디2</span>
-                <span className="text-xs text-gray-500">25.09.25</span>
-              </div>
-              <div className="text-yellow-500 text-sm">
-                <span>★★★★★</span>
-              </div>
-            </div>
-
-            <div className="mb-2 text-sm text-gray-500">
-              <p>구매옵션</p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 mb-3">
-              <div className="w-full sm:w-64 sm:flex-shrink-0">
-                <div className="aspect-square bg-gray-300 flex items-center justify-center rounded">
-                  <span className="text-gray-600 text-sm">
-                    리뷰 이미지 (Placeholder)
-                  </span>
-                </div>
-              </div>
-              <p className="text-sm text-gray-700 leading-relaxed sm:flex-1">
-                두 번째 리뷰 내용
-              </p>
-            </div>
-
-            <div className="flex items-center justify-end space-x-4 text-sm text-gray-500 pt-3">
-              <button className="flex items-center space-x-1 cursor-pointer hover:text-gray-900 transition duration-150">
-                <span>👍 도움이 돼요 1</span>
-              </button>
-              <button className="flex items-center space-x-1 cursor-pointer hover:text-gray-900 transition duration-150">
-                <span>💬 댓글</span>
-              </button>
+              )}
             </div>
           </div>
-        </div>
+        ))}
 
-        {/* 페이지네이션 */}
+        {/* 페이지네이션 (임시) */}
         <div className="flex justify-center space-x-1 mt-8 pb-10 text-sm">
           <button className="px-3 py-2 text-gray-500 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
             이전
