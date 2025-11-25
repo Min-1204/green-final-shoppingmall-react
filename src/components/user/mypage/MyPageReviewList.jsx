@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ReviewModifyDelete from "../../review/ReviewModifyDelete";
 import ReviewSee from "../../review/ReviewSee";
-import { getAll } from "../../../api/review/reviewapi";
+import { getMyReviews } from "../../../api/review/reviewapi";
 
 const MyPageReviewList = () => {
   const [reviewModal, setReviewModal] = useState(false);
@@ -11,7 +11,7 @@ const MyPageReviewList = () => {
 
   useEffect(() => {
     const getReviews = async () => {
-      const data = await getAll();
+      const data = await getMyReviews(1);
       setReviews(data);
       console.log("data => ", data);
     };
