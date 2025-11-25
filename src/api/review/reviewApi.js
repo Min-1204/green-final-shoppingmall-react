@@ -5,7 +5,8 @@ const prefix = `${API_SERVER_HOST}/api/review`;
 
 export const reviewList = async (productId) => {
   const { data } = await axios.get(`${prefix}/product/${productId}`);
-  console.log("product review => ", productId);
+  console.log("API 요청 data => ", data);
+  console.log("productId => ", productId);
   return data;
 };
 
