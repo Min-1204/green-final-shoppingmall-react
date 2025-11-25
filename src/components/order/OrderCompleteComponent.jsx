@@ -19,22 +19,22 @@ const OrderCompleteComponent = () => {
 
   const {
     items,
-    receiver,
-    address,
-    zipCode,
-    detailAddress,
-    phone,
+    receiverName,
+    streetAddress,
+    postalCode,
+    detailedAddress,
+    receiverPhone,
     couponDiscount,
     shippingFee,
     couponName,
     usePoint,
     paymentMethod,
     orderNumber,
-    deliveryMemo,
+    deliveryRequest,
   } = order;
 
   const totalPrice = items.reduce(
-    (sum, item) => sum + Number(item.price) * Number(item.qty),
+    (sum, item) => sum + Number(item.sellingPrice) * Number(item.quantity),
     0
   );
 
@@ -82,31 +82,34 @@ const OrderCompleteComponent = () => {
           <div className="px-6 py-5 space-y-4">
             {items.map((item) => (
               <div
-                key={item.id + item.name}
+                key={item.id + item.productName}
                 className="flex justify-between items-start py-4 border-b border-[#f0f0f0] last:border-0"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-[80px] h-[80px] flex-shrink-0 bg-[#f8f8f8] rounded overflow-hidden">
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.imageUrl}
+                      alt={item.productName}
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="space-y-1 pt-1">
                     <p className="text-[11px] text-[#999] font-medium tracking-wide">
-                      [{item.brand}]
+                      [{item.brandName}]
                     </p>
                     <p className="text-[14px] font-medium text-[#111] leading-snug">
-                      {item.name}
+                      {item.productName} - {item.optionName}
                     </p>
                     <p className="text-[13px] text-[#666] mt-2">
-                      {item.price.toLocaleString()}원 × {item.qty}개
+                      {item.sellingPrice.toLocaleString()}원 × {item.quantity}개
                     </p>
                   </div>
                 </div>
                 <p className="text-[15px] font-bold text-[#111] pt-1">
-                  {(Number(item.price) * Number(item.qty)).toLocaleString()}원
+                  {(
+                    Number(item.sellingPrice) * Number(item.quantity)
+                  ).toLocaleString()}
+                  원
                 </p>
               </div>
             ))}
@@ -123,28 +126,30 @@ const OrderCompleteComponent = () => {
               <span className="text-[13px] text-[#888] w-24 flex-shrink-0">
                 받는 사람
               </span>
-              <span className="text-[14px] text-[#111]">{receiver}</span>
+              <span className="text-[14px] text-[#111]">{receiverName}</span>
             </div>
             <div className="flex py-2">
               <span className="text-[13px] text-[#888] w-24 flex-shrink-0">
                 연락처
               </span>
-              <span className="text-[14px] text-[#111]">{phone}</span>
+              <span className="text-[14px] text-[#111]">{receiverPhone}</span>
             </div>
             <div className="flex py-2">
               <span className="text-[13px] text-[#888] w-24 flex-shrink-0">
                 주소
               </span>
               <span className="text-[14px] text-[#111]">
-                ({zipCode}) {address} {detailAddress}
+                ({postalCode}) {streetAddress} {detailedAddress}
               </span>
             </div>
-            {deliveryMemo && (
+            {deliveryRequest && (
               <div className="flex py-2">
                 <span className="text-[13px] text-[#888] w-24 flex-shrink-0">
                   배송 요청사항
                 </span>
-                <span className="text-[14px] text-[#111]">{deliveryMemo}</span>
+                <span className="text-[14px] text-[#111]">
+                  {deliveryRequest}
+                </span>
               </div>
             )}
           </div>
