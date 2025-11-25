@@ -4,18 +4,41 @@ export const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/products`;
 
 export const registerProduct = async (productForm) => {
-  const product = {
-    category: productForm?.category,
-    brand: productForm?.brand,
-    basicInfo: productForm?.basicInfo,
-    saleInfo: productForm?.saleInfo,
-    options: productForm?.options,
-    deliveryPolicy: productForm?.deliveryPolicy,
-  };
+  const formData = new FormData();
+  formData.append(
+    "product",
+    new Blob(
+      [
+        JSON.stringify({
+          category: productForm?.category,
+          brand: productForm?.brand,
+          basicInfo: productForm?.basicInfo,
+          saleInfo: productForm?.saleInfo,
+          options: productForm?.options.map((option) => ({
+            ...option,
+            image: null,
+          })),
+          deliveryPolicy: productForm?.deliveryPolicy,
+          // todo : 제품 상세 이미지 (여러장)
+          // todo : 상품 정보 공고 고시
+        }),
+      ],
+      { type: "application/json" }
+    )
+  );
 
-  console.log("product : ", product);
-  const header = { headers: { "Content-Type": "application/json" } };
-  const res = await axios.post(`${prefix}`, product, header);
-  console.log("backend 로 부터 온 데이터 ", res);
+  for (var i = 0; i < productForm?.options.length; i++) {
+    formData.append("optionImages", productForm?.options[i].image);
+  }
+
+  formData.append("mainImages", productForm.mainImages.thumbnailImage);
+
+  for (var i = 0; i < productForm?.mainImages?.galleryImages.length; i++) {
+    formData.append("mainImages", productForm?.mainImages?.galleryImages[i]);
+  }
+
+  const header = { headers: { "Content-Type": "multipart/form-data" } };
+
+  const res = await axios.post(`${prefix}`, formData, header);
   return res.data;
 };
