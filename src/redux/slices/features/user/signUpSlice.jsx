@@ -2,16 +2,16 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { signUpApi } from "../../../../api/user/userapi";
 
 //prettier-ignore
-export const signUpThunk = createAsyncThunk("signup/signup", async(userData, {rejectWithValue})=> {
+export const signUpThunk = createAsyncThunk("signup/signup", async(signUpForm, {rejectWithValue})=> {
     // 성공 시 로직
   try {
-    const response = await signUpApi(userData);
-    console.log("백엔드 응답 콘솔", response)
+    const response = await signUpApi(signUpForm);
+    console.log("백엔드 회원가입 응답 콘솔", response)
     return response; // 여기가 fulfilled의 payload가 된다. 즉, 성공시!
 
     // 실패 시 로직
   } catch (error) { // 여기가 rejected 실패 시
-    console.log("API 에러 여기는 createAsync:", error)
+    console.log("API 에러 여기는 회원가입 createAsync:", error)
     return rejectWithValue(error.message || "회원가입에 실패하였습니다");
   }
  }

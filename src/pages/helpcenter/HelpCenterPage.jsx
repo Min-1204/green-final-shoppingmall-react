@@ -1,4 +1,3 @@
-// src/pages/help/HelpCenterLayout.jsx
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import Header from "../../layouts/mainpage/Header";

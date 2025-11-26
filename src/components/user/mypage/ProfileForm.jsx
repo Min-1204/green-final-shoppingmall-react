@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 export default function ProfileForm() {
-  const { user } = useSelector((state) => state.userSlice);
+  const { user = null } = useSelector((state) => state.authSlice || {});
 
   // prettier-ignore
   const [modifyform, setModifyForm] = useState({

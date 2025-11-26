@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const APISERVER = "http://localhost:8080";
-const LOGIN_USER = `${APISERVER}/api/user`;
+const USER_API = `${APISERVER}/api/user`;
 
 export const signUpApi = async (signUpForm) => {
   try {
@@ -33,11 +33,21 @@ export const signUpApi = async (signUpForm) => {
 
     console.log("백엔드로 보내는 데이터 콘솔", requestData);
 
-    const res = await axios.post(`${LOGIN_USER}/signup`, requestData);
+    const res = await axios.post(`${USER_API}/signup`, requestData);
     console.log("여기는 응답 데이터 확인 콘솔", res.data);
     return res.data;
   } catch (error) {
     console.error("회원가입 API 에러", error.response?.data || error.message);
     throw error.response?.data.message || "회원가입에 실패했습니다.";
+  }
+};
+
+export const loginApi = async (loginForm) => {
+  try {
+    const res = await axios.post(`${USER_API}/login`, loginForm);
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.error("백엔드 데이터 오류", error);
   }
 };

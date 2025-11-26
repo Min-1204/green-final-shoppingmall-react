@@ -3,15 +3,19 @@ import SocialLoginButtons from "../signup/SocialLoginButtons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  loginAsyncThunk,
   clearError,
-  login,
-} from "../../../redux/slices/features/user/userSlice";
+} from "../../../redux/slices/features/user/authSlice";
 
 const LoginComponent = () => {
   const dispatch = useDispatch();
-  const { isLoggedIn, error } = useSelector((state) => state.userSlice);
+
+  const { isLoggedIn, error, loading } = useSelector(
+    (state) => state.authSlice
+  );
+
   const [loginData, setLoginData] = useState({
-    login_Id: "",
+    loginId: "",
     password: "",
   });
 
@@ -43,13 +47,14 @@ const LoginComponent = () => {
   // prettier-ignore
   const loginHandleClick = () => {
     console.log("여기는 로그인컴포넌트 로그인클릭 실행되었다:", loginData);
+
     dispatch( // dispatch는 action = payload로 전달된다.
-      login({ // action을 취할 reducer login을 호출
-        login_Id: loginData.login_Id, // {login_Id : 데이터} 형식으로 전달
+      loginAsyncThunk({ // action을 취할 reducer login을 호출
+        loginId: loginData.loginId, // {loginId : 데이터} 형식으로 전달
         password: loginData.password, // {password : 데이터} 형식으로 전달
       })
     );
-    console.log(`로그인 버튼이 눌렸습니다. \n 이메일: ${loginData.login_Id} \n 비밀번호: ${loginData.password}`);
+    console.log(`로그인 버튼이 눌렸습니다. \n 이메일: ${loginData.loginId} \n 비밀번호: ${loginData.password}`);
   };
 
   const signHandleClick = () => {
@@ -82,11 +87,12 @@ const LoginComponent = () => {
                 <label className="text-xs text-gray-500">아이디</label>
                 <input
                   className="mt-1 w-full h-10 px-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-                  name="login_Id"
+                  name="loginId"
                   type="text"
-                  value={loginData.login_Id}
+                  value={loginData.loginId}
                   onChange={inputChangeHandler}
                   placeholder="Enter your Id address"
+                  disabled={loading} // ✅ 추가: 로딩 중 입력 방지
                 />
               </div>
               <div>
@@ -98,6 +104,7 @@ const LoginComponent = () => {
                   value={loginData.password}
                   onChange={inputChangeHandler}
                   placeholder="Enter password"
+                  disabled={loading} // ✅ 추가: 로딩 중 입력 방지
                 />
               </div>
               {/* 보안접속 자리 */}
@@ -110,9 +117,11 @@ const LoginComponent = () => {
             {/* 로그인 버튼 */}
             <button
               onClick={loginHandleClick}
-              className="mt-6 w-full h-11 rounded-md bg-gray-900 text-white text-sm font-semibold hover:bg-black transition cursor-pointer"
+              disabled={loading} // ✅ 추가: 로딩 중 버튼 비활성화
+              className="mt-6 w-full h-11 rounded-md bg-gray-900 text-white text-sm font-semibold hover:bg-black transition cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed" // ✅ 추가: disabled 스타일
             >
-              로그인
+              {loading ? "로그인 중..." : "로그인"}{" "}
+              {/* ✅ 추가: 로딩 상태 표시 */}
             </button>
           </>
 

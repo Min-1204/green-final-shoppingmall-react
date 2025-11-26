@@ -3,13 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../../layouts/mainpage/NavBar";
 import ProductSearchBar from "../../components/search/ProductSearchBar";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/slices/features/user/userSlice";
+import { logout } from "../../redux/slices/features/user/authSlice";
 
 export default function Header() {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-  const { isLoggedIn } = useSelector((state) => state.userSlice);
+  const { isLoggedIn } = useSelector((state) => state.authSlice);
 
   const notices = [
     "[WELCOME] 공지/이벤트(미정)",
