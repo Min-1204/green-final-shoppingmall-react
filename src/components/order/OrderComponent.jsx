@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import CouponModal from "./CouponModal";
+import { registerOrder } from "../../api/order/orderApi";
 
 // Helper function to format price with commas and '원'
 const formatPrice = (price) => {
@@ -98,35 +99,43 @@ const OrderComponent = () => {
   const finalPrice = totalPrice + shippingFee - couponDiscount - usePoint;
   const couponName = selectedCoupon ? selectedCoupon.name : null;
 
-  const handleOrderCompleteClick = () => {
+  const handleOrderCompleteClick = async () => {
     // 필수 약관 동의 확인 (디자인 변경이지만, 결제 로직에 필수적이므로 유지)
     if (!(agreePurchase && agreePersonal && agreeDelegate)) {
       alert("필수 동의 항목에 동의해 주세요.");
       return;
     }
 
-    // ✅ 주문번호 생성 (예: 20250207-38492034)
-    const orderNumber = `ORD-${Date.now()}`;
+    // // ✅ 주문번호 생성 (예: 20250207-38492034)
+    // const orderNumber = `ORD-${Date.now()}`;
+    // 백엔드에서 생성하는 걸로 변경
 
+    const orderProducts = cartItems.map((item) => ({
+      productOptionId: item.productOptionId,
+      quantity: item.quantity,
+    }));
+    console.log("orderProducts", orderProducts);
+
+    const dto = {
+      paymentMethod: selectedPayment,
+      receiverName: receiverName,
+      receiverPhone: receiverPhone,
+      postalCode: postalCode,
+      streetAddress: streetAddress,
+      detailedAddress: detailedAddress,
+      deliveryRequest:
+        deliveryRequest === "직접입력"
+          ? customDeliveryRequest
+          : deliveryRequest,
+      couponId: null,
+      usedPoints: usePoint,
+      orderProducts: orderProducts,
+    };
+
+    const resultOrderId = await registerOrder(dto, 1);
+    console.log("백엔드로부터 받은 주문 id", resultOrderId);
     navigate("/order/complete", {
-      state: {
-        items: cartItems,
-        receiverName,
-        streetAddress,
-        postalCode,
-        detailedAddress,
-        receiverPhone,
-        couponDiscount,
-        shippingFee,
-        couponName,
-        usePoint, // 사용한 포인트
-        paymentMethod,
-        orderNumber, // 주문 번호
-        deliveryRequest:
-          deliveryRequest === "직접입력"
-            ? customDeliveryRequest
-            : deliveryRequest,
-      },
+      state: { orderId: resultOrderId },
     });
   };
 
