@@ -40,3 +40,29 @@ export const reviewDelete = async (reviewId) => {
   console.log("delete reviewId => ", reviewId);
   return data;
 };
+
+export const reviewAvgRating = async (productId) => {
+  const { data } = await axios.get(`${prefix}/product/${productId}/avg`);
+  console.log("제품 리뷰 평균 별점 => ", data);
+  return data;
+};
+
+export const reviewCount = async (productId) => {
+  const { data } = await axios.get(`${prefix}/product/${productId}/count`);
+  console.log("제품 리뷰 개수 => ", data);
+  return data;
+};
+
+export const reviewRatingByCount = async (productId, rating) => {
+  const { data } = await axios.get(
+    `${prefix}/product/${productId}/${rating}/count`
+  );
+  console.log("제품 리뷰 별점별 개수 => ", data);
+  return data;
+};
+
+export const reviewPositive = async (productId) => {
+  const { data } = await axios.get(`${prefix}/product/${productId}/positive`);
+  console.log("긍정적 리뷰 개수 => ", data);
+  return data;
+};
