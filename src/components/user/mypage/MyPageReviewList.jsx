@@ -5,6 +5,7 @@ import { getMyReviews } from "../../../api/review/reviewapi";
 
 const MyPageReviewList = () => {
   const [reviewModal, setReviewModal] = useState(false);
+  const [reviewSeeModal, setReviewSeeModal] = useState(false);
   const [selectedReviewEdit, setSelectedReviewEdit] = useState(null);
   const [selectedReviewSee, setSelectedReviewSee] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -17,12 +18,6 @@ const MyPageReviewList = () => {
     };
     getReviews();
   }, []);
-
-  useEffect(() => {
-    if (selectedReviewSee) {
-      setSelectedReviewSee(true);
-    }
-  }, [selectedReviewSee]);
 
   const reviewUpdatedHandler = (updatedReview) => {
     if (updatedReview.deleted) {
@@ -128,7 +123,10 @@ const MyPageReviewList = () => {
                     리뷰수정
                   </button>
                   <button
-                    onClick={() => setSelectedReviewSee(item)}
+                    onClick={() => {
+                      setSelectedReviewSee(item);
+                      setReviewSeeModal(true);
+                    }}
                     className="px-4 py-1.5 text-xs border border-zinc-300 rounded hover:bg-zinc-50 cursor-pointer"
                   >
                     리뷰보기
@@ -150,7 +148,7 @@ const MyPageReviewList = () => {
         {reviewModal && selectedReviewEdit && (
           <ReviewModifyDelete
             closeModal={() => setReviewModal(false)}
-            review={setSelectedReviewEdit}
+            review={selectedReviewEdit}
             update={reviewUpdatedHandler}
           />
         )}
@@ -159,7 +157,7 @@ const MyPageReviewList = () => {
         {selectedReviewSee && (
           <ReviewSee
             closeModal={() => setSelectedReviewSee(false)}
-            review={setSelectedReviewSee}
+            review={selectedReviewSee}
           />
         )}
       </div>

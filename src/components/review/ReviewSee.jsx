@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 const ReviewSee = ({ closeModal, review }) => {
+  console.log("리뷰 보기 => ", review);
   const [currentRating, setCurrentRating] = useState(0);
   const [reviewContent, setReviewContent] = useState("");
   const [images] = useState([1, 2, 3, 4, 5]); // 임시 이미지 데이터
