@@ -38,7 +38,7 @@ const menuGroups = [
 ];
 
 export default function MyPageLayout() {
-  const { user } = useSelector((state) => state.userSlice);
+  const { user } = useSelector((state) => state.authSlice);
 
   return (
     <div className="min-h-screen bg-[#f4f5f7]">

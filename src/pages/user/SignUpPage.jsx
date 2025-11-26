@@ -18,7 +18,7 @@ export default function SignUpPage() {
     (state) => state.signUpSlice
   );
 
-  const [step, setStep] = useState(1); // 회원가입 Step 1 ~ 3
+  const [step, setStep] = useState(null); // 회원가입 Step 1 ~ 3
   const [modalOpen, setModalOpen] = useState(true); // 회원 가입 페이지로 이동되면 State 기본값이 true이므로 자동으로 오픈됨
 
   // 약관

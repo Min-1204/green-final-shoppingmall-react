@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useAuth } from "../../hooks/useAuth";
-import { updateUserRole } from "../../redux/slices/features/user/userSlice";
+import { updateUserRole } from "../../redux/slices/features/user/authSlice";
 
 export default function DevToolTest() {
   const dispatch = useDispatch();
@@ -13,12 +13,12 @@ export default function DevToolTest() {
       {currentUser && (
         <div className="mb-6 p-4 bg-yellow-100 border border-yellow-300 rounded-xl shadow-inner">
           <p className="text-sm text-yellow-900 font-semibold mb-3">
-            개발자 테스트 | 현재 권한: {currentUser.user_Role || "user"}
+            개발자 테스트 | 현재 권한: {currentUser.userRole || "user"}
           </p>
           <div className="flex gap-3">
             <button
               onClick={() => {
-                dispatch(updateUserRole({ user_Role: "admin" }));
+                dispatch(updateUserRole({ userRole: "admin" }));
               }}
               className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
@@ -26,7 +26,7 @@ export default function DevToolTest() {
             </button>
             <button
               onClick={() => {
-                dispatch(updateUserRole({ user_Role: "user" }));
+                dispatch(updateUserRole({ userRole: "user" }));
               }}
               className="px-4 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
             >
