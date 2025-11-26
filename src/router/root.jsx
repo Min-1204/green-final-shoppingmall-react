@@ -5,7 +5,7 @@ import adminRouter from "./adminRouter";
 import mypageRouter from "./mypageRouter";
 import helpRouter from "./helpRouter";
 
-const Main = lazy(() => import("../pages/user/MainPage"));
+const Main = lazy(() => import("../pages/mainpage/MainPage"));
 const LoginPage = lazy(() => import("../pages/user/LoginPage"));
 const SignPage = lazy(() => import("../pages/user/SignUpPage"));
 const FindIdPage = lazy(() => import("../pages/user/FindIdPage"));

@@ -97,7 +97,7 @@ export default function MainPage() {
           </div>
 
           {/* 하단 동그라미 페이지네이션 */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 z-50">
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 z-40">
             {mainImages.map((_, idx) => (
               <button
                 key={idx}

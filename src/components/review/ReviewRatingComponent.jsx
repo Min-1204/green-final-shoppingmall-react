@@ -1,17 +1,80 @@
+import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
+import {
+  reviewAvgRating,
+  reviewCount,
+  reviewRatingByCount,
+  reviewPositive,
+} from "../../api/review/reviewapi";
 
 const ReviewRatingComponent = () => {
-  // 임시 데이터
-  const averageScore = 4.3;
-  const positivePercentage = 85;
-  const totalReviews = 120;
-  const scoreData = [
-    { score: 5, label: "★★★★★", count: 80 },
-    { score: 4, label: "★★★★", count: 25 },
-    { score: 3, label: "★★★", count: 10 },
-    { score: 2, label: "★★", count: 3 },
-    { score: 1, label: "★", count: 2 },
-  ];
+  const [avgRating, setAvgRating] = useState(0);
+  const [reviewTotalCount, setReviewTotalCount] = useState(0);
+  const [ratingByCount, setRatingByCount] = useState({
+    5: 0,
+    4: 0,
+    3: 0,
+    2: 0,
+    1: 0,
+  });
+  const [positiveCount, setPositiveCount] = useState(0);
+
+  // 리뷰 평균 별점
+  useEffect(() => {
+    const productReviewAvgRating = async () => {
+      const data = await reviewAvgRating(1);
+      console.log("평균별점 데이터 => ", data);
+      setAvgRating(data);
+    };
+    productReviewAvgRating();
+  }, []);
+
+  // 리뷰 개수
+  useEffect(() => {
+    const productReviewCount = async () => {
+      const data = await reviewCount(1);
+      console.log("리뷰 개수 데이터 => ", data);
+      setReviewTotalCount(data);
+    };
+    productReviewCount();
+  }, []);
+
+  // 별점별 리뷰 개수
+  useEffect(() => {
+    const productReviewRatingByCount = async () => {
+      const counts = {};
+      for (let rating = 1; rating <= 5; rating++) {
+        const data = await reviewRatingByCount(1, rating);
+        counts[rating] = data;
+        console.log(`별점 ${rating}점 개수 => `, data);
+      }
+      setRatingByCount(counts);
+    };
+    productReviewRatingByCount();
+  }, []);
+
+  useEffect(() => {
+    const productReviewPositive = async () => {
+      const positive = await reviewPositive(1);
+      const total = await reviewCount(1);
+
+      let percent = 0;
+      if (total === 0) {
+        percent = 0;
+      } else {
+        percent = Math.trunc((positive / total) * 100);
+      }
+      setPositiveCount(percent);
+    };
+    productReviewPositive();
+  }, []);
+
+  // 그래프 너비 계산
+  const maxCount = Math.max(...Object.values(ratingByCount));
+  const barWidth = (count) => {
+    if (maxCount === 0) return "0%";
+    return `${(count / maxCount) * 100}%`;
+  };
 
   return (
     <div className="p-6 border border-gray-200 rounded-lg mb-6 bg-white">
@@ -24,40 +87,34 @@ const ReviewRatingComponent = () => {
         <div className="flex flex-col items-center justify-center lg:w-1/3 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 mb-6 lg:mb-0">
           <div className="flex items-center space-x-2 text-6xl font-extrabold text-gray-900 mb-2">
             <FaStar className="w-12 h-12 text-yellow-500" />
-            <span className="text-5xl">{averageScore}</span>
+            <span className="text-5xl">{Math.trunc(avgRating)}</span>
           </div>
           <p className="text-sm text-gray-700 font-medium mt-3">
-            <span className="font-bold text-blue-600">
-              {positivePercentage}%
-            </span>
-            의 구매자가 이 상품을 좋아합니다.
+            <span className="font-bold text-blue-600">{positiveCount}%</span>의
+            구매자가 이 상품을 좋아합니다.
           </p>
           <p className="text-xs text-gray-400 mt-1">
-            (총 {totalReviews}개 리뷰)
+            (총 {reviewTotalCount}개 리뷰)
           </p>
         </div>
 
         {/* 별점 그래프 */}
         <div className="flex-1 lg:w-2/3 space-y-3 pt-4">
-          {scoreData.map((data) => (
-            <div key={data.score} className="flex items-center text-sm">
-              <div className="w-30 text-gray-700 font-medium">{data.label}</div>
+          {[5, 4, 3, 2, 1].map((rating) => (
+            <div key={rating} className="flex items-center text-sm">
+              <div className="w-30 text-gray-700 font-medium">
+                {"★".repeat(rating)}
+              </div>
               <div className="flex-1 mx-4 h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gray-900 transition-all duration-700 ease-out rounded-full"
                   style={{
-                    width:
-                      data.score === 5
-                        ? "100%"
-                        : data.score === 4
-                        ? "10%"
-                        : "0%",
+                    width: barWidth(ratingByCount[rating]),
                   }}
                 ></div>
               </div>
-
               <div className="w-10 text-right text-sm text-gray-600 font-semibold">
-                {data.count}
+                {ratingByCount[rating]}
               </div>
             </div>
           ))}
