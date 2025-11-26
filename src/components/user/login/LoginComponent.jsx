@@ -46,7 +46,16 @@ const LoginComponent = () => {
 
   // prettier-ignore
   const loginHandleClick = () => {
-    console.log("여기는 로그인컴포넌트 로그인클릭 실행되었다:", loginData);
+    if(!loginData.loginId.trim()) {
+      alert("아이디를 입력해주세요")
+      return;
+    }
+    if(!loginData.password.trim()){
+      alert("비밀번호를 입력해주세요")
+      return;
+    }
+
+  console.log("여기는 로그인컴포넌트 로그인클릭 실행되었다:", loginData);
 
     dispatch( // dispatch는 action = payload로 전달된다.
       loginAsyncThunk({ // action을 취할 reducer login을 호출
