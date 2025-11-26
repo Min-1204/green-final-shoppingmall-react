@@ -1,16 +1,58 @@
-// src/pages/product/ProductListComponent.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import products from "../../data/products";
-import { CATEGORY_DATA } from "../../data/categories";
+// import { CATEGORY_DATA } from "../../data/categories";
 import { ChevronRight } from "lucide-react";
 
 import ProductCard from "./ProductCard";
 import ProductSortBar from "./ProductSortBar";
 import ProductFilterBar from "../filter/ProductFilterBar";
 import Pagination from "./Pagination";
+import { getCategoryList } from "../../api/admin/category/categoryApi";
 
 const ProductListComponent = () => {
+  // 유즈서치파람 : 카테고리뎁스, 카테고리아이디
+  const [searchParams] = useSearchParams();
+  const categoryDepth = parseInt(searchParams.get("categoryDepth"));
+  const categoryId = parseInt(searchParams.get("categoryId"));
+  console.log("categoryDepth : ", categoryDepth);
+  console.log("categoryId : ", categoryId);
+
+  const [category, setCategory] = useState({ subCategories: [] });
+
+  useEffect(() => {
+    const getCategories = async () => {
+      const data = await getCategoryList();
+      console.log("useEffect 동작");
+      if (categoryDepth === 1) {
+        const temp = data.find((category) => category.id === categoryId);
+        console.log("Main category", temp);
+        setCategory(temp);
+      } else if (categoryDepth === 2) {
+        const temp = data.find((category) =>
+          category.subCategories
+            .map((category) => category.id)
+            .flat(1)
+            .includes(categoryId)
+        );
+        console.log("Main category", temp);
+        setCategory(temp);
+      } else if (categoryDepth === 3) {
+        const temp = data.find((category) =>
+          category.subCategories
+            .map((category) =>
+              category.subCategories.map((category) => category.id)
+            )
+            .flat(2)
+            .includes(categoryId)
+        );
+        console.log("Main category", temp);
+        setCategory(temp);
+      }
+    };
+    getCategories();
+  }, [categoryDepth, categoryId]);
+
   const { main, sub, deep } = useParams();
 
   const decodedMain = decodeURIComponent(main).replace(/-/g, "/");
@@ -69,7 +111,8 @@ const ProductListComponent = () => {
     currentPage * itemsPerPage
   );
 
-  const sideCategory = CATEGORY_DATA.find((c) => c.main === decodedMain);
+  // const sideCategory = CATEGORY_DATA.find((c) => c.main === decodedMain);
+  const sideCategory = { subs: [] };
 
   // URL 파라미터(카테고리)가 변경될 때마다 currentPage를 1로 리셋 (기존 로직 유지)
   useEffect(() => {
@@ -86,48 +129,46 @@ const ProductListComponent = () => {
         <div className="sticky top-6 bg-white rounded-xl border border-gray-200 p-6 shadow-md">
           {/* ✨ 1차 카테고리 제목 디자인 */}
           <h2 className="text-2xl font-extrabold text-gray-900 pb-4 border-b border-gray-200">
-            {decodedMain}
+            {category.name}
           </h2>
 
           {/* ✨ 2차/3차 카테고리 목록 디자인 개선 */}
           <ul className="mt-5 space-y-1.5">
-            {sideCategory?.subs.map((item) => {
-              const isActiveSub = decodedSub === item.name;
+            {category?.subCategories.map((secondCategory) => {
+              const isActiveSub = categoryId === secondCategory.id;
               return (
-                <li key={item.name}>
+                <li key={secondCategory.id}>
                   {/* ✨ 2차 카테고리 링크 디자인: 활성화 시 블루 배경/텍스트 */}
                   <Link
-                    to={`/category/${main}/${encodeURIComponent(
-                      item.name.replace(/\//g, "-")
-                    )}`}
+                    to={`/products?categoryDepth=${secondCategory.depth}&categoryId=${secondCategory.id}`}
                     className={`block px-4 py-2 rounded-lg transition-all text-base ${
                       isActiveSub
                         ? "bg-gray-600 text-white font-bold shadow-sm" // 활성화 상태
                         : "text-gray-700 hover:bg-gray-100 font-medium" // 기본 상태
                     }`}
                   >
-                    {item.name}
+                    {secondCategory.name}
                   </Link>
 
                   {/* 3차 카테고리 목록 */}
-                  {isActiveSub && item.children?.length > 0 && (
+                  {isActiveSub && (
                     // ✨ 3차 목록 디자인: 왼쪽 경계선 색상 변경 및 간격 조정
                     <ul className="mt-2 space-y-1 ml-4 pl-4 border-l-2 border-gray-200">
-                      {item.children.map((child) => (
-                        <li key={child}>
+                      {secondCategory.subCategories.map((thirdCategory) => (
+                        <li key={thirdCategory.id}>
                           <Link
-                            to={`/category/${main}/${encodeURIComponent(
-                              item.name.replace(/\//g, "-")
-                            )}/${encodeURIComponent(
-                              child.replace(/\//g, "-")
-                            )}`}
+                            // to={`/category/${main}/${encodeURIComponent(
+                            //   item.name.replace(/\//g, "-")
+                            // )}/${encodeURIComponent(
+                            //   child.replace(/\//g, "-")
+                            // )}`}
                             className={`block px-3 py-1.5 rounded-md text-sm transition-all ${
-                              decodedDeep === child
+                              decodedDeep === thirdCategory
                                 ? "bg-blue-50 text-gray-700 font-bold" // 활성화 상태
                                 : "text-gray-600 hover:text-gray-600 hover:bg-gray-50" // 기본 상태
                             }`}
                           >
-                            {child}
+                            {thirdCategory.name}
                           </Link>
                         </li>
                       ))}
