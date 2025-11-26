@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import ReviewRatingComponent from "./ReviewRatingComponent";
 import { reviewList } from "../../api/review/reviewapi";
-import { Database } from "lucide-react";
 
 const ReviewListComponent = () => {
+  const sortOptions = [
+    { label: "최신순", value: "latest" },
+    { label: "좋아요순", value: "like" },
+    { label: "높은별점순", value: "ratingDesc" },
+    { label: "낮은별점순", value: "ratingAsc" },
+  ];
+
   const [reviews, setReviews] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null); // 'sort', 'option', null
   const [showComments, setShowComments] = useState({}); //리뷰 댓글의 열림/닫힘(on/off) 여부
-  const [selectedSort, setSelectedSort] = useState("최신순");
-  const [selectedOption, setSelectedOption] = useState("옵션");
+  const [selectedSort, setSelectedSort] = useState(sortOptions[0]); //기본 최신순
   const sortRef = useRef();
-  const optionRef = useRef();
-
-  const sortOptions = ["최신순", "좋아요순", "높은별점순", "낮은별점순"];
-  const options = ["옵션1", "옵션2", "옵션3", "옵션4"];
 
   const initialComments = [
     {
@@ -42,21 +43,19 @@ const ReviewListComponent = () => {
   //리뷰 목록 조회
   useEffect(() => {
     const getReviews = async () => {
-      const reviews = await reviewList(1);
+      const reviews = await reviewList(1, selectedSort.value);
       console.log("상품 리뷰 => ", reviews);
+      console.log("sort옵션 => ", selectedSort.value);
       setReviews(reviews);
     };
     getReviews();
-  }, []);
+  }, [selectedSort]);
 
-  //정렬, 옵션 드롭다운
+  //정렬 드롭다운
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (sortRef.current && !sortRef.current.contains(e.target)) {
         setOpenDropdown((prev) => (prev === "sort" ? null : prev));
-      }
-      if (optionRef.current && !optionRef.current.contains(e.target)) {
-        setOpenDropdown((prev) => (prev === "option" ? null : prev));
       }
     };
 
@@ -90,7 +89,7 @@ const ReviewListComponent = () => {
               }
               className="px-2 py-0.5 text-xs bg-white border border-gray-300 rounded-md text-gray-700 cursor-pointer hover:border-gray-400 transition focus:outline-none flex items-center justify-between min-w-[90px]"
             >
-              <span>{selectedSort}</span>
+              <span>{selectedSort.label}</span>
               <span className="ml-2 text-gray-600 text-lg">▾</span>
             </button>
 
@@ -98,43 +97,14 @@ const ReviewListComponent = () => {
               <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10 overflow-hidden">
                 {sortOptions.map((option) => (
                   <div
-                    key={option}
+                    key={option.value}
                     className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-xs transition-colors"
                     onClick={() => {
                       setSelectedSort(option);
                       setOpenDropdown(null);
                     }}
                   >
-                    {option}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* 옵션 */}
-          <div className="relative" ref={optionRef}>
-            <button
-              onClick={() =>
-                setOpenDropdown(openDropdown === "option" ? null : "option")
-              }
-              className="px-2 py-0.5 text-xs bg-white border border-gray-300 rounded-md text-gray-700 cursor-pointer hover:border-gray-400 transition focus:outline-none flex items-center justify-between min-w-[90px]"
-            >
-              <span>{selectedOption}</span>
-              <span className="ml-2 text-gray-600 text-lg">▾</span>
-            </button>
-            {openDropdown === "option" && (
-              <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10 overflow-hidden">
-                {options.map((option) => (
-                  <div
-                    key={option}
-                    className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-xs transition-colors"
-                    onClick={() => {
-                      setSelectedOption(option);
-                      setOpenDropdown(null);
-                    }}
-                  >
-                    {option}
+                    {option.label}
                   </div>
                 ))}
               </div>
@@ -155,7 +125,7 @@ const ReviewListComponent = () => {
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center space-x-3">
                     <span className="text-gray-900 font-semibold text-base">
-                      {review.userName || "유저아이디"}
+                      {review.loginId}
                     </span>
                     <span className="text-xs text-gray-500">
                       {review.createdAt?.slice(0, 10).replace(/-/g, ".") ||
