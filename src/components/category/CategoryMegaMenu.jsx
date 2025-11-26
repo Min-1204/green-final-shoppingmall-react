@@ -10,7 +10,6 @@ const CategoryMegaMenu = ({ isOpen, setOpen }) => {
     const getCategories = async () => {
       const data = await getCategoryList();
       setCategories(data);
-      console.log(data);
     };
     getCategories();
   }, []);

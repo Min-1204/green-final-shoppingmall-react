@@ -20,8 +20,8 @@ const ProductCard = ({ product }) => {
       {/* **[디자인 개선]** 모서리 조정, 그림자 제거 */}
       <div className="relative aspect-square overflow-hidden rounded-t-md bg-gray-50 mb-2">
         <img
-          src={product.images.thumbnail}
-          alt={product.name}
+          src={product.mainImages[0].imageUrl}
+          alt="썸네일 이미지"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
 
@@ -49,13 +49,13 @@ const ProductCard = ({ product }) => {
       <div className="px-2 pb-3">
         {/* 브랜드 */}
         <p className="text-xs text-gray-500 font-normal mb-0.5 truncate">
-          {product.brand}
+          {product.brand.name}
         </p>
 
         {/* 상품명 */}
         {/* **[디자인 개선]** 폰트 굵기 조정 (semibold로 더 강조) */}
         <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 leading-snug mb-2 min-h-[2.5rem]">
-          {product.name}
+          {product.basicInfo.productName}
         </h3>
 
         {/* 가격 영역 */}
@@ -64,7 +64,7 @@ const ProductCard = ({ product }) => {
           {/* 단일 가격 */}
           {product.options.length === 1 && (
             <p className="text-base font-extrabold text-gray-900">
-              {product.options[0].price.toLocaleString()}
+              {product.options[0].sellingPrice.toLocaleString()}
               <span className="text-sm font-medium">원</span>
             </p>
           )}
@@ -72,7 +72,7 @@ const ProductCard = ({ product }) => {
           {/* 옵션 최저가 */}
           {product.options && product.options.length > 1 && (
             <p className="text-base font-extrabold text-gray-900">
-              {product.options[0].price.toLocaleString()}
+              {product.options[0].sellingPrice.toLocaleString()}
               <span className="text-sm font-medium">원~</span>
             </p>
           )}

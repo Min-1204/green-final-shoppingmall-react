@@ -9,36 +9,67 @@ import ProductSortBar from "./ProductSortBar";
 import ProductFilterBar from "../filter/ProductFilterBar";
 import Pagination from "./Pagination";
 import { getCategoryList } from "../../api/admin/category/categoryApi";
+import { fetchProductsByThirdCategoryIds } from "../../api/admin/product/productApi";
 
 const ProductListComponent = () => {
-  // 유즈서치파람 : 카테고리뎁스, 카테고리아이디
+  // 유즈서치파람 : 카테고리뎁스, 카테고리아이디 url 에서 가져오기
   const [searchParams] = useSearchParams();
   const categoryDepth = parseInt(searchParams.get("categoryDepth"));
   const categoryId = parseInt(searchParams.get("categoryId"));
-  console.log("categoryDepth : ", categoryDepth);
-  console.log("categoryId : ", categoryId);
+  console.log("categoryDepth : ", categoryDepth, "categoryId : ", categoryId);
 
-  const [category, setCategory] = useState({ subCategories: [] });
+  const [mainCategory, setMainCategory] = useState({ subCategories: [] });
+  const [secondCategoryId, setSecondCategoryId] = useState();
+  const [selectedCategory, setSelectedCategory] = useState({});
+  const [productList, setproductList] = useState([]);
 
   useEffect(() => {
-    const getCategories = async () => {
-      const data = await getCategoryList();
-      console.log("useEffect 동작");
+    const loadData = async () => {
+      const categoriesData = await getCategoryList();
+      let thirdIds = [];
       if (categoryDepth === 1) {
-        const temp = data.find((category) => category.id === categoryId);
-        console.log("Main category", temp);
-        setCategory(temp);
+        // 메인 카테고리 찾기
+        const firstCategory = categoriesData.find(
+          (category) => category.id === categoryId
+        );
+        console.log("Main category", firstCategory);
+        setMainCategory(firstCategory);
+        setSelectedCategory(firstCategory);
+        // 3차 카테고리 배열 thirdIds 만들기
+        thirdIds = firstCategory.subCategories
+          .map((secondCategory) =>
+            secondCategory.subCategories.map(
+              (thirdCategory) => thirdCategory.id
+            )
+          )
+          .flat(1);
+        console.log("thirdIds : ", thirdIds);
       } else if (categoryDepth === 2) {
-        const temp = data.find((category) =>
+        // 메인 카테고리 찾기
+        const firstCategory = categoriesData.find((category) =>
           category.subCategories
             .map((category) => category.id)
             .flat(1)
             .includes(categoryId)
         );
-        console.log("Main category", temp);
-        setCategory(temp);
+        console.log("Main category", firstCategory);
+        setMainCategory(firstCategory);
+
+        // 선택된 2차 카테고리 찾기
+        const secondCategory = firstCategory.subCategories.find(
+          (secondCategory) => secondCategory.id === categoryId
+        );
+        console.log("selectedSecondCategory : ", secondCategory);
+        setSecondCategoryId(secondCategory.id);
+        setSelectedCategory(secondCategory);
+        // 선택된 2차 카테고리의 하위 3차 카테고리 배열 thirdIds 만들기
+        thirdIds = secondCategory.subCategories.map(
+          (thirdCategory) => thirdCategory.id
+        );
+        console.log("thirdIds : ", thirdIds);
       } else if (categoryDepth === 3) {
-        const temp = data.find((category) =>
+        // 메인 카테고리 찾기
+        const firstCategory = categoriesData.find((category) =>
           category.subCategories
             .map((category) =>
               category.subCategories.map((category) => category.id)
@@ -46,11 +77,36 @@ const ProductListComponent = () => {
             .flat(2)
             .includes(categoryId)
         );
-        console.log("Main category", temp);
-        setCategory(temp);
+        console.log("Main category", firstCategory);
+        setMainCategory(firstCategory);
+
+        // 선택된 3차 카테고리의 부모 2차 카테고리 찾기
+        const secondCategory = firstCategory.subCategories.find(
+          (secondCategory) =>
+            secondCategory.subCategories
+              .map((thirdCategory) => thirdCategory.id)
+              .flat(1)
+              .includes(categoryId)
+        );
+        console.log("selectedSecondCategory : ", secondCategory);
+        setSecondCategoryId(secondCategory.id);
+
+        // 선택된 카테고리 정보 찾기
+        const selectedCate = secondCategory.subCategories.find(
+          (thirdCategory) => thirdCategory.id === categoryId
+        );
+        setSelectedCategory(selectedCate);
+        // 3차 카테고리 배열 thirdIds 만들기
+        thirdIds = [categoryId];
+        console.log("thirdIds : ", thirdIds);
       }
+
+      // 상품 목록 가져오기
+      const productsData = await fetchProductsByThirdCategoryIds(thirdIds);
+      setproductList(productsData);
+      console.log("productList", productsData);
     };
-    getCategories();
+    loadData();
   }, [categoryDepth, categoryId]);
 
   const { main, sub, deep } = useParams();
@@ -75,18 +131,18 @@ const ProductListComponent = () => {
   }
 
   // 콘솔 로그 유지 (디버깅용)
-  console.log("decodedMain:", decodedMain);
-  console.log("decodedSub:", decodedSub);
-  console.log("decodedDeep:", decodedDeep);
-  console.log(
-    "products:",
-    products.map((p) => ({
-      main: p.categoryMain,
-      sub: p.categorySub,
-      deep: p.categoryDeep,
-    }))
-  );
-  console.log("결과:", categoryProducts);
+  // console.log("decodedMain:", decodedMain);
+  // console.log("decodedSub:", decodedSub);
+  // console.log("decodedDeep:", decodedDeep);
+  // console.log(
+  //   "products:",
+  //   products.map((p) => ({
+  //     main: p.categoryMain,
+  //     sub: p.categorySub,
+  //     deep: p.categoryDeep,
+  //   }))
+  // );
+  // console.log("결과:", categoryProducts);
 
   // 브랜드 필터(브랜드별로 상품 조회 가능하게 하는 필터) (기존 로직 유지)
   const [filters, setFilters] = useState({});
@@ -98,7 +154,7 @@ const ProductListComponent = () => {
 
   // 제품 브랜드들을 brandOptions에 담아서 ProductFilterBar에 전달 (기존 로직 유지)
   const brandOptions = [...new Set(categoryProducts.map((p) => p.brand))];
-  console.log("brandOptions:", brandOptions);
+  // console.log("brandOptions:", brandOptions);
 
   // ✅ 정렬 (원하면 나중에 확장 가능) (기존 로직 유지)
   const sortedProducts = [...categoryProducts];
@@ -129,13 +185,13 @@ const ProductListComponent = () => {
         <div className="sticky top-6 bg-white rounded-xl border border-gray-200 p-6 shadow-md">
           {/* ✨ 1차 카테고리 제목 디자인 */}
           <h2 className="text-2xl font-extrabold text-gray-900 pb-4 border-b border-gray-200">
-            {category.name}
+            {mainCategory.name}
           </h2>
 
           {/* ✨ 2차/3차 카테고리 목록 디자인 개선 */}
           <ul className="mt-5 space-y-1.5">
-            {category?.subCategories.map((secondCategory) => {
-              const isActiveSub = categoryId === secondCategory.id;
+            {mainCategory?.subCategories.map((secondCategory) => {
+              const isActiveSub = secondCategoryId === secondCategory.id;
               return (
                 <li key={secondCategory.id}>
                   {/* ✨ 2차 카테고리 링크 디자인: 활성화 시 블루 배경/텍스트 */}
@@ -157,13 +213,9 @@ const ProductListComponent = () => {
                       {secondCategory.subCategories.map((thirdCategory) => (
                         <li key={thirdCategory.id}>
                           <Link
-                            // to={`/category/${main}/${encodeURIComponent(
-                            //   item.name.replace(/\//g, "-")
-                            // )}/${encodeURIComponent(
-                            //   child.replace(/\//g, "-")
-                            // )}`}
+                            to={`/products?categoryDepth=${thirdCategory.depth}&categoryId=${thirdCategory.id}`}
                             className={`block px-3 py-1.5 rounded-md text-sm transition-all ${
-                              decodedDeep === thirdCategory
+                              categoryId === thirdCategory.id
                                 ? "bg-blue-50 text-gray-700 font-bold" // 활성화 상태
                                 : "text-gray-600 hover:text-gray-600 hover:bg-gray-50" // 기본 상태
                             }`}
@@ -190,10 +242,10 @@ const ProductListComponent = () => {
           </Link>
           <ChevronRight className="w-4 h-4 text-gray-300" />
           <Link
-            to={`/category/${main}`}
+            to={`/products?categoryDepth=${mainCategory.depth}&categoryId=${mainCategory.id}`}
             className="font-medium text-gray-700 hover:text-gray-900 transition-colors"
           >
-            {decodedMain}
+            {mainCategory.name}
           </Link>
           {decodedSub && (
             <>
@@ -212,12 +264,12 @@ const ProductListComponent = () => {
         {/* ✨ 카테고리 제목 영역 디자인 개선 */}
         <div className="mb-8">
           <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
-            {decodedDeep || decodedSub || decodedMain}
+            {selectedCategory.name}
           </h1>
           <p className="text-base text-gray-600">
             총{" "}
             <span className="font-extrabold text-gray-600">
-              {sortedProducts.length}
+              {productList.length}
             </span>
             개의 상품이 있습니다.
           </p>
@@ -239,10 +291,10 @@ const ProductListComponent = () => {
         </div>
 
         {/* ✅ 상품 그리드 (기존 반응형 유지 및 카드 디자인 강화) */}
-        {pagedProducts.length > 0 ? (
+        {productList.length > 0 ? (
           // ✨ 모바일(2열), 태블릿(3열), 데스크톱(4열)
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-            {pagedProducts.map((product) => (
+            {productList.map((product) => (
               <div
                 key={product.id}
                 className="group rounded-xl overflow-hidden bg-white border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5" // ✨ 호버 효과 강화
