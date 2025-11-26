@@ -61,10 +61,10 @@ export const authSlice = createSlice({
       }
       console.log(`AuthSlice 권한 변경완료 : ${userRole}`);
     },
-  },
 
-  clearError: (state) => {
-    state.error = null;
+    clearError: (state) => {
+      state.error = null;
+    },
   },
 
   extraReducers: (builder) => {

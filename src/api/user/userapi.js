@@ -44,10 +44,15 @@ export const signUpApi = async (signUpForm) => {
 
 export const loginApi = async (loginForm) => {
   try {
+    console.log("로그인 API 호출 + 요청 데이터", loginForm);
     const res = await axios.post(`${USER_API}/login`, loginForm);
-    console.log(res.data);
+    console.log("로그인 API + 응답 데이터", res.data);
+    if (!res.data) {
+      throw new Error("데이터가 없습니다");
+    }
     return res.data;
   } catch (error) {
-    console.error("백엔드 데이터 오류", error);
+    console.error("로그인 API 에러", error);
+    throw error;
   }
 };
