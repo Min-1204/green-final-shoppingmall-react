@@ -42,3 +42,12 @@ export const registerProduct = async (productForm) => {
   const res = await axios.post(`${prefix}`, formData, header);
   return res.data;
 };
+
+export const fetchProductsByThirdCategoryIds = async (thirdCategoryIds) => {
+  const res = await axios.get(`${prefix}`, {
+    params: {
+      categoryId: thirdCategoryIds,
+    },
+  });
+  return res.data;
+};
