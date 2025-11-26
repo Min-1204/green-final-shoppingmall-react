@@ -7,12 +7,12 @@ const CategoryMegaMenu = ({ isOpen, setOpen }) => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const getCategoris = async () => {
+    const getCategories = async () => {
       const data = await getCategoryList();
       setCategories(data);
       console.log(data);
     };
-    getCategoris();
+    getCategories();
   }, []);
 
   const navigate = useNavigate();
