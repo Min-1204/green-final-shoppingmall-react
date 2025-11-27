@@ -14,8 +14,8 @@ const ProductDetailQuantity = ({ qty, setQty, option }) => {
         <div className="flex items-center flex-1 min-w-0 pr-2">
           {/* 🖼️ [추가] 옵션 이미지: 작은 크기, 둥근 모서리 적용 */}
           <img
-            src={option.image_url}
-            alt={option.option_name}
+            src={option.imageUrl}
+            alt={option.optionName}
             className="w-10 h-10 object-cover rounded-md flex-shrink-0 mr-3 border border-gray-100"
             // 이미지 URL이 없을 경우 대비하여 에러 핸들링 추가 (ProductDetailOptions.jsx와 동일)
             onError={(e) => {
@@ -28,7 +28,7 @@ const ProductDetailQuantity = ({ qty, setQty, option }) => {
           {/* 제품명 */}
           {/* **[디자인 개선]** 폰트 굵기를 일반(normal)으로 조정하여 간결함 강조 */}
           <div className="text-sm font-normal text-gray-800 min-w-0 flex-1">
-            <div className="truncate">{option.option_name}</div>
+            <div className="truncate">{option.optionName}</div>
           </div>
         </div>
 
@@ -60,7 +60,7 @@ const ProductDetailQuantity = ({ qty, setQty, option }) => {
           {/* **[디자인 개선]** 가격 크기와 굵기를 강조 */}
           <div className="text-base font-extrabold text-gray-900 whitespace-nowrap pl-4">
             {/* 수량 * 단가로 변경하여 총 가격 표시 (기존 코드가 단가만 표시하여 수정했습니다) */}
-            {option.price.toLocaleString()}원
+            {option?.sellingPrice?.toLocaleString()}원
           </div>
         </div>
       </div>

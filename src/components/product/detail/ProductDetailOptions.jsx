@@ -71,17 +71,19 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
                     idx !== options.length - 1 ? "border-b border-gray-100" : ""
                   } 
                   ${
-                    option.stock === 0
+                    option.currentStock === 0
                       ? "bg-gray-50 cursor-not-allowed"
                       : "hover:bg-gray-50 cursor-pointer"
                   }`}
-                onClick={() => option.stock !== 0 && handleSelect(option)}
+                onClick={() =>
+                  option.currentStock !== 0 && handleSelect(option)
+                }
               >
                 <div className="flex items-center gap-3 flex-1">
                   {/* 🖼️ [수정] 옵션 이미지: 작은 크기, 둥근 모서리, 오브젝트 핏 적용 */}
                   <img
-                    src={option.image_url}
-                    alt={option.option_name}
+                    src={option.imageUrl}
+                    alt={option.optionName}
                     className="w-10 h-10 object-cover rounded-md flex-shrink-0"
                     // 이미지 URL이 없을 경우 대비하여 에러 핸들링 추가
                     onError={(e) => {
@@ -93,7 +95,7 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
 
                   <div className="flex items-center gap-2 min-w-0">
                     {/* 품절 표시 */}
-                    {option.stock === 0 && (
+                    {option.currentStock === 0 && (
                       <span className="px-2 py-0.5 text-xs font-bold text-white bg-gray-400 rounded flex-shrink-0">
                         품절
                       </span>
@@ -102,26 +104,28 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
                     {/* 옵션명 */}
                     <span
                       className={`text-sm font-medium truncate ${
-                        option.stock === 0 ? "text-gray-400" : "text-gray-900"
+                        option.currentStock === 0
+                          ? "text-gray-400"
+                          : "text-gray-900"
                       }`}
                     >
-                      {option.option_name}
+                      {option.optionName}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 flex-shrink-0">
                   {/* 가격 */}
-                  {option.stock !== 0 && (
+                  {option.currentStock !== 0 && (
                     <span className="text-sm font-semibold text-gray-900 whitespace-nowrap">
-                      {option.price
-                        ? option.price.toLocaleString() + "원"
+                      {option.sellingPrice
+                        ? option.sellingPrice.toLocaleString() + "원"
                         : "가격 정보 없음"}
                     </span>
                   )}
 
                   {/* 재입고 알림 버튼 */}
-                  {option.stock === 0 && (
+                  {option.currentStock === 0 && (
                     <button
                       className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                       onClick={(e) => {
@@ -151,7 +155,7 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
             >
               {/* 제품명 */}
               <div className="flex-1 text-sm font-medium text-gray-900 min-w-0">
-                <div className="truncate">{option.option_name}</div>
+                <div className="truncate">{option.optionName}</div>
               </div>
 
               {/* 수량 조절 */}
@@ -175,8 +179,8 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
 
               {/* 가격 */}
               <div className="text-sm font-bold text-gray-900 min-w-[70px] text-right whitespace-nowrap">
-                {option.price
-                  ? option.price.toLocaleString() + "원"
+                {option.sellingPrice
+                  ? option.sellingPrice.toLocaleString() + "원"
                   : "가격 정보 없음"}
               </div>
 

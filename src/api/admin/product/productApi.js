@@ -51,3 +51,9 @@ export const fetchProductsByThirdCategoryIds = async (thirdCategoryIds) => {
   });
   return res.data;
 };
+
+export const fetchProductById = async (id) => {
+  const res = await axios.get(`${prefix}/${id}`);
+  console.log(res.data);
+  return res.data;
+};
