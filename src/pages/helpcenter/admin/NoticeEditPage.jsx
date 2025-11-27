@@ -10,7 +10,7 @@ export default function NoticeEditPage() {
   useEffect(() => {
     if (!isLoggedIn) {
       alert("로그인이 필요합니다");
-      navigate("/loginpage");
+      navigate("/login");
       return;
     }
 
@@ -29,7 +29,7 @@ export default function NoticeEditPage() {
     id,
     title: "기존 제목",
     type: "일반",
-    content: "기존 내용입니다"
+    content: "기존 내용입니다",
   };
 
   const handleSave = (formData) => {

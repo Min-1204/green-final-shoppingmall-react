@@ -7,71 +7,70 @@ import {
   clearError,
 } from "../../../redux/slices/features/user/authSlice";
 
+// prettier-ignore
 const LoginComponent = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Redux Dispatch 사용 함수
+  const { isLoggedIn, error, loading } = useSelector( (state) => state.authSlice ); // 로그인상태, 에러상태, 로딩상태
 
-  const { isLoggedIn, error, loading } = useSelector(
-    (state) => state.authSlice
-  );
-
-  const [loginData, setLoginData] = useState({
-    loginId: "",
-    password: "",
+  const [loginData, setLoginData] = useState({ // 로그인데이터 Form
+    loginId: "", // 로그인아이디
+    password: "", // 비밀번호
   });
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // useNaivate 경로Hook 
 
-  const inputChangeHandler = (e) => {
-    const { name, value } = e.target;
-    setLoginData({
-      ...loginData,
-      [name]: value,
+  const inputChangeHandler = (e) => { // 입력핸들러
+    const { name, value } = e.target; // 이벤트객체 target 속성 name과 value 디스럭처링
+    setLoginData({  // set State 변경
+      ...loginData, // 기존 loginData prev
+      [name]: value, // [name] = value 변경
     });
-    console.log(name, value);
+    console.log(name, value); 
   };
 
-  useEffect(() => {
-    if (error) {
-      alert(`로그인 실패: ${error}`);
-      dispatch(clearError());
-    }
-  }, [error, dispatch]);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/");
-      alert("로그인에 성공하였습니다.");
+  useEffect(() => { // useEffcet Hook
+    if (isLoggedIn) { // 로그인상태 true
+      navigate("/"); // 메인
+      alert("로그인에 성공하였습니다."); // 알림
     }
   }, [isLoggedIn, navigate]);
 
+  useEffect(() => { // useEffect Hook
+    if (error) { // error true ?
+      alert(`로그인 실패: ${error}`); // 알림 + error
+      dispatch(clearError()); // clearError authSlice 호출
+    }
+  }, [error, dispatch]); // 의존성 배열
+
+
   // prettier-ignore
-  const loginHandleClick = () => {
-    if(!loginData.loginId.trim()) {
-      alert("아이디를 입력해주세요")
+  const loginHandleClick = () => { // 로그인핸들러
+    console.log("여기는 로그인컴포넌트 로그인클릭 실행되었다:", loginData); // 로그인 버튼 클릭 시 데이터 확인
+
+    if(!loginData.loginId.trim()) { // loginData의 loginId 공백제거 => 조건반대
+      // 즉, 로그인아이디가 공백이라면, 입력되지 않았다면
+      alert("아이디를 입력해주세요")  // 알림
       return;
     }
-    if(!loginData.password.trim()){
-      alert("비밀번호를 입력해주세요")
+    if(!loginData.password.trim()){ // loginData의 password 공백제거 => 조건반대
+      // 즉, 비밀번호가 공백이라면, 입력되지 않았다면
+      alert("비밀번호를 입력해주세요") // 알림
       return;
     }
-
-  console.log("여기는 로그인컴포넌트 로그인클릭 실행되었다:", loginData);
-
-    dispatch( // dispatch는 action = payload로 전달된다.
-      loginAsyncThunk(loginData)
-    );
+    
+    dispatch( loginAsyncThunk(loginData) ); // loginAsyncThunk Reducer 호출 해당 loginData 인자 전달
     console.log(`로그인 버튼이 눌렸습니다. \n 이메일: ${loginData.loginId} \n 비밀번호: ${loginData.password}`);
   };
 
-  const signHandleClick = () => {
-    navigate("/joinpage");
+  const signHandleClick = () => { // 회원가입 버튼
+    navigate("/signup");
   };
 
-  const findIdBtn = () => {
+  const findIdBtn = () => { // 아이디찾기 버튼
     navigate("/findId");
   };
 
-  const findPasswordBtn = () => {
+  const findPasswordBtn = () => { // 비밀번호찾기 버튼
     navigate("/findpw");
   };
 
@@ -85,15 +84,14 @@ const LoginComponent = () => {
             LOGIN
           </h1>
 
-          {/* 내용 영역 */}
           <>
             {/* 입력폼 */}
             <div className="mt-6 space-y-4">
               <div>
                 <label className="text-xs text-gray-500">아이디</label>
-                <input
+                <input // 인풋라인
                   className="mt-1 w-full h-10 px-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-                  name="loginId"
+                  name="loginId" 
                   type="text"
                   value={loginData.loginId}
                   onChange={inputChangeHandler}
@@ -113,7 +111,7 @@ const LoginComponent = () => {
                   disabled={loading} // ✅ 추가: 로딩 중 입력 방지
                 />
               </div>
-              {/* 보안접속 자리 */}
+              {/* 보안접속 자리 보안적인 부분은 추후 검토 후 적용 예정*/}
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 <span className="inline-block h-4 w-4 rounded-full bg-red-500" />
                 보안접속
@@ -122,12 +120,11 @@ const LoginComponent = () => {
 
             {/* 로그인 버튼 */}
             <button
-              onClick={loginHandleClick}
+              onClick={loginHandleClick} // 해당 버튼이 눌리면 적용된 State의 폼을 제출한다.
               disabled={loading} // ✅ 추가: 로딩 중 버튼 비활성화
               className="mt-6 w-full h-11 rounded-md bg-gray-900 text-white text-sm font-semibold hover:bg-black transition cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed" // ✅ 추가: disabled 스타일
             >
-              {loading ? "로그인 중..." : "로그인"}{" "}
-              {/* ✅ 추가: 로딩 상태 표시 */}
+              {loading ? "로그인 중..." : "로그인"} {/* ✅ 추가: 로딩 상태 표시 삼항연산자 */}
             </button>
           </>
 
@@ -155,7 +152,7 @@ const LoginComponent = () => {
             </button>
           </div>
 
-          {/* SNS 로그인 */}
+          {/* 하단 라인 SNS 로그인 */}
           <SocialLoginButtons className="mt-8" />
         </div>
       </div>

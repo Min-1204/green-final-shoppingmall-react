@@ -20,33 +20,34 @@ function Input({ label, required, error, className = "", ...props }) {
   );
 }
 
-export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
+export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
   const [errors, setErrors] = useState({});
-  const { openPostcode } = useDaumPostalCode();
+  const { openPostcode } = useDaumPostalCode(); // 다음주소API
 
   // 콘솔은 개발 중에만 확인하세요
-  console.log(form);
+  console.log(signUpForm);
 
-  const validate = () => {
-    const e = {};
+  //prettier-ignore
+  const validate = () => { // 유효성 검사 함수
+    const e = {}; // 빈 객체 속성 및 데이터추가 가능
     const loginIdRegex = /^[a-zA-Z0-9]+$/; // 영어,숫자만 허용
-    if (!form.loginId || form.loginId.length < 4) {
+    if (!signUpForm.loginId || signUpForm.loginId.length < 4) {
       e.loginId = "아이디는 4자 이상 입력하세요.";
-    } else if (!loginIdRegex.test(form.loginId)) {
+    } else if (!loginIdRegex.test(signUpForm.loginId)) {
       e.loginId = "아이디는 영어(대/소문자와)와 숫자만 사용할 수 있습니다.";
     }
-    if (!form.password || form.password.length < 8)
+    if (!signUpForm.password || signUpForm.password.length < 8)
       e.password = "비밀번호는 8자 이상 입력하세요.";
-    if (form.confirmPassword !== form.password)
+    if (signUpForm.confirmPassword !== signUpForm.password)
       e.confirmPassword = "비밀번호가 일치하지 않습니다.";
-    if (!form.name) e.name = "이름을 입력하세요.";
-    if (!form.birthY || !form.birthM || !form.birthD) {
+    if (!signUpForm.name) e.name = "이름을 입력하세요.";
+    if (!signUpForm.birthY || !signUpForm.birthM || !signUpForm.birthD) {
       e.birthDate = "생년월일을 모두 입력하세요.";
     } else {
       // 상세 검증
-      const year = parseInt(form.birthY);
-      const month = parseInt(form.birthM);
-      const day = parseInt(form.birthD);
+      const year = parseInt(signUpForm.birthY);
+      const month = parseInt(signUpForm.birthM);
+      const day = parseInt(signUpForm.birthD);
 
       if (year < 1900 || year > new Date().getFullYear()) {
         e.birthDate = "올바른 연도를 입력하세요.";
@@ -56,15 +57,15 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
         e.birthDate = "일은 1~31 사이여야 합니다.";
       }
     }
-    if (!form.email || !/^\S+@\S+\.\S+$/.test(form.email))
+    if (!signUpForm.email || !/^\S+@\S+\.\S+$/.test(signUpForm.email))
       e.email = "이메일 형식 오류";
-    if (!form.phoneNumber || !/^\d{10,11}$/.test(form.phoneNumber))
+    if (!signUpForm.phoneNumber || !/^\d{10,11}$/.test(signUpForm.phoneNumber))
       e.phoneNumber = "휴대전화 숫자만 10~11자리 입력하세요.";
 
-    if (!form.postalCode || !/^\d{5}$/.test(form.postalCode))
+    if (!signUpForm.postalCode || !/^\d{5}$/.test(signUpForm.postalCode))
       e.postalCode = "우편번호는 5자리 숫자입니다.";
-    if (!form.address) e.address = "기본 주소를 입력하세요.";
-    if (!form.addressDetail) e.addressDetail = "상세 주소를 입력하세요.";
+    if (!signUpForm.address) e.address = "기본 주소를 입력하세요.";
+    if (!signUpForm.addressDetail) e.addressDetail = "상세 주소를 입력하세요.";
 
     setErrors(e);
 
@@ -82,7 +83,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
   const handleAddressSearch = () => {
     openPostcode((data) => {
       onChange({
-        ...form,
+        ...signUpForm,
         postalCode: data.zonecode,
         address: data.address,
         addressDetail: "",
@@ -104,8 +105,10 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
           <Input
             label="아이디 입력"
             required
-            value={form.loginId || ""}
-            onChange={(e) => onChange({ ...form, loginId: e.target.value })}
+            value={signUpForm.loginId || ""}
+            onChange={(e) =>
+              onChange({ ...signUpForm, loginId: e.target.value })
+            }
             placeholder="예) product1234"
             error={errors.loginId}
           />
@@ -121,8 +124,10 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
               label="비밀번호(영문,숫자,특수문자 8~15자)"
               required
               type="password"
-              value={form.password || ""}
-              onChange={(e) => onChange({ ...form, password: e.target.value })}
+              value={signUpForm.password || ""}
+              onChange={(e) =>
+                onChange({ ...signUpForm, password: e.target.value })
+              }
               placeholder="••••••"
               error={errors.password}
             />
@@ -136,9 +141,9 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
               label="비밀번호 재입력"
               required
               type="password"
-              value={form.confirmPassword || ""}
+              value={signUpForm.confirmPassword || ""}
               onChange={(e) =>
-                onChange({ ...form, confirmPassword: e.target.value })
+                onChange({ ...signUpForm, confirmPassword: e.target.value })
               }
               placeholder="••••••"
               error={errors.confirmPassword}
@@ -157,8 +162,10 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
             <Input
               label="이름 입력"
               required
-              value={form.name || ""}
-              onChange={(e) => onChange({ ...form, name: e.target.value })}
+              value={signUpForm.name || ""}
+              onChange={(e) =>
+                onChange({ ...signUpForm, name: e.target.value })
+              }
               placeholder="홍길동"
               error={errors.name}
             />
@@ -172,8 +179,10 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
               label="이메일 입력"
               required
               type="email"
-              value={form.email || ""}
-              onChange={(e) => onChange({ ...form, email: e.target.value })}
+              value={signUpForm.email || ""}
+              onChange={(e) =>
+                onChange({ ...signUpForm, email: e.target.value })
+              }
               placeholder="name@example.com"
               error={errors.email}
             />
@@ -189,9 +198,9 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
             id="emailAgreement"
             type="checkbox"
             className="h-4 w-4 rounded accent-emerald-500 focus:ring-emerald-300"
-            checked={!!form.emailAgreement}
+            checked={!!signUpForm.emailAgreement}
             onChange={(e) =>
-              onChange({ ...form, emailAgreement: e.target.checked })
+              onChange({ ...signUpForm, emailAgreement: e.target.checked })
             }
           />
           <label htmlFor="emailAgreement" className="text-sm">
@@ -205,10 +214,10 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
             <Input
               label="휴대전화 입력 (숫자만)"
               required
-              value={form.phoneNumber || ""}
+              value={signUpForm.phoneNumber || ""}
               onChange={(e) =>
                 onChange({
-                  ...form,
+                  ...signUpForm,
                   phoneNumber: e.target.value.replace(/\D/g, ""),
                 })
               }
@@ -225,9 +234,9 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
                 id="smsAgreement"
                 type="checkbox"
                 className="h-4 w-4 rounded accent-emerald-500 focus:ring-emerald-300"
-                checked={!!form.smsAgreement}
+                checked={!!signUpForm.smsAgreement}
                 onChange={(e) =>
-                  onChange({ ...form, smsAgreement: e.target.checked })
+                  onChange({ ...signUpForm, smsAgreement: e.target.checked })
                 }
               />
               <label htmlFor="smsAgreement" className="text-sm">
@@ -243,10 +252,10 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
               <input
                 placeholder="YYYY"
                 maxLength={4}
-                value={form.birthY || ""}
+                value={signUpForm.birthY || ""}
                 onChange={(e) =>
                   onChange({
-                    ...form,
+                    ...signUpForm,
                     birthY: e.target.value.replace(/\D/g, ""),
                   })
                 }
@@ -256,10 +265,10 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
               <input
                 placeholder="MM"
                 maxLength={2}
-                value={form.birthM || ""}
+                value={signUpForm.birthM || ""}
                 onChange={(e) =>
                   onChange({
-                    ...form,
+                    ...signUpForm,
                     birthM: e.target.value.replace(/\D/g, ""),
                   })
                 }
@@ -269,10 +278,10 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
               <input
                 placeholder="DD"
                 maxLength={2}
-                value={form.birthD || ""}
+                value={signUpForm.birthD || ""}
                 onChange={(e) =>
                   onChange({
-                    ...form,
+                    ...signUpForm,
                     birthD: e.target.value.replace(/\D/g, ""),
                   })
                 }
@@ -290,7 +299,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
           <div className="flex gap-3 items-start">
             <input
               maxLength={5}
-              value={form.postalCode || ""}
+              value={signUpForm.postalCode || ""}
               readOnly
               placeholder="01234"
               className={`h-11 px-3 rounded-md border outline-none focus:ring-2 focus:ring-emerald-600 text-sm w-32 transition ${
@@ -317,7 +326,7 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
             기본 주소 <b className="text-rose-600">*</b>
           </span>
           <input
-            value={form.address || ""}
+            value={signUpForm.address || ""}
             readOnly
             placeholder="기본 주소 (예: 서울특별시 강남구 테헤란로)"
             className={`h-11 px-3 rounded-md border outline-none focus:ring-2 focus:ring-emerald-600 text-sm transition ${
@@ -336,9 +345,9 @@ export default function InfoStep({ form, onChange, onPrev, onSubmit }) {
             상세 주소 <b className="text-rose-600">*</b>
           </span>
           <input
-            value={form.addressDetail || ""}
+            value={signUpForm.addressDetail || ""}
             onChange={(e) =>
-              onChange({ ...form, addressDetail: e.target.value })
+              onChange({ ...signUpForm, addressDetail: e.target.value })
             }
             placeholder="상세 주소 (예: 101동 101호)"
             className={`h-11 px-3 rounded-md border outline-none focus:ring-2 focus:ring-emerald-600 text-sm transition ${

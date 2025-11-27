@@ -39,7 +39,7 @@ const root = createBrowserRouter([
     ),
   },
   {
-    path: "loginpage",
+    path: "login",
     element: (
       <Suspense fallback={Loading}>
         <LoginPage />
@@ -47,7 +47,7 @@ const root = createBrowserRouter([
     ),
   },
   {
-    path: "joinpage",
+    path: "signup",
     element: (
       <Suspense fallback={Loading}>
         <SignPage />

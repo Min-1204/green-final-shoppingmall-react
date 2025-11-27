@@ -10,7 +10,7 @@ function AdminRoute({ children }) {
   // 1. 로그인 여부 확인
   if (!isLoggedIn) {
     console.warn("AdminRoute: 로그인이 필요합니다.");
-    return <Navigate to="/loginpage" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // 2. 관리자 권한 확인

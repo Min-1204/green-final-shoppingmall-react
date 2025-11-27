@@ -10,7 +10,7 @@ export default function SuccessStep() {
   };
 
   const handleLoginClick = () => {
-    navigate("/loginpage");
+    navigate("/login");
   };
 
   return (

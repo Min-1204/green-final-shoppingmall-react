@@ -19,7 +19,7 @@ const FindIdResult = ({ idValue, onReset }) => {
 
       <div className="space-y-2">
         <button
-          onClick={() => navigate("/loginpage")}
+          onClick={() => navigate("/login")}
           className="w-full h-10 rounded-md bg-gray-900 text-white text-sm font-semibold hover:bg-black"
         >
           로그인하러 가기
