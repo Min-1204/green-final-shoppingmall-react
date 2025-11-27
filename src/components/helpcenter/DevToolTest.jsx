@@ -5,15 +5,16 @@ import { updateUserRole } from "../../redux/slices/features/user/authSlice";
 
 export default function DevToolTest() {
   const dispatch = useDispatch();
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
+  console.log("여기는 DevToolTest 확인 : ", user);
 
   return (
     <div>
       {/* 개발자 테스트 UI 이후 서버와 연결 후에는 권한 확인을 서버에서 데이터를 받아서 확인할 예정~ */}
-      {currentUser && (
+      {user && (
         <div className="mb-6 p-4 bg-yellow-100 border border-yellow-300 rounded-xl shadow-inner">
           <p className="text-sm text-yellow-900 font-semibold mb-3">
-            개발자 테스트 | 현재 권한: {currentUser.userRole || "user"}
+            개발자 테스트 | 현재 권한: {user.userRole || "user"}
           </p>
           <div className="flex gap-3">
             <button

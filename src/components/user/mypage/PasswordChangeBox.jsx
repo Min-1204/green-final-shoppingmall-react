@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 export default function PasswordChangeBox() {
-  const { user } = useSelector((state) => state.userSlice);
+  const { user } = useSelector((state) => state.authSlice);
 
   const [pwForm, setPwForm] = useState({
     password: "",

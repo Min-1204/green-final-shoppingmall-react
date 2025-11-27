@@ -58,10 +58,7 @@ const LoginComponent = () => {
   console.log("여기는 로그인컴포넌트 로그인클릭 실행되었다:", loginData);
 
     dispatch( // dispatch는 action = payload로 전달된다.
-      loginAsyncThunk({ // action을 취할 reducer login을 호출
-        loginId: loginData.loginId, // {loginId : 데이터} 형식으로 전달
-        password: loginData.password, // {password : 데이터} 형식으로 전달
-      })
+      loginAsyncThunk(loginData)
     );
     console.log(`로그인 버튼이 눌렸습니다. \n 이메일: ${loginData.loginId} \n 비밀번호: ${loginData.password}`);
   };
