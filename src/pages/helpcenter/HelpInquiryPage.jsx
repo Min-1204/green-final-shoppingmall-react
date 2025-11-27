@@ -1,7 +1,7 @@
 // src/pages/help/HelpInquiryPage.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const inquiryTypes = [
   "배송문의",
@@ -9,14 +9,14 @@ const inquiryTypes = [
   "반품/교환/취소",
   "적립금/쿠폰",
   "회원정보",
-  "기타문의"
+  "기타문의",
 ];
 
 export default function HelpInquiryPage() {
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
 
-  const { user } = useSelector((state) => state.userSlice);
+  const { user } = useSelector((state) => state.authSlice);
 
   // ✅ 폼 데이터 상태 관리 (테이블 구조에 맞춤)
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ export default function HelpInquiryPage() {
     is_answered: false, // 답변 여부 (초기값 false)
     is_visible: true, // 노출 여부 (초기값 true)
     agree_email_contact: user?.marketingEmail || false, // 이메일 알림 동의
-    agree_sms_contact: user?.marketingSms || false // SMS 알림 동의
+    agree_sms_contact: user?.marketingSms || false, // SMS 알림 동의
   });
 
   // ✅ 입력 값 변경 핸들러
@@ -35,7 +35,7 @@ export default function HelpInquiryPage() {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
