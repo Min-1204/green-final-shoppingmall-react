@@ -14,3 +14,9 @@ export const getOneOrder = async (orderId) => {
   console.log("getOneOrder => ", res.data);
   return res.data;
 };
+
+export const getOrderList = async (userId) => {
+  const res = await axios.get(`${prefix}/list?userId=${userId}`);
+  console.log("getOrderList => ", res.data);
+  return res.data;
+};
