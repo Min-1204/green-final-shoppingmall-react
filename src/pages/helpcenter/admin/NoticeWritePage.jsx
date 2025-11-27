@@ -10,7 +10,7 @@ export default function NoticeWritePage() {
   useEffect(() => {
     if (!isLoggedIn) {
       alert("로그인이 필요합니다");
-      navigate("/loginpage");
+      navigate("/login");
       return;
     }
 

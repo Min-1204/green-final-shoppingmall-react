@@ -106,7 +106,7 @@ export default function SignUpPage() {
     if (step === 2) // step의 상태값이 2과 동일하면 해당 컴포넌트를 출력하고 해당 컴포넌트에 value,onChange,onPrev, onSubmit 4개의 props를 전달
       return (
         <InfoStep
-          form={signUpForm} // 회원가입 form 전달
+          signUpForm={signUpForm} // 회원가입 form 전달
           onChange={setSignUpForm}  // 회원가입 변경 form 전달
           onPrev={() => setStep(1)}  // onPrev -> 이전페이지로 이동함수 전달
           onSubmit={handleSignUpSubmit} // onSubmit 다음버튼 회원가입 Step 3로 넘어갈 수 있는 기능

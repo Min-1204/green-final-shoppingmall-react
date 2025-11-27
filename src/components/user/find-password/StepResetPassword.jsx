@@ -51,7 +51,7 @@ const StepResetPassword = ({ userId }) => {
     // TODO: 비밀번호 변경 API
     console.log("비밀번호 변경:", { userId, pw1 });
     alert("비밀번호가 변경되었습니다. 다시 로그인해주세요.");
-    navigate("/loginpage");
+    navigate("/login");
   };
 
   // 입력 중에 너무 긴 걸 막고 싶으면 여기서 컷 해도 됨

@@ -88,14 +88,14 @@ export default function Header() {
                 <>
                   {/* 로그아웃 상태: 로그인/회원가입 버튼 */}
                   <button
-                    onClick={() => navigate("/loginpage")}
+                    onClick={() => navigate("/login")}
                     className="hover:text-gray-400 cursor-pointer transition-colors"
                   >
                     로그인
                   </button>
                   <span className="text-white/30">|</span>
                   <button
-                    onClick={() => navigate("/joinpage")}
+                    onClick={() => navigate("/signup")}
                     className="hover:text-gray-400 cursor-pointer transition-colors"
                   >
                     회원가입

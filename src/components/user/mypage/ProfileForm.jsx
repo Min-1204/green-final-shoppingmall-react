@@ -5,8 +5,7 @@ export default function ProfileForm() {
   const { user = null } = useSelector((state) => state.authSlice || {});
 
   // prettier-ignore
-  const [modifyform, setModifyForm] = useState({
-    ...(user || {}),
+  const [modifyform, setModifyForm] = useState({ ...(user || {}),
     // Y, M, D가 분리되어 있는상태로 문자열 결합하기
     birthDate: // birth_date 속성 추가
       user?.birthY && user?.birthM && user?.birthD // user 데이터의 birth Y , M , D 데이터가 전부 있는지
