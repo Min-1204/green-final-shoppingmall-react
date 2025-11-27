@@ -75,14 +75,14 @@ const CartComponent = () => {
     if (selectedCartItems.length === 0) return alert("상품을 선택해주세요");
     navigate("/order", { state: { items: selectedCartItems } });
     //주문 페이지 이동 시 장바구니 전체 비우기
-    // removeAll();
+    removeAll(1);
   };
 
   // ✅ 전체 주문 시 전체 장바구니 전달
   const handleOrderAll = () => {
     navigate("/order", { state: { items: cart } });
     //주문 페이지 이동 시 장바구니 전체 비우기
-    // removeAll();
+    removeAll(1);
   };
 
   // 빈 장바구니 UI
