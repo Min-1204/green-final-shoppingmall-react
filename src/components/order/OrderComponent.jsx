@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import CouponModal from "./CouponModal";
+import { registerOrder } from "../../api/order/orderApi";
 
 // Helper function to format price with commas and '원'
 const formatPrice = (price) => {
@@ -32,18 +33,25 @@ const OrderComponent = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState(null);
 
+  // 배송지명
   const [addressName, setAddressName] = useState("");
+  // 주문자 정보와 동일 토글
   const [useOrdererInfo, setUseOrdererInfo] = useState(false);
-  const [receiver, setReceiver] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [detailAddress, setDetailAddress] = useState("");
-
-  const [isDefaultAddress, setIsDefaultAddress] = useState(false);
-
-  const [deliveryMemo, setDeliveryMemo] = useState("");
-  const [customDeliveryMemo, setCustomDeliveryMemo] = useState("");
+  // 수령인
+  const [receiverName, setReceiverName] = useState("");
+  // 수령인 전화번호
+  const [receiverPhone, setReceiverPhone] = useState("");
+  // 도로명 주소
+  const [streetAddress, setStreetAddress] = useState("");
+  // 우편번호
+  const [postalCode, setPostalCode] = useState("");
+  // 상세주소
+  const [detailedAddress, setDetailedAddress] = useState("");
+  //기본 배송지인지 여부
+  const [defaultAddress, setDefaultAddress] = useState(false);
+  // 배송 요청 사항
+  const [deliveryRequest, setDeliveryRequest] = useState("");
+  const [customDeliveryRequest, setCustomDeliveryRequest] = useState("");
 
   const [pointBalance, setPointBalance] = useState(966); // 보유 포인트
   const [usePoint, setUsePoint] = useState(0); // 사용할 포인트
@@ -82,42 +90,52 @@ const OrderComponent = () => {
   };
 
   const totalPrice = cartItems.reduce(
-    (sum, item) => sum + Number(item.price) * Number(item.qty),
+    (sum, item) => sum + Number(item.sellingPrice) * Number(item.quantity),
     0
   );
-  const shippingFee = totalPrice >= 20000 ? 0 : 3000;
+  const shippingFee = totalPrice >= 20000 ? 0 : 2500;
   const couponDiscount = selectedCoupon ? selectedCoupon.amount : 0;
   // 최종 결제금액 계산: (총 상품금액 + 배송비) - 쿠폰할인 - 포인트사용
   const finalPrice = totalPrice + shippingFee - couponDiscount - usePoint;
   const couponName = selectedCoupon ? selectedCoupon.name : null;
 
-  const handleOrderCompleteClick = () => {
+  const handleOrderCompleteClick = async () => {
     // 필수 약관 동의 확인 (디자인 변경이지만, 결제 로직에 필수적이므로 유지)
     if (!(agreePurchase && agreePersonal && agreeDelegate)) {
       alert("필수 동의 항목에 동의해 주세요.");
       return;
     }
 
-    // ✅ 주문번호 생성 (예: 20250207-38492034)
-    const orderNumber = `ORD-${Date.now()}`;
+    // // ✅ 주문번호 생성 (예: 20250207-38492034)
+    // const orderNumber = `ORD-${Date.now()}`;
+    // 백엔드에서 생성하는 걸로 변경
 
+    const orderProducts = cartItems.map((item) => ({
+      productOptionId: item.productOptionId,
+      quantity: item.quantity,
+    }));
+    console.log("orderProducts", orderProducts);
+
+    const dto = {
+      paymentMethod: selectedPayment,
+      receiverName: receiverName,
+      receiverPhone: receiverPhone,
+      postalCode: postalCode,
+      streetAddress: streetAddress,
+      detailedAddress: detailedAddress,
+      deliveryRequest:
+        deliveryRequest === "직접입력"
+          ? customDeliveryRequest
+          : deliveryRequest,
+      couponId: null,
+      usedPoints: usePoint,
+      orderProducts: orderProducts,
+    };
+
+    const resultOrderId = await registerOrder(dto, 1);
+    console.log("백엔드로부터 받은 주문 id", resultOrderId);
     navigate("/order/complete", {
-      state: {
-        items: cartItems,
-        receiver,
-        address,
-        zipCode,
-        detailAddress,
-        phone,
-        couponDiscount,
-        shippingFee,
-        couponName,
-        usePoint, // 사용한 포인트
-        paymentMethod,
-        orderNumber, // 주문 번호
-        deliveryMemo:
-          deliveryMemo === "직접입력" ? customDeliveryMemo : deliveryMemo,
-      },
+      state: { orderId: resultOrderId },
     });
   };
 
@@ -125,11 +143,11 @@ const OrderComponent = () => {
     const check = e.target.checked;
     setUseOrdererInfo(check);
     if (check) {
-      setReceiver(ordererInfo.name);
-      setPhone(ordererInfo.phone);
+      setReceiverName(ordererInfo.name);
+      setReceiverPhone(ordererInfo.phone);
     } else {
-      setReceiver("");
-      setPhone("");
+      setReceiverName("");
+      setReceiverPhone("");
     }
   };
 
@@ -140,8 +158,8 @@ const OrderComponent = () => {
 
         //도로명 주소의 노출 규칙에 따라 주소를 표시한다.
         //내려오는 변수가 값이 없는 경우엔 공백('') 값을 가지므로, 이를 참고하여 분기 한다.
-        setAddress(data.roadAddress); //도로명 주소 변수
-        setZipCode(data.zonecode); // 우편번호 변수
+        setStreetAddress(data.roadAddress); //도로명 주소 변수
+        setPostalCode(data.zonecode); // 우편번호 변수
       },
     }).open();
   };
@@ -201,31 +219,35 @@ const OrderComponent = () => {
                           <div className="flex items-start gap-4">
                             <div className="w-[80px] h-[80px] flex-shrink-0 bg-[#f8f8f8] rounded overflow-hidden">
                               <img
-                                src={item.image}
-                                alt={item.name}
+                                src={item.imageUrl}
+                                alt={item.productName}
                                 className="w-full h-full object-cover"
                               />
                             </div>
                             <div className="flex-1 space-y-1 pt-1">
                               <p className="text-[11px] text-[#999] font-medium tracking-wide">
-                                [{item.brand}]
+                                [{item.brandName}]
                               </p>
                               <p className="text-[14px] text-[#111] font-medium leading-snug">
-                                {item.name}
+                                {item.productName} - {item.optionName}
                               </p>
                             </div>
                           </div>
                         </td>
                         <td className="px-3 py-5 text-center text-[14px] text-[#111]">
-                          {item.qty}
+                          {item.quantity}
                         </td>
                         <td className="px-3 py-5 text-center text-[15px] font-bold text-[#111]">
-                          {formatPrice(Number(item.price) * Number(item.qty))}
+                          {formatPrice(
+                            Number(item.sellingPrice) * Number(item.quantity)
+                          )}
                         </td>
                         {/* 포인트는 가격의 1%를 임시로 가정하여 계산 */}
                         <td className="px-6 py-5 text-center text-[14px] font-medium text-[#ff6e18]">
                           {Math.floor(
-                            Number(item.price) * Number(item.qty) * 0.01
+                            Number(item.sellingPrice) *
+                              Number(item.quantity) *
+                              0.01
                           )}
                           P
                         </td>
@@ -250,11 +272,11 @@ const OrderComponent = () => {
                     className="px-5 py-2.5 border border-[#d5d5d5] bg-white text-[#111] text-[13px] font-medium hover:border-[#111] transition-colors"
                     onClick={() => {
                       setAddressName("집");
-                      setReceiver("홍길동");
-                      setPhone("010-1234-5678");
-                      setZipCode("06236");
-                      setAddress("서울특별시 강남구 테헤란로 123");
-                      setDetailAddress("삼성타워빌딩 10층");
+                      setReceiverName("홍길동");
+                      setReceiverPhone("010-1234-5678");
+                      setPostalCode("06236");
+                      setStreetAddress("서울특별시 강남구 테헤란로 123");
+                      setDetailedAddress("삼성타워빌딩 10층");
                     }}
                   >
                     기존 배송지
@@ -263,11 +285,11 @@ const OrderComponent = () => {
                     className="px-5 py-2.5 border border-[#d5d5d5] bg-white text-[#111] text-[13px] font-medium hover:border-[#111] transition-colors"
                     onClick={() => {
                       setAddressName("");
-                      setReceiver("");
-                      setPhone("");
-                      setZipCode("");
-                      setAddress("");
-                      setDetailAddress("");
+                      setReceiverName("");
+                      setReceiverPhone("");
+                      setPostalCode("");
+                      setStreetAddress("");
+                      setDetailedAddress("");
                     }}
                   >
                     신규 배송지
@@ -275,8 +297,8 @@ const OrderComponent = () => {
                   <label className="flex items-center gap-2 cursor-pointer ml-auto">
                     <input
                       type="checkbox"
-                      checked={isDefaultAddress}
-                      onChange={(e) => setIsDefaultAddress(e.target.checked)}
+                      checked={defaultAddress}
+                      onChange={(e) => setDefaultAddress(e.target.checked)}
                       className="w-4 h-4"
                     />
                     <span className="text-[13px] text-[#111]">
@@ -310,22 +332,22 @@ const OrderComponent = () => {
                   <input
                     className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
                     placeholder="받는 사람"
-                    value={receiver}
-                    onChange={(e) => setReceiver(e.target.value)}
+                    value={receiverName}
+                    onChange={(e) => setReceiverName(e.target.value)}
                   />
 
                   <input
                     className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
                     placeholder="연락처 (- 제외)"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={receiverPhone}
+                    onChange={(e) => setReceiverPhone(e.target.value)}
                   />
 
                   <div className="flex gap-2">
                     <input
                       className="flex-1 px-4 py-3 border border-[#d5d5d5] bg-[#f8f8f8] text-[13px] text-[#111]"
                       placeholder="우편번호"
-                      value={zipCode}
+                      value={postalCode}
                       readOnly
                     />
                     <button
@@ -339,15 +361,15 @@ const OrderComponent = () => {
                   <input
                     className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
                     placeholder="기본 주소"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    value={streetAddress}
+                    onChange={(e) => setStreetAddress(e.target.value)}
                   />
 
                   <input
                     className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
                     placeholder="상세 주소"
-                    value={detailAddress}
-                    onChange={(e) => setDetailAddress(e.target.value)}
+                    value={detailedAddress}
+                    onChange={(e) => setDetailedAddress(e.target.value)}
                   />
                 </div>
               </div>
@@ -364,8 +386,8 @@ const OrderComponent = () => {
               <div className="px-6 py-6 space-y-3">
                 <select
                   className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] bg-white focus:outline-none focus:border-[#111] transition-colors"
-                  value={deliveryMemo}
-                  onChange={(e) => setDeliveryMemo(e.target.value)}
+                  value={deliveryRequest}
+                  onChange={(e) => setDeliveryRequest(e.target.value)}
                 >
                   <option value="">배송 요청사항을 선택해주세요</option>
                   <option value="문 앞에 놓아주세요.">
@@ -383,12 +405,12 @@ const OrderComponent = () => {
                   <option value="직접입력">직접입력</option>
                 </select>
 
-                {deliveryMemo === "직접입력" && (
+                {deliveryRequest === "직접입력" && (
                   <input
                     className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
                     placeholder="배송 요청사항을 입력해주세요"
-                    value={customDeliveryMemo}
-                    onChange={(e) => setCustomDeliveryMemo(e.target.value)}
+                    value={customDeliveryRequest}
+                    onChange={(e) => setCustomDeliveryRequest(e.target.value)}
                   />
                 )}
               </div>

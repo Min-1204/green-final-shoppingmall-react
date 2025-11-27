@@ -22,15 +22,14 @@ const CartComponent = () => {
   // console.log("cart", cart);
 
   const [selectedItems, setSelectedItems] = useState([]);
-  
-  useEffect(() => {
-    refreshCart(userId);
-  }, [])
-  
 
   useEffect(() => {
-    setSelectedItems(cart.map((item)=>item.id));
-    console.log("selectedItems", selectedItems)
+    refreshCart(userId);
+  }, []);
+
+  useEffect(() => {
+    setSelectedItems(cart.map((item) => item.id));
+    console.log("selectedItems", selectedItems);
   }, [cart]);
 
   const toggleSelectAll = () => {
@@ -76,14 +75,14 @@ const CartComponent = () => {
     if (selectedCartItems.length === 0) return alert("상품을 선택해주세요");
     navigate("/order", { state: { items: selectedCartItems } });
     //주문 페이지 이동 시 장바구니 전체 비우기
-    removeAll()
+    // removeAll();
   };
 
   // ✅ 전체 주문 시 전체 장바구니 전달
   const handleOrderAll = () => {
     navigate("/order", { state: { items: cart } });
     //주문 페이지 이동 시 장바구니 전체 비우기
-    removeAll()
+    // removeAll();
   };
 
   // 빈 장바구니 UI

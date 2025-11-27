@@ -5,6 +5,7 @@ import ReturnModal from "./ReturnModal";
 import CancleModal from "./CancleModal";
 import ExchangeModal from "./ExchangeModal";
 import sampleOrders from "../../data/sampleOrders";
+import { getOrderList } from "../../api/order/orderApi";
 
 export default function OrderHistoryComponent() {
   const [selectedPeriod, setSelectedPeriod] = useState("1개월");
@@ -17,9 +18,16 @@ export default function OrderHistoryComponent() {
     배송완료: 0,
   });
 
+  // 주문 내역 리스트(백엔드로부터 받아오는 데이터)
+  const [orderList, setOrderList] = useState([]);
+
+  // 배송 조회 모달
   const [deliveryModal, setDeliveryModal] = useState(false);
+  // 취소 신청 모달
   const [cancleModal, setCancleModal] = useState(false);
+  // 반품 신청 모달
   const [returnModal, setReturnModal] = useState(false);
+  // 교환 신청 모달
   const [exchangeModal, setExchangeModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState({});
 
@@ -52,6 +60,34 @@ export default function OrderHistoryComponent() {
       ? "text-green-600"
       : "text-[#ff5c00]";
 
+  const orderStatusMap = {
+    PENDING_PAYMENT: "주문접수",
+    PAID: "결제완료",
+    PREPARING: "배송준비중",
+    SHIPPING: "배송중",
+    DELIVERED: "배송완료",
+    CANCEL_REQUESTED: "취소신청",
+    EXCHANGE_REQUESTED: "교환신청",
+    RETURN_REQUESTED: "반품신청",
+  };
+
+  useEffect(() => {
+    const fetchOrderList = async (userId) => {
+      const data = await getOrderList(userId);
+      setOrderList(data);
+    };
+
+    fetchOrderList(1);
+
+    // sampleOrders
+    //   .flatMap((o) => o.product)
+    //   .forEach((p) => {
+    //     newCountState[p.status] += 1;
+    //   });
+
+    // setCountStatus(newCountState);
+  }, []);
+
   useEffect(() => {
     const newCountState = {
       주문접수: 0,
@@ -60,14 +96,31 @@ export default function OrderHistoryComponent() {
       배송중: 0,
       배송완료: 0,
     };
-    sampleOrders
-      .flatMap((o) => o.product)
-      .forEach((p) => {
-        newCountState[p.status] += 1;
+    console.log("orderList =>", orderList);
+    orderList
+      .flatMap((o) => o.orderProducts)
+      .map((op) => op.orderProductStatus)
+      .forEach((status) => {
+        switch (status) {
+          case "PENDING_PAYMENT":
+            newCountState["주문접수"] += 1;
+            break;
+          case "PAID":
+            newCountState["결제완료"] += 1;
+            break;
+          case "PREPARING":
+            newCountState["배송준비중"] += 1;
+            break;
+          case "SHIPPING":
+            newCountState["배송중"] += 1;
+            break;
+          case "DELIVERED":
+            newCountState["배송완료"] += 1;
+            break;
+        }
       });
-
     setCountStatus(newCountState);
-  }, [sampleOrders]);
+  }, [orderList]);
 
   const handleSelectPeriod = (month) => {
     const now = new Date();
@@ -277,22 +330,22 @@ export default function OrderHistoryComponent() {
           </thead>
 
           <tbody className="divide-y divide-gray-100">
-            {sampleOrders &&
-              sampleOrders.map((order) => (
+            {orderList &&
+              orderList.map((order) => (
                 <Fragment key={order.id}>
-                  {order.product.map((item, index) => (
+                  {order.orderProducts.map((item, index) => (
                     <tr
                       key={item.id}
                       className="hover:bg-gray-50 transition-colors"
                     >
                       {index === 0 && (
                         <td
-                          rowSpan={order.product.length}
+                          rowSpan={order.orderProducts.length}
                           className="text-center align-top p-5 border-r border-gray-100 bg-white"
                         >
-                          <div className="text-sm mb-1">{order.date}</div>
+                          <div className="text-sm mb-1">{order.orderDate}</div>
                           <div className="text-xs text-gray-400">
-                            {order.id}
+                            {order.orderNumber}
                           </div>
                         </td>
                       )}
@@ -300,28 +353,37 @@ export default function OrderHistoryComponent() {
                       <td className="py-5 px-3">
                         <div className="w-14 h-14 bg-gray-100 overflow-hidden">
                           <img
-                            src={item.image}
+                            src={item.imageUrl}
                             className="w-full h-full object-cover"
-                            alt={item.pname}
+                            alt={item.productName}
                           />
                         </div>
                       </td>
                       <td className="py-5 text-left">
-                        <p className="text-sm text-gray-800">{item.pname}</p>
+                        <p className="text-sm text-gray-800">
+                          {item.productName} - {item.productOptionName}
+                        </p>
                       </td>
-                      <td className="text-center text-gray-700">{item.qty}</td>
+                      <td className="text-center text-gray-700">
+                        {item.quantity}
+                      </td>
                       <td className="text-right pr-5 text-gray-800">
-                        {item.price.toLocaleString()}원
+                        {(item.purchasedPrice * item.quantity).toLocaleString()}
+                        원
                       </td>
                       <td className="text-center">
                         <div
-                          className={`text-sm mb-2 ${statusClass(item.status)}`}
+                          className={`text-sm mb-2 ${statusClass(
+                            orderStatusMap[item.orderProductStatus]
+                          )}`}
                         >
-                          {item.status}
+                          {orderStatusMap[item.orderProductStatus]}
                         </div>
                         <div className="flex flex-col gap-1.5 items-center">
-                          {(item.status === "배송중" ||
-                            item.status === "배송완료") && (
+                          {(orderStatusMap[item.orderProductStatus] ===
+                            "배송중" ||
+                            orderStatusMap[item.orderProductStatus] ===
+                              "배송완료") && (
                             <button
                               className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors"
                               onClick={() => {
@@ -332,7 +394,8 @@ export default function OrderHistoryComponent() {
                               배송조회
                             </button>
                           )}
-                          {item.status === "배송완료" && (
+                          {orderStatusMap[item.orderProductStatus] ===
+                            "배송완료" && (
                             <button
                               className="text-xs px-3 py-1 bg-black text-white hover:bg-gray-800 transition-colors"
                               onClick={() => {
@@ -346,7 +409,10 @@ export default function OrderHistoryComponent() {
                       </td>
                       <td className="text-center px-3">
                         <div className="flex flex-col gap-1.5 items-center">
-                          {item.status === "결제완료" && (
+                          {(orderStatusMap[item.orderProductStatus] ===
+                            "주문접수" ||
+                            orderStatusMap[item.orderProductStatus] ===
+                              "결제완료") && (
                             <button
                               className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full"
                               onClick={() => {
@@ -357,19 +423,20 @@ export default function OrderHistoryComponent() {
                               취소신청
                             </button>
                           )}
-                          {item.status !== "배송준비중" &&
-                            item.status !== "배송중" && (
-                              <button
-                                className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full"
-                                onClick={() => {
-                                  setExchangeModal(!exchangeModal);
-                                  setSelectedItem(item);
-                                }}
-                              >
-                                교환신청
-                              </button>
-                            )}
-                          {item.status === "배송완료" && (
+                          {orderStatusMap[item.orderProductStatus] !==
+                            "배송완료" && (
+                            <button
+                              className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full"
+                              onClick={() => {
+                                setExchangeModal(!exchangeModal);
+                                setSelectedItem(item);
+                              }}
+                            >
+                              교환신청
+                            </button>
+                          )}
+                          {orderStatusMap[item.orderProductStatus] ===
+                            "배송완료" && (
                             <button
                               className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full"
                               onClick={() => {
