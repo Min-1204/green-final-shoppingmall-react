@@ -9,12 +9,15 @@ import { addItem } from "../../../redux/slices/features/cart/cartSlice";
 import ProductDetailQuantity from "./ProductDetailQuantity";
 import ProductQuestion from "../../productquestion/ProductQuestion";
 import ProductPurchaseInfo from "./ProductPurchaseInfo";
-import products from "../../../data/products";
+import { fetchProductById } from "../../../api/admin/product/productApi";
 
 export default function ProductDetailComponent() {
-  const { id } = useParams();
-  const product = products.find((p) => p.id === Number(id));
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [product, setProduct] = useState({});
+
+  // 썸네일 이미지 (상세페이지에서 제일 크게 보이는 이미지)
+  const [thumbnailImage, setThumbnailImage] = useState();
 
   const [liked, setLiked] = useState(false);
 
@@ -23,13 +26,24 @@ export default function ProductDetailComponent() {
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    if (selectedItems.length === 0) {
+    const loadData = async () => {
+      const productData = await fetchProductById(parseInt(id));
+      setProduct(productData);
+      console.log("id : ", id);
+      console.log("product : ", productData);
+      setThumbnailImage(productData?.mainImages[0]?.imageUrl);
+    };
+    loadData();
+  }, [id]);
+
+  useEffect(() => {
+    if (selectedItems?.length === 0) {
       setTotalPrice(0);
       return;
     }
 
     const sum = selectedItems.reduce(
-      (acc, option) => acc + option.price * option.qty,
+      (acc, option) => acc + option.sellingPrice * option.qty,
       0
     );
 
@@ -42,11 +56,6 @@ export default function ProductDetailComponent() {
   //옵션 하나인 상품의 구매수량
   const [qty, setQty] = useState(1);
 
-  // 썸네일 이미지
-  const [thumbnailImage, setThumbnailImage] = useState(
-    product.images.thumbnail
-  );
-
   const tabs = [
     { key: "info", label: "상품설명" },
     { key: "buy", label: "구매정보" },
@@ -58,9 +67,9 @@ export default function ProductDetailComponent() {
 
   const handleClickOrderOption = () => {
     if (
-      product.options &&
-      product.options.length > 0 &&
-      selectedItems.length === 0
+      product?.options &&
+      product?.options?.length > 0 &&
+      selectedItems?.length === 0
     )
       return alert("옵션을 선택해주세요.");
 
@@ -140,19 +149,19 @@ export default function ProductDetailComponent() {
         </Link>
         <span className="text-gray-300">/</span>
         <span className="hover:text-gray-900 transition-colors cursor-pointer">
-          {product.categoryMain}
+          {product?.category?.parent?.parent?.name}
         </span>
         <span className="text-gray-300">/</span>
         <span className="hover:text-gray-900 transition-colors cursor-pointer">
-          {product.categorySub}
+          {product?.category?.parent?.name}
         </span>
         <span className="text-gray-300">/</span>
         <span className="text-gray-900 font-medium">
-          {product.categoryDeep}
+          {product?.category?.name}
         </span>
       </nav>
 
-      {/* 🔹 개선된 상품 상단영역 */}
+      {/* 상품 상단영역 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
         {/* ✅ 왼쪽: 메인 이미지 + 갤러리 */}
         <div>
@@ -160,29 +169,33 @@ export default function ProductDetailComponent() {
           <div className="aspect-square overflow-hidden rounded-2xl bg-gray-50 border border-gray-200 shadow-sm group">
             <img
               src={thumbnailImage}
-              alt={product.name}
+              alt={"썸네일 이미지"}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
           </div>
 
           {/* 갤러리 이미지 리스트 */}
-          {product.images.gallery.length > 0 && (
-            <div className="flex gap-3 mt-5">
+          {product?.mainImages?.length > 0 && (
+            <div className="flex flex-wrap gap-3 mt-5">
               <img
-                src={product.images.thumbnail}
-                alt={product.name}
+                src={product?.mainImages[0]?.imageUrl}
+                alt={product?.basicInfo?.productName}
                 className="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:border-gray-900 transition"
-                onClick={() => setThumbnailImage(product.images.thumbnail)}
+                onClick={() =>
+                  setThumbnailImage(product?.mainImages[0]?.imageUrl)
+                }
               />
-              {product.images.gallery.map((img, index) => (
-                <img
-                  key={index}
-                  src={img}
-                  alt={`gallery-${index}`}
-                  className="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:border-gray-900 transition"
-                  onClick={() => setThumbnailImage(img)}
-                />
-              ))}
+              {product?.mainImages
+                ?.filter((_, idx) => idx !== 0)
+                .map((img, index) => (
+                  <img
+                    key={index}
+                    src={img?.imageUrl}
+                    alt={`gallery-${index}`}
+                    className="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:border-gray-900 transition"
+                    onClick={() => setThumbnailImage(img?.imageUrl)}
+                  />
+                ))}
             </div>
           )}
         </div>
@@ -191,30 +204,30 @@ export default function ProductDetailComponent() {
         <div className="space-y-6">
           {/* 브랜드 */}
           <div className="inline-block px-4 py-1.5 bg-gradient-to-r from-gray-100 to-gray-50 rounded-full text-sm text-gray-700 font-semibold border border-gray-200">
-            {product.brand}
+            {product?.brand?.name}
           </div>
 
           {/* 상품명 */}
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-            {product.name}
+            {product?.basicInfo?.productName}
           </h1>
 
           {/* 가격 */}
           <div className="py-5 border-y-2 border-gray-900">
-            {product.options.length > 1 && (
+            {product?.options?.length > 1 && (
               <p className="text-3xl md:text-4xl font-bold text-gray-900">
-                {product.options[0].price.toLocaleString()}원~
+                {product?.options[0]?.sellingPrice?.toLocaleString()}원~
               </p>
             )}
-            {product.options.length === 1 && (
+            {product?.options?.length === 1 && (
               <p className="text-3xl md:text-4xl font-bold text-gray-900">
-                {product.options[0].price.toLocaleString()}원
+                {product?.options[0]?.sellingPrice?.toLocaleString()}원
               </p>
             )}
           </div>
 
           {/* 옵션 선택 */}
-          {product.options.length > 1 && (
+          {product?.options?.length > 1 && (
             <ProductDetailOptions
               product={product}
               selectedItems={selectedItems}
@@ -223,16 +236,16 @@ export default function ProductDetailComponent() {
           )}
 
           {/* 수량 선택 (옵션 없을 때) */}
-          {product.options.length === 1 && (
+          {product?.options?.length === 1 && (
             <ProductDetailQuantity
               qty={qty}
               setQty={setQty}
-              option={product.options[0]}
+              option={product?.options[0]}
             />
           )}
 
           {/* 🔴 [추가] 상품 금액 합계 UI */}
-          {product.options.length === 1 && (
+          {product?.options?.length === 1 && (
             <div className="pt-4 pb-6 border-t border-gray-300">
               <div className="flex justify-between items-end">
                 <span className="text-base font-semibold text-gray-900">
@@ -240,7 +253,7 @@ export default function ProductDetailComponent() {
                 </span>
                 {/* **[디자인 적용]** 올리브영 스타일의 빨간색 금액 강조 */}
                 <span className="text-2xl font-extrabold text-[#ff6e18]">
-                  {(product.options[0].price * qty).toLocaleString()}원
+                  {(product?.options[0]?.sellingPrice * qty).toLocaleString()}원
                   {/* 이 금액이 계산된 총액을 표시하게 됩니다. */}
                 </span>
               </div>
@@ -263,7 +276,7 @@ export default function ProductDetailComponent() {
 
           {/* 🔹 개선된 버튼 영역 */}
           <div className="flex gap-3 pt-6">
-            {product.options.length > 1 ? (
+            {product?.options?.length > 1 ? (
               <>
                 <button
                   className="flex-1 py-4 rounded-xl border-2 border-gray-900 text-gray-900 font-semibold hover:bg-gray-900 hover:text-white transition-all duration-300 active:scale-95"
@@ -311,7 +324,9 @@ export default function ProductDetailComponent() {
             <div className="flex justify-between items-center">
               <span className="text-gray-600 font-medium">배송비</span>
               <span className="font-bold text-gray-900">
-                2,500원 (20,000원 이상 무료배송)
+                {product?.deliveryPolicy?.basicDeliveryFee.toLocaleString()}원 (
+                {product?.deliveryPolicy?.freeConditionAmount.toLocaleString()}
+                원 이상 무료배송)
               </span>
             </div>
             <div className="flex justify-between items-center">
