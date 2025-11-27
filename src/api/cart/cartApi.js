@@ -35,13 +35,13 @@ export const deleteCartItem = async (id) => {
   }
 };
 
-export const deleteAll = async () => {
-    try {
-      const res = await axios.delete(`${prefix}/delete`)
-      console.log(res.data)
-      return res.data
-    } catch (err) {
-      console.error("Axios error", err.response || err)
-      throw err;
-    }
+export const deleteAllByUserId = async (userId) => {
+  try {
+    const res = await axios.delete(`${prefix}/delete/${userId}`);
+    console.log(res.data);
+    return res.data;
+  } catch (err) {
+    console.error("Axios error", err.response || err);
+    throw err;
   }
+};

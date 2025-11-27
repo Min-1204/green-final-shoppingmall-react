@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
-  deleteAll,
+  deleteAllByUserId,
   deleteCartItem,
   getCartItems,
   postChangeCartItem,
@@ -24,11 +24,9 @@ export const deleteCartItemAsync = createAsyncThunk(
     return deleteCartItem(id);
   }
 );
-export const deleteAllAsync = createAsyncThunk(
-  "deleteAllAsync", () => {
-    return deleteAll();
-  }
-)
+export const deleteAllAsync = createAsyncThunk("deleteAllAsync", (userId) => {
+  return deleteAllByUserId(userId);
+});
 
 const cartSlice = createSlice({
   name: "cartSlice",

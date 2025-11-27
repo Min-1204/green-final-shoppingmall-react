@@ -22,9 +22,9 @@ const useCustomCart = () => {
     dispatch(deleteCartItemAsync(id));
     // console.log("removeItem");
   };
-  const removeAll = () => {
-    dispatch(deleteAllAsync());
-  }
+  const removeAll = (userId) => {
+    dispatch(deleteAllAsync(userId));
+  };
 
   return { refreshCart, changeCart, removeItem, removeAll };
 };
