@@ -361,8 +361,12 @@ export default function ProductDetailComponent() {
 
       {/* 탭 컨텐츠 */}
       <div className="mt-8">
-        {tab === "info" && <ProductDetailInfo />}
-        {tab === "buy" && <ProductPurchaseInfo />}
+        {tab === "info" && (
+          <ProductDetailInfo detailImages={product.detailImages} />
+        )}
+        {tab === "buy" && (
+          <ProductPurchaseInfo detailInfo={product.detailInfo} />
+        )}
         {tab === "review" && <ReviewListComponent />}
         {tab === "qna" && <ProductQuestion />}
       </div>
