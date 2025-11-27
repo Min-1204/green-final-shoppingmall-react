@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
-import ProductCategory from "../../../components/admin/product/ProductCategory";
-import ProductBrand from "../../../components/admin/product/ProductBrand";
-import ProductBasicInfo from "../../../components/admin/product/ProductBasicInfo";
-import ProductSaleInfo from "../../../components/admin/product/ProductSaleInfo";
-import ProductImageRegister from "../../../components/admin/product/ProductImageRegister";
-import OptionRegistration from "../../../components/admin/product/OptionRegistration";
+import { useEffect, useState } from "react";
 import { registerProduct } from "../../../api/admin/product/productApi";
 import DeliveryPolicy from "../../../components/admin/product/DeliveryPolicy";
+import OptionRegistration from "../../../components/admin/product/OptionRegistration";
+import ProductBasicInfo from "../../../components/admin/product/ProductBasicInfo";
+import ProductBrand from "../../../components/admin/product/ProductBrand";
+import ProductCategory from "../../../components/admin/product/ProductCategory";
+import ProductMainImages from "../../../components/admin/product/ProductMainImages";
+import ProductSaleInfo from "../../../components/admin/product/ProductSaleInfo";
+import ProductDetailImages from "../../../components/admin/product/ProductDetailImages";
+import ProductDetailInfo from "../../../components/admin/product/ProductDetailInfo";
 
 const initForm = {
   category: {},
@@ -46,6 +48,7 @@ const initForm = {
       image: null,
     },
   ],
+  detailInfo: {},
 };
 
 const ProductAddPage = () => {
@@ -100,9 +103,14 @@ const ProductAddPage = () => {
             setProductForm((prev) => ({ ...prev, saleInfo: data }))
           }
         />
-        <ProductImageRegister
+        <ProductMainImages
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, mainImages: data }))
+          }
+        />
+        <ProductDetailImages
+          onChangeForm={(data) =>
+            setProductForm((prev) => ({ ...prev, detailImages: data }))
           }
         />
         <DeliveryPolicy
@@ -113,6 +121,11 @@ const ProductAddPage = () => {
         <OptionRegistration
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, options: data }))
+          }
+        />
+        <ProductDetailInfo
+          onChangeForm={(data) =>
+            setProductForm((prev) => ({ ...prev, detailInfo: data }))
           }
         />
       </div>

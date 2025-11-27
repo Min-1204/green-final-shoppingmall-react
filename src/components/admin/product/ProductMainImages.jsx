@@ -6,7 +6,7 @@ const initialImages = {
   galleryImages: [],
 };
 
-export default function ProductImageRegister({ onChangeForm }) {
+export default function ProductMainImages({ onChangeForm }) {
   const thumbnailRef = useRef(null);
   const galleryRef = useRef(null);
   const [isOpen, setIsOpen] = useState(true);
@@ -102,7 +102,7 @@ export default function ProductImageRegister({ onChangeForm }) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex justify-between items-center p-3 border-b"
       >
-        <h2 className="text-lg font-semibold text-gray-800">상품 사진</h2>
+        <h2 className="text-lg font-semibold text-gray-800">상품 대표 사진</h2>
 
         <button className="text-gray-600 hover:text-gray-900 transition-colors">
           {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
