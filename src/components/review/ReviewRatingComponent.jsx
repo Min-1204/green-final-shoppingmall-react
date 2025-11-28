@@ -5,7 +5,7 @@ import {
   reviewCount,
   reviewRatingByCount,
   reviewPositive,
-} from "../../api/review/reviewapi";
+} from "../../api/review/reviewApi";
 
 const ReviewRatingComponent = () => {
   const [avgRating, setAvgRating] = useState(0);
@@ -23,7 +23,7 @@ const ReviewRatingComponent = () => {
   useEffect(() => {
     const productReviewAvgRating = async () => {
       const data = await reviewAvgRating(1);
-      console.log("평균별점 데이터 => ", data);
+      // console.log("평균별점 데이터 => ", data);
       setAvgRating(data);
     };
     productReviewAvgRating();
@@ -33,7 +33,7 @@ const ReviewRatingComponent = () => {
   useEffect(() => {
     const productReviewCount = async () => {
       const data = await reviewCount(1);
-      console.log("리뷰 개수 데이터 => ", data);
+      // console.log("리뷰 개수 데이터 => ", data);
       setReviewTotalCount(data);
     };
     productReviewCount();
@@ -46,7 +46,7 @@ const ReviewRatingComponent = () => {
       for (let rating = 1; rating <= 5; rating++) {
         const data = await reviewRatingByCount(1, rating);
         counts[rating] = data;
-        console.log(`별점 ${rating}점 개수 => `, data);
+        // console.log(`별점 ${rating}점 개수 => `, data);
       }
       setRatingByCount(counts);
     };
