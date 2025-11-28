@@ -60,3 +60,8 @@ export const fetchProductById = async (id) => {
   console.log(res.data);
   return res.data;
 };
+
+export const searchProductsByCondition = async (condition) => {
+  const res = await axios.post(`${prefix}/search`, condition);
+  return res.data;
+};

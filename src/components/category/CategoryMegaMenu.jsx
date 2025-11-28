@@ -1,14 +1,14 @@
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCategoryList } from "../../api/admin/category/categoryApi";
+import { fetchCategoryList } from "../../api/admin/category/categoryApi";
 
 const CategoryMegaMenu = ({ isOpen, setOpen }) => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const getCategories = async () => {
-      const data = await getCategoryList();
+      const data = await fetchCategoryList();
       setCategories(data);
     };
     getCategories();

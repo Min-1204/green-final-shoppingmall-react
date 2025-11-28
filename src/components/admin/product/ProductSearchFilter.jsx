@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductList from "./ProductList";
+import { fetchCategoryList } from "../../../api/admin/category/categoryApi";
+import { searchProductsByCondition } from "../../../api/admin/product/productApi";
 
 const temp_categories = {
   스킨케어: {
@@ -12,7 +14,10 @@ const temp_categories = {
 
 const initialCondition = {
   searchType: "productName",
-  searchKeyword: "",
+  productName: "",
+  keywords: "",
+  brandName: "",
+  categoryIds: [],
   category1: "",
   category2: "",
   category3: "",
@@ -20,62 +25,179 @@ const initialCondition = {
   dateType: "registerDate",
   fromDate: "",
   toDate: "",
-  saleStatus: ["정상", "품절", "재고 확보 중", "판매 중지"],
-  exposureStatus: "전체",
+  saleStatuses: ["ON_SALE", "SOLD_OUT", "STOP_SALE"],
+  exposureStatuses: ["EXPOSURE", "HIDDEN", "SCHEDULED"],
 };
 
+const saleStatusList = [
+  { title: "전체", enum: "ALL" },
+  { title: "판매중", enum: "ON_SALE" },
+  { title: "품절", enum: "SOLD_OUT" },
+  { title: "판매 중지", enum: "STOP_SALE" },
+];
+
+const exposureStatusList = [
+  { title: "전체", enum: "ALL" },
+  { title: "노출", enum: "EXPOSURE" },
+  { title: "미노출", enum: "HIDDEN" },
+  { title: "노출 예약", enum: "SCHEDULED" },
+];
+
 const ProductSearchFilter = () => {
-  const [categories1, setCategories1] = useState([
-    "1차 카테고리",
-    ...Object.keys(temp_categories),
-  ]);
-  const [categories2, setCategories2] = useState(["2차 카테고리"]);
-  const [categories3, setCategories3] = useState(["3차 카테고리"]);
-  const [categories4, setCategories4] = useState(["4차 카테고리"]);
-  const [searchConditions, setSearchConditions] = useState(initialCondition);
+  const [categories1, setCategories1] = useState([]);
+  const [categories2, setCategories2] = useState([]);
+  const [categories3, setCategories3] = useState([]);
+  const [categories4, setCategories4] = useState([]);
+  const [searchConditions, setSearchConditions] = useState({
+    ...initialCondition,
+  });
+
+  useEffect(() => {
+    console.log(searchConditions);
+  }, [searchConditions]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchCategoryList();
+      setCategories1(data);
+    };
+    loadData();
+  }, []);
+
+  const searchTypeHandler = (e) => {
+    const { name, value } = e.target;
+    setSearchConditions((prev) => ({
+      ...prev,
+      [name]: value,
+      productName: "",
+      keywords: "",
+      brandName: "",
+    }));
+  };
 
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
     setSearchConditions((prev) => ({ ...prev, [name]: value }));
   };
 
-  const selectCategoryHandler = (e) => {
-    const { name, value } = e.target;
-    const newConditions = { ...searchConditions, [name]: value };
-    setSearchConditions(newConditions);
-
-    if (name === "category1") {
-      const next = temp_categories[value]
-        ? Object.keys(temp_categories[value])
-        : [];
-      setCategories2(["2차 카테고리", ...next]);
-      setCategories3(["3차 카테고리"]);
-      setCategories4(["4차 카테고리"]);
+  const findDeepestCategoryId = (id, depth) => {
+    if (depth === 1) {
+      const ids = categories1
+        .find((c) => c.id === id)
+        .subCategories.map((category2) =>
+          category2.subCategories.map((category3) => category3.id)
+        )
+        .flat(1);
+      console.log(ids);
+      return ids;
+    } else if (depth === 2) {
+      const ids = categories2
+        .find((c) => c.id === id)
+        .subCategories.map((category3) => category3.id);
+      console.log(ids);
+      return ids;
     }
   };
 
-  const onCheckBoxChangeHandler = (e) => {
+  const selectCategoryHandler = (e) => {
+    const { name, value } = e.target;
+    console.log("name : ", name, ", value : ", value);
+
+    if (name === "category1") {
+      const selectedCategory1 = categories1.find(
+        (category) => category.name === value
+      );
+      const id = selectedCategory1.id;
+      console.log(id);
+
+      // 최하위 카테고리 ids 찾기
+      const ids = findDeepestCategoryId(id, 1);
+      // searchConditions 업데이트
+      setSearchConditions((prev) => ({
+        ...prev,
+        categoryIds: [...ids],
+        category1: value,
+        category2: "",
+        category3: "",
+      }));
+
+      // 2차 카테고리 만들기
+      setCategories2(selectedCategory1.subCategories);
+    } else if (name === "category2") {
+      const selectedCategory2 = categories2.find(
+        (category) => category.name === value
+      );
+      const id = selectedCategory2.id;
+      console.log(id);
+
+      // 최하위 카테고리 ids 찾기
+      const ids = findDeepestCategoryId(id, 2);
+      // searchConditions 업데이트
+      setSearchConditions((prev) => ({
+        ...prev,
+        categoryIds: [...ids],
+        category2: value,
+        category3: "",
+      }));
+
+      // 3차 카테고리 만들기
+      setCategories3(selectedCategory2.subCategories);
+    } else if (name === "category3") {
+      const selectedCategory3 = categories3.find(
+        (category) => category.name === value
+      );
+      const id = selectedCategory3.id;
+      console.log(id);
+
+      // searchConditions 업데이트
+      setSearchConditions((prev) => ({
+        ...prev,
+        categoryIds: [id],
+        category3: value,
+      }));
+    }
+  };
+
+  const saleStatusChangeHandler = (e) => {
     const { name, value, checked } = e.target;
+
+    console.log("name : ", name);
+    console.log("value : ", value);
+
     setSearchConditions((prev) => {
-      if (value === "전체") {
+      if (value === "ALL") {
         return {
           ...prev,
-          [name]: checked ? ["정상", "품절", "재고 확보 중", "판매 중지"] : [],
+          [name]: checked ? ["ON_SALE", "SOLD_OUT", "STOP_SALE"] : [],
         };
       } else {
         return {
           ...prev,
           [name]: checked
-            ? [...prev.saleStatus, value]
-            : prev.saleStatus.filter((s) => s !== value),
+            ? [...prev.saleStatuses, value]
+            : prev.saleStatuses.filter((s) => s !== value),
         };
       }
     });
   };
 
-  const onRadioChangeHandler = (e) => {
-    const { name, value } = e.target;
-    setSearchConditions((prev) => ({ ...prev, [name]: value }));
+  const exposureStatusChangeHandler = (e) => {
+    const { name, value, checked } = e.target;
+    setSearchConditions((prev) => {
+      if (value === "ALL") {
+        return {
+          ...prev,
+          [name]: checked ? ["EXPOSURE", "HIDDEN", "SCHEDULED"] : [],
+        };
+      } else {
+        return {
+          ...prev,
+          [name]: checked
+            ? [...prev.exposureStatuses, value]
+            : prev.exposureStatuses.filter((exp) => exp !== value),
+        };
+      }
+    });
   };
 
   const getDateRange = (period) => {
@@ -110,11 +232,17 @@ const ProductSearchFilter = () => {
     setSearchConditions((prev) => ({ ...prev, fromDate, toDate }));
   };
 
-  const initializeCondition = () => {
+  const searchClick = () => {
+    console.log("searchClick");
+    const data = searchProductsByCondition(searchConditions);
+    console.log(data);
+  };
+
+  const reSetCondition = () => {
     setSearchConditions(initialCondition);
-    setCategories2(["2차 카테고리"]);
-    setCategories3(["3차 카테고리"]);
-    setCategories4(["4차 카테고리"]);
+    setCategories2([]);
+    setCategories3([]);
+    setCategories4([]);
   };
 
   return (
@@ -140,7 +268,7 @@ const ProductSearchFilter = () => {
             <select
               name="searchType"
               value={searchConditions.searchType}
-              onChange={onChangeHandler}
+              onChange={searchTypeHandler}
               className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md"
             >
               <option value="productName">상품명</option>
@@ -149,8 +277,8 @@ const ProductSearchFilter = () => {
             </select>
             <input
               type="text"
-              name="searchKeyword"
-              value={searchConditions.searchKeyword}
+              name={searchConditions.searchType}
+              value={searchConditions[searchConditions.searchType]}
               onChange={onChangeHandler}
               className="border border-gray-300 p-1 w-80 rounded-md"
               placeholder="검색어를 입력하세요"
@@ -173,8 +301,11 @@ const ProductSearchFilter = () => {
                   onChange={selectCategoryHandler}
                   className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md"
                 >
-                  {cats.map((c) => (
-                    <option key={c}>{c}</option>
+                  <option value="" disabled hidden>
+                    {i + 1}차카테고리
+                  </option>
+                  {cats.map((category) => (
+                    <option key={category.id}>{category.name}</option>
                   ))}
                 </select>
               )
@@ -195,7 +326,6 @@ const ProductSearchFilter = () => {
               className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md"
             >
               <option value="registerDate">등록일</option>
-              <option value="updateDate">수정일</option>
             </select>
             <input
               type="date"
@@ -232,28 +362,26 @@ const ProductSearchFilter = () => {
             판매 상태
           </div>
           <div className="flex items-center flex-grow p-2 gap-2">
-            {["전체", "정상", "품절", "재고 확보 중", "판매 중지"].map(
-              (status) => (
-                <label
-                  key={status}
-                  className="flex items-center mr-3 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    name="saleStatus"
-                    value={status}
-                    onChange={onCheckBoxChangeHandler}
-                    checked={
-                      status === "전체"
-                        ? searchConditions.saleStatus.length === 4
-                        : searchConditions.saleStatus.includes(status)
-                    }
-                    className="mr-1 accent-blue-600 cursor-pointer"
-                  />
-                  {status}
-                </label>
-              )
-            )}
+            {saleStatusList.map((status) => (
+              <label
+                key={status.enum}
+                className="flex items-center mr-3 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  name="saleStatuses"
+                  value={status.enum}
+                  onChange={saleStatusChangeHandler}
+                  checked={
+                    status.title === "전체"
+                      ? searchConditions.saleStatuses.length === 3
+                      : searchConditions.saleStatuses.includes(status.enum)
+                  }
+                  className="mr-1 accent-blue-600 cursor-pointer"
+                />
+                {status.title}
+              </label>
+            ))}
           </div>
         </div>
 
@@ -263,20 +391,24 @@ const ProductSearchFilter = () => {
             노출 여부
           </div>
           <div className="flex items-center flex-grow p-2 gap-2">
-            {["전체", "노출", "미노출", "노출 예약"].map((exp) => (
+            {exposureStatusList.map((exp) => (
               <label
-                key={exp}
+                key={exp.enum}
                 className="flex items-center mr-3 cursor-pointer"
               >
                 <input
-                  type="radio"
-                  name="exposureStatus"
-                  value={exp}
-                  checked={searchConditions.exposureStatus === exp}
-                  onChange={onRadioChangeHandler}
+                  type="checkbox"
+                  name="exposureStatuses"
+                  value={exp.enum}
+                  checked={
+                    exp.title === "전체"
+                      ? searchConditions.exposureStatuses.length === 3
+                      : searchConditions.exposureStatuses.includes(exp.enum)
+                  }
+                  onChange={exposureStatusChangeHandler}
                   className="mr-1 accent-blue-600 cursor-pointer"
                 />
-                {exp}
+                {exp.title}
               </label>
             ))}
           </div>
@@ -285,11 +417,14 @@ const ProductSearchFilter = () => {
 
       {/* 검색 버튼 */}
       <div className="flex justify-center gap-4 mb-6">
-        <button className="bg-blue-600 text-white px-8 py-2 cursor-pointer rounded-md shadow-md hover:bg-blue-700 transition font-semibold">
+        <button
+          onClick={searchClick}
+          className="bg-blue-600 text-white px-8 py-2 cursor-pointer rounded-md shadow-md hover:bg-blue-700 transition font-semibold"
+        >
           검색
         </button>
         <button
-          onClick={initializeCondition}
+          onClick={reSetCondition}
           className="border border-gray-300 bg-white px-8 py-2 text-gray-700 cursor-pointer rounded-md shadow-md hover:bg-gray-100 transition font-semibold"
         >
           초기화

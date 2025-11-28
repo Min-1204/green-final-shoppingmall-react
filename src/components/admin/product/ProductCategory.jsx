@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
-import { getCategoryList } from "../../../api/admin/category/categoryApi";
+import { fetchCategoryList } from "../../../api/admin/category/categoryApi";
 
 // 카테고리 경로를 문자열로 변환하는 헬퍼 함수
 const getCategoryPath = (path) => path.map((c) => c.name).join(" > ");
@@ -43,7 +43,7 @@ export default function ProductCategory({ onChangeForm }) {
 
   useEffect(() => {
     const getCategories = async () => {
-      const data = await getCategoryList();
+      const data = await fetchCategoryList();
       setCategoriesData(data);
     };
     getCategories();
