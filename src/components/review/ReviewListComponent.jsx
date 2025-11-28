@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ReviewRatingComponent from "./ReviewRatingComponent";
 import { reviewList } from "../../api/review/reviewApi";
 
-const ReviewListComponent = () => {
+const ReviewListComponent = ({ productId }) => {
   const sortOptions = [
     { label: "최신순", value: "latest" },
     { label: "좋아요순", value: "like" },
@@ -45,7 +45,7 @@ const ReviewListComponent = () => {
   // 리뷰 목록 조회
   useEffect(() => {
     const getReviews = async () => {
-      const reviews = await reviewList(1, selectedSort.value);
+      const reviews = await reviewList(productId, selectedSort.value);
       console.log("상품 리뷰 => ", reviews);
       console.log("sort옵션 => ", selectedSort.value);
       setReviews(reviews);

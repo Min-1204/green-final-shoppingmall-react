@@ -367,7 +367,7 @@ export default function ProductDetailComponent() {
         {tab === "buy" && (
           <ProductPurchaseInfo detailInfo={product.detailInfo} />
         )}
-        {tab === "review" && <ReviewListComponent />}
+        {tab === "review" && <ReviewListComponent productId={product.id} />}
         {tab === "qna" && <ProductQuestion />}
       </div>
     </div>
