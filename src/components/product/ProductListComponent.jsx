@@ -8,7 +8,7 @@ import ProductCard from "./ProductCard";
 import ProductSortBar from "./ProductSortBar";
 import ProductFilterBar from "../filter/ProductFilterBar";
 import Pagination from "./Pagination";
-import { getCategoryList } from "../../api/admin/category/categoryApi";
+import { fetchCategoryList } from "../../api/admin/category/categoryApi";
 import { fetchProductsByThirdCategoryIds } from "../../api/admin/product/productApi";
 
 const ProductListComponent = () => {
@@ -25,7 +25,7 @@ const ProductListComponent = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      const categoriesData = await getCategoryList();
+      const categoriesData = await fetchCategoryList();
       let thirdIds = [];
       if (categoryDepth === 1) {
         // 메인 카테고리 찾기
