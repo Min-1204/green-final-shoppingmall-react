@@ -296,10 +296,6 @@ export default function OrderHistoryComponent() {
             조회
           </button>
         </div>
-        <p className="text-xs text-gray-400 mt-3">
-          ※ 2017년 4월 1일 이후 내역만 조회가 가능하며, 이전의 주문내역은
-          달빛나라 촉촉마을 조인내역에서 확인하실 수 있습니다.
-        </p>
       </div>
 
       {/* 주문 목록 테이블 */}
