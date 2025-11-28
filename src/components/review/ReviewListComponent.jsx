@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import ReviewRatingComponent from "./ReviewRatingComponent";
-import { reviewList } from "../../api/review/reviewapi";
+import { reviewList } from "../../api/review/reviewApi";
 
 const ReviewListComponent = () => {
   const sortOptions = [
@@ -15,6 +15,8 @@ const ReviewListComponent = () => {
   const [showComments, setShowComments] = useState({}); //리뷰 댓글의 열림/닫힘(on/off) 여부
   const [selectedSort, setSelectedSort] = useState(sortOptions[0]); //기본 최신순
   const sortRef = useRef();
+
+  const [modalImage, setModalImage] = useState(null); // null이면 닫힘, 이미지 URL이면 열림
 
   const initialComments = [
     {
@@ -40,7 +42,7 @@ const ReviewListComponent = () => {
     },
   ];
 
-  //리뷰 목록 조회
+  // 리뷰 목록 조회
   useEffect(() => {
     const getReviews = async () => {
       const reviews = await reviewList(1, selectedSort.value);
@@ -51,7 +53,7 @@ const ReviewListComponent = () => {
     getReviews();
   }, [selectedSort]);
 
-  //정렬 드롭다운
+  // 정렬 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (sortRef.current && !sortRef.current.contains(e.target)) {
@@ -63,16 +65,17 @@ const ReviewListComponent = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  //리뷰별 댓글 열기/닫기
+  // 리뷰별 댓글 열기/닫기
   const toggleComments = (reviewId) => {
     setShowComments((current) => {
-      const isOpen = current[reviewId] || false; //현재 상태 확인, 없으면 false
-      return {
-        ...current,
-        [reviewId]: !isOpen, //클릭한 리뷰만 반전
-      };
+      const isOpen = current[reviewId] || false;
+      return { ...current, [reviewId]: !isOpen };
     });
   };
+
+  // 이미지 모달 열기/닫기
+  const openModal = (img) => setModalImage(img);
+  const closeModal = () => setModalImage(null);
 
   return (
     <div className="w-full min-h-screen">
@@ -81,7 +84,6 @@ const ReviewListComponent = () => {
 
         {/* 드롭다운 영역 */}
         <div className="flex items-center space-x-3 py-4 text-sm text-gray-600">
-          {/* 정렬 */}
           <div className="relative" ref={sortRef}>
             <button
               onClick={() =>
@@ -141,17 +143,22 @@ const ReviewListComponent = () => {
                   <p>{review.option || "구매옵션"}</p>
                 </div>
 
+                {/* 리뷰 내용 + 이미지 */}
+                <p className="text-sm text-gray-700 leading-relaxed mb-6">
+                  {review.content}
+                </p>
                 <div className="flex flex-col sm:flex-row gap-4 mb-3">
-                  <div className="w-full sm:w-64 sm:flex-shrink-0">
-                    <div className="aspect-square bg-gray-300 flex items-center justify-center rounded">
-                      <span className="text-gray-600 text-sm">
-                        리뷰 이미지 (Placeholder)
-                      </span>
-                    </div>
+                  <div className="flex gap-2">
+                    {review.imageUrls.slice(0, 5).map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`리뷰 이미지 ${idx + 1}`}
+                        className="w-20 h-20 object-cover rounded cursor-pointer"
+                        onClick={() => openModal(img)}
+                      />
+                    ))}
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed sm:flex-1">
-                    {review.content}
-                  </p>
                 </div>
 
                 <div className="flex items-center justify-end space-x-4 text-sm text-gray-500 pt-3">
@@ -171,14 +178,13 @@ const ReviewListComponent = () => {
                   </button>
                 </div>
 
-                {/* 댓글 영역 (더미) */}
+                {/* 댓글 영역 */}
                 {showComments[review.id] && (
                   <div className="mt-4 border-t border-gray-200 pt-3">
                     {initialComments.map((comment) => {
                       const nameColor = comment.isSeller
                         ? "text-blue-600"
                         : "text-gray-900";
-
                       return (
                         <div
                           key={comment.id}
@@ -220,28 +226,47 @@ const ReviewListComponent = () => {
           <p>리뷰가 없습니다.</p>
         )}
 
-        {/* 페이지네이션 (임시) */}
-        <div className="flex justify-center space-x-1 mt-8 pb-10 text-sm">
-          <button className="px-3 py-2 text-gray-500 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
-            이전
-          </button>
-          <button className="px-3 py-2 text-white bg-gray-800 rounded-md font-semibold shadow-md cursor-pointer transition duration-150">
-            1
-          </button>
-          <button className="px-3 py-2 text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
-            2
-          </button>
-          <button className="px-3 py-2 text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
-            3
-          </button>
-          <span className="px-3 py-2 text-gray-400">...</span>
-          <button className="px-3 py-2 text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
-            10
-          </button>
-          <button className="px-3 py-2 text-gray-500 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
-            다음
-          </button>
-        </div>
+        {/* ===== 모달 영역 ===== */}
+        {modalImage && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+            <div className="relative max-w-2xl w-full">
+              <img
+                src={modalImage}
+                alt="리뷰 이미지"
+                className="w-full h-auto object-contain rounded"
+              />
+              <button
+                onClick={closeModal}
+                className="absolute top-2 right-2 text-white text-2xl cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 페이지네이션 (임시) */}
+      <div className="flex justify-center space-x-1 mt-8 pb-10 text-sm">
+        <button className="px-3 py-2 text-gray-500 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
+          이전
+        </button>
+        <button className="px-3 py-2 text-white bg-gray-800 rounded-md font-semibold shadow-md cursor-pointer transition duration-150">
+          1
+        </button>
+        <button className="px-3 py-2 text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
+          2
+        </button>
+        <button className="px-3 py-2 text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
+          3
+        </button>
+        <span className="px-3 py-2 text-gray-400">...</span>
+        <button className="px-3 py-2 text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
+          10
+        </button>
+        <button className="px-3 py-2 text-gray-500 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150">
+          다음
+        </button>
       </div>
     </div>
   );

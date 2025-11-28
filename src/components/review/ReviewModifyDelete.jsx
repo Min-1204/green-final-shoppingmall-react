@@ -1,43 +1,57 @@
 import { useEffect, useRef, useState } from "react";
-import { reviewDelete, reviewModify } from "../../api/review/reviewapi";
+import { reviewDelete, reviewModify } from "../../api/review/reviewApi";
 
 const ReviewModifyDelete = ({ closeModal, review, update }) => {
   const [currentRating, setCurrentRating] = useState(0);
   const [reviewContent, setReviewContent] = useState("");
-  const [images, setImages] = useState([]); // 로컬 상태로 관리
+  const [images, setImages] = useState([]); // 이미지 미리보기+원본RUL
+  const [newFiles, setNewFiles] = useState([]); // 새로 첨부한 파일 관리
+  const [deleteImgUrls, setDeleteImgUrls] = useState([]); // 삭제할 기존 이미지 url
+  const [originalImgUrls, setOriginalImgUrls] = useState([]); // 원본 이미지 URL 저장
+
   const uploadRef = useRef();
 
   useEffect(() => {
     if (review) {
       setReviewContent(review.content || review.review || "");
       setCurrentRating(review.rating || 0);
+      setImages(review.imageUrls || []);
+      setNewFiles([]);
+      setDeleteImgUrls([]);
+      setOriginalImgUrls(review.imageUrls);
     }
-  }, [review]);
+  }, [review, review.id, review.imageUrls.length]);
 
   //리뷰 수정(업데이트) 핸들러
   const reviewUpdatedHandler = async () => {
-    await reviewModify(review.id, {
+    const updateReview = await reviewModify(review.id, {
       content: reviewContent,
       rating: currentRating,
+      newImages: newFiles,
+      deleteImgUrls: deleteImgUrls,
     });
     alert("리뷰가 수정되었습니다.");
 
     if (update) {
-      update({
+      const formatReview = {
         ...review,
         content: reviewContent,
         rating: currentRating,
-      });
+        imageUrls: updateReview.imageUrls || images,
+      };
+      update(formatReview);
     }
     closeModal();
   };
 
   //리뷰 삭제 핸들러
   const reviewDeleteHandler = async (id) => {
-    if (window.confirm("정말 삭제하시겠습니까?")) {
-      await reviewDelete(id);
-      alert("리뷰가 삭제되었습니다.");
-    }
+    const ok = window.confirm("정말 삭제하시겠습니까?");
+    if (!ok) return;
+
+    await reviewDelete(id);
+
+    alert("리뷰가 삭제되었습니다.");
 
     if (update) {
       update({ deleted: true, id: id });
@@ -45,27 +59,52 @@ const ReviewModifyDelete = ({ closeModal, review, update }) => {
     closeModal();
   };
 
-  //사진 첨부 핸들러
+  // 사진 첨부 핸들러
   const imageAddHandler = () => {
-    const files = uploadRef.current.files;
-    if (!files) return;
+    const files = Array.from(uploadRef.current.files);
+    if (!files.length) return;
 
-    const newImages = [];
-    for (let file of files) {
+    const totalImg = review.imageUrls.length + files.length;
+    if (totalImg > 5) {
+      alert("사진은 최대 5장끼지 등록할 수 있습니다.");
+      return;
+    }
+
+    //새 파일 상태에 추가
+    setNewFiles((prev) =>
+      [...prev, ...files].slice(0, 5 - originalImgUrls.length)
+    );
+
+    //미리보기 이미지
+    files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        newImages.push(e.target.result);
-        if (newImages.length === files.length) {
-          setImages((prev) => [...prev, ...newImages].slice(0, 5)); // 최대 5장
-        }
+        setImages((prev) => {
+          const newImages = [...prev, e.target.result];
+          return newImages.slice(0, 5);
+        });
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
 
-  //첨부 이미지 삭제 핸들러
+  // 첨부 이미지 삭제 핸들러
   const imageRemoveHandler = (idx) => {
-    setImages((prev) => prev.filter((review, i) => i !== idx));
+    const imageToRemove = images[idx];
+    const originalImgCnt = originalImgUrls.length;
+
+    // 기존 서버 이미지인 경우
+    if (idx < originalImgCnt) {
+      // deleteImgUrls에 추가
+      setDeleteImgUrls((prev) => [...prev, imageToRemove]);
+    } else {
+      // 새로 추가한 이미지인 경우 newFiles에서 제거
+      const newFileIdx = idx - originalImgCnt;
+      setNewFiles((prev) => prev.filter((file, i) => i !== newFileIdx));
+    }
+
+    // images state에서 제거
+    setImages((prev) => prev.filter((img, i) => i !== idx));
   };
 
   return (
@@ -156,6 +195,7 @@ const ReviewModifyDelete = ({ closeModal, review, update }) => {
             </button>
           </div>
         </div>
+
         {/* 첨부 이미지 미리보기 */}
         <div className="flex gap-2 mt-3 overflow-x-auto">
           {images.map((img, idx) => {

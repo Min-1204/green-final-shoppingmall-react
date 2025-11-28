@@ -1,11 +1,14 @@
-import axios from "axios";
 import { useRef, useState } from "react";
-import { reviewAdd } from "../../api/review/reviewapi";
+import { reviewAdd } from "../../api/review/reviewApi";
 
 const ReviewAddComponent = ({ closeModal }) => {
   const [currentRating, setCurrentRating] = useState(0);
-  const [review, setReview] = useState({});
-  const [images, setImages] = useState([]);
+  const [review, setReview] = useState({
+    content: "",
+    rating: 0,
+    images: [],
+  }); //서버 전송용 파일 객체
+  const [images, setImages] = useState([]); //이미지 미리보기용
   const uploadRef = useRef();
 
   const reviewAddHandler = async () => {
@@ -14,28 +17,46 @@ const ReviewAddComponent = ({ closeModal }) => {
     closeModal();
   };
 
-  //사진 첨부 핸들러
+  // 사진 첨부 핸들러
   const imageAddHandler = () => {
-    const files = uploadRef.current.files;
+    const files = Array.from(uploadRef.current.files);
     if (!files) return;
 
-    const newImages = [];
-    for (let file of files) {
+    //업로드 파일 개수 제한
+    if (review.images.length + files.length > 5) {
+      alert("사진은 최대 5장끼지 등록할 수 있습니다.");
+      return;
+    }
+
+    //원본 파일 저장
+    setReview((prev) => ({
+      ...prev,
+      images: [...prev.images, ...files].slice(0, 5),
+    }));
+
+    //미리보기 이미지
+    const previews = [];
+    files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        newImages.push(e.target.result);
+        previews.push(e.target.result);
 
-        if (newImages.length === files.length) {
-          setImages((prev) => [...prev, newImages].slice(0, 5)); //최대 5장
+        if (previews.length === files.length) {
+          setImages((prev) => [...prev, ...previews].slice(0, 5));
         }
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
 
-  //첨부 이미지 삭제 핸들러
+  // 첨부 이미지 삭제 핸들러
   const imageRemoveHandler = (idx) => {
     setImages((prev) => prev.filter((review, i) => i !== idx));
+
+    setReview((prev) => ({
+      ...prev,
+      images: prev.images.filter((review, i) => i !== idx),
+    }));
   };
 
   return (
