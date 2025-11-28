@@ -279,7 +279,7 @@ const OrderComponent = () => {
                       setDetailedAddress("삼성타워빌딩 10층");
                     }}
                   >
-                    기존 배송지
+                    기본 배송지
                   </button>
                   <button
                     className="px-5 py-2.5 border border-[#d5d5d5] bg-white text-[#111] text-[13px] font-medium hover:border-[#111] transition-colors"
