@@ -31,6 +31,9 @@ export default function OrderHistoryComponent() {
   const [exchangeModal, setExchangeModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState({});
 
+  // 상품 리뷰 작성
+  const [selectedProduct, setSelectedProduct] = useState({});
+
   // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -395,6 +398,7 @@ export default function OrderHistoryComponent() {
                             <button
                               className="text-xs px-3 py-1 bg-black text-white hover:bg-gray-800 transition-colors"
                               onClick={() => {
+                                setSelectedProduct(item);
                                 setReviewModal(true);
                               }}
                             >
@@ -502,7 +506,10 @@ export default function OrderHistoryComponent() {
 
       {/* 모달들 */}
       {reviewModal && (
-        <ReviewAddComponent closeModal={() => setReviewModal(false)} />
+        <ReviewAddComponent
+          closeModal={() => setReviewModal(false)}
+          productId={selectedProduct.productId}
+        />
       )}
       {deliveryModal && selectedItem && (
         <DeliveryModal
