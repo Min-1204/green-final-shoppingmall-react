@@ -21,6 +21,7 @@ export const getMyReviews = async (userId) => {
 };
 
 export const reviewAdd = async (review) => {
+  console.log("review => ", review);
   const formData = new FormData();
   formData.append(
     "review",

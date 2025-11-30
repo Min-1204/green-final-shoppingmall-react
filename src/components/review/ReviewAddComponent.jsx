@@ -1,12 +1,13 @@
 import { useRef, useState } from "react";
 import { reviewAdd } from "../../api/review/reviewApi";
 
-const ReviewAddComponent = ({ closeModal }) => {
+const ReviewAddComponent = ({ closeModal, productId }) => {
   const [currentRating, setCurrentRating] = useState(0);
   const [review, setReview] = useState({
     content: "",
     rating: 0,
     images: [],
+    productId: productId,
   }); //서버 전송용 파일 객체
   const [images, setImages] = useState([]); //이미지 미리보기용
   const uploadRef = useRef();
@@ -95,7 +96,11 @@ const ReviewAddComponent = ({ closeModal }) => {
                       className={starClass}
                       onClick={() => {
                         setCurrentRating(star);
-                        setReview({ ...review, rating: star });
+                        setReview({
+                          ...review,
+                          rating: star,
+                          productId: productId,
+                        });
                       }}
                     >
                       {currentRating >= star ? "★" : "☆"}

@@ -237,7 +237,7 @@ const ReviewListComponent = ({ productId }) => {
               />
               <button
                 onClick={closeModal}
-                className="absolute top-2 right-2 text-white text-2xl cursor-pointer"
+                className="absolute top-2 right-2 text-gray-300 text-2xl cursor-pointer"
               >
                 ✕
               </button>
