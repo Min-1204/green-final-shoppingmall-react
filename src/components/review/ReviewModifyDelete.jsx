@@ -24,6 +24,10 @@ const ReviewModifyDelete = ({ closeModal, review, update }) => {
 
   //리뷰 수정(업데이트) 핸들러
   const reviewUpdatedHandler = async () => {
+    if (!reviewContent.trim()) {
+      alert("리뷰 내용을 입력해주세요");
+      return;
+    }
     const updateReview = await reviewModify(review.id, {
       content: reviewContent,
       rating: currentRating,
