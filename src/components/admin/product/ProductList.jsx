@@ -1,4 +1,5 @@
-import React from "react";
+import { Link } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const getAvailableStock = (product) => {
   const availableOptions = product?.options.filter((op) => op.currentStock > 0);
@@ -25,6 +26,7 @@ const getOutOfStock = (product) => {
 };
 
 const ProductList = ({ products }) => {
+  const navigate = useNavigate();
   const tableHeaders = [
     "번호",
     "상품명",
@@ -39,6 +41,10 @@ const ProductList = ({ products }) => {
   ];
 
   console.log("products : ", products);
+
+  const goToModifyPage = (id) => {
+    navigate(`/admin/product/modify/${id}`);
+  };
 
   return (
     <div className="w-full mt-6">
@@ -167,7 +173,10 @@ const ProductList = ({ products }) => {
 
                 <td className="px-3 py-3 w-[130px]">
                   <div className="flex flex-col gap-1">
-                    <button className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm">
+                    <button
+                      onClick={() => goToModifyPage(product.id)}
+                      className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm"
+                    >
                       수정
                     </button>
                     <button className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1 rounded-md border border-green-200 cursor-pointer transition shadow-sm">
