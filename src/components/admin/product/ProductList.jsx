@@ -1,76 +1,51 @@
 import React from "react";
 
-const dummyProducts = [
-  {
-    id: 11,
-    name: "프리미엄 검색 모델 제공",
-    price: 90000,
-    aStock: "[7] 200/130",
-    dStock: "[3] 0/0",
-    delivery: "기본배송료(1)",
-    hits: 1,
-    date: "2025-10-29 10:43",
-    status: "정상",
-    exposure: "노출",
-  },
-  {
-    id: 10,
-    name: "프리미엄 검색 모델 제공",
-    price: 90000,
-    aStock: "[5] 100/50",
-    dStock: "[5] 0/0",
-    delivery: "기본배송료(1)",
-    hits: 5,
-    date: "2019-02-20 11:07",
-    status: "정상",
-    exposure: "노출",
-  },
-  {
-    id: 9,
-    name: "세련된 갤러리 배너 제공",
-    price: 26000,
-    aStock: "[4] 100/70",
-    dStock: "[6] 0/0",
-    delivery: "기본배송료(1)",
-    hits: 1,
-    date: "2019-02-15 17:47",
-    status: "정상",
-    exposure: "노출",
-  },
-  {
-    id: 8,
-    name: "세련된 단일 3호 제공",
-    price: 64000,
-    aStock: "[3] 50/20",
-    dStock: "[7] 0/0",
-    delivery: "기본배송료(1)",
-    hits: 4,
-    date: "2019-02-15 19:44",
-    status: "정상",
-    exposure: "노출",
-  },
-];
+const getAvailableStock = (product) => {
+  const availableOptions = product?.options.filter((op) => op.currentStock > 0);
+  const availableOptionCnt = availableOptions.length;
+  const availableStock = availableOptions.reduce(
+    (acc, option) => acc + option.currentStock,
+    0
+  );
 
-const ProductList = () => {
+  return `[${availableOptionCnt}] ${availableStock}`;
+};
+
+const getOutOfStock = (product) => {
+  const outOfStockOptions = product?.options.filter(
+    (op) => op.currentStock === 0
+  );
+  const outOfStockOptionCnt = outOfStockOptions.length;
+  const outOfStock = outOfStockOptions.reduce(
+    (acc, option) => acc + option.currentStock,
+    0
+  );
+
+  return `[${outOfStockOptionCnt}] ${outOfStock}`;
+};
+
+const ProductList = ({ products }) => {
   const tableHeaders = [
     "번호",
     "상품명",
-    "정가",
-    "재고/옵션",
+    "판매가",
+    "재고",
     "배송비",
-    "조회",
+    // "조회",
     "등록/수정일",
     "상태",
     "노출",
     "관리",
   ];
 
+  console.log("products : ", products);
+
   return (
     <div className="w-full mt-6">
       {/* 상단 영역 */}
       <div className="flex justify-between items-center mb-3 text-gray-700 flex-wrap gap-2 px-2">
         <span className="font-semibold text-lg">
-          검색 결과 (총 {dummyProducts.length}개)
+          검색 결과 (총 {products.length}개)
         </span>
 
         <div className="flex items-center gap-2 flex-wrap">
@@ -129,9 +104,9 @@ const ProductList = () => {
           </thead>
 
           <tbody className="bg-white divide-y divide-gray-200">
-            {dummyProducts.map((product) => (
+            {products.map((product) => (
               <tr
-                key={product.id}
+                key={product?.id}
                 className="hover:bg-gray-50 transition divide-x divide-gray-200"
               >
                 <td className="px-2 py-3 w-[50px]">
@@ -141,50 +116,54 @@ const ProductList = () => {
                   />
                 </td>
 
-                <td className="px-3 py-3 w-[50px]">{product.id}</td>
+                <td className="px-3 py-3 w-[50px]">{product?.id}</td>
 
                 <td className="px-3 py-3 text-left">
-                  <span className="text-blue-600 cursor-pointer hover:underline">
-                    {product.name}
+                  <span className="cursor-pointer hover:underline">
+                    {product?.basicInfo?.productName}
                   </span>
                 </td>
 
                 <td className="px-3 py-3 text-right">
-                  {product.price.toLocaleString()}원
+                  {product?.options[0]?.sellingPrice.toLocaleString()}원
                 </td>
 
                 <td className="px-3 py-3 text-center">
-                  <div>{product.aStock}</div>
+                  <div>{getAvailableStock(product)}</div>
                   <div className="text-gray-600 text-xs">
-                    {product.dStock}{" "}
+                    {getOutOfStock(product)}{" "}
                     <span className="text-red-500 ml-1">📦</span>
                   </div>
                 </td>
 
-                <td className="px-3 py-3 text-center text-blue-600 hover:underline cursor-pointer">
-                  {product.delivery}
+                <td className="px-3 py-3 text-center hover:underline cursor-pointer">
+                  {product?.deliveryPolicy?.name} (
+                  {product?.deliveryPolicy?.freeConditionAmount.toLocaleString()}
+                  원)
                 </td>
 
-                <td className="px-3 py-3 text-center">{product.hits}</td>
+                {/* <td className="px-3 py-3 text-center">미구현</td> */}
 
                 <td className="px-3 py-3 text-xs text-gray-500">
-                  <div>{product.date.split(" ")[0]}</div>
-                  <div>{product.date.split(" ")[1]}</div>
+                  <div>{product?.createdAt.split("T")[0]}</div>
+                  <div>{product?.createdAt.split("T")[1]}</div>
                 </td>
 
                 <td className="px-3 py-3 text-center">
                   <span
                     className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      product.status === "정상"
+                      product?.saleInfo?.saleStatus === "ON_SALE"
                         ? "bg-green-100 text-green-800"
                         : "bg-gray-100 text-gray-800"
                     }`}
                   >
-                    {product.status}
+                    {product?.saleInfo?.saleStatus}
                   </span>
                 </td>
 
-                <td className="px-3 py-3 text-center">{product.exposure}</td>
+                <td className="px-3 py-3 text-center">
+                  {product?.saleInfo?.exposureStatus}
+                </td>
 
                 <td className="px-3 py-3 w-[130px]">
                   <div className="flex flex-col gap-1">

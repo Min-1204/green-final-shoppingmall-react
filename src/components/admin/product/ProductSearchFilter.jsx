@@ -3,28 +3,18 @@ import ProductList from "./ProductList";
 import { fetchCategoryList } from "../../../api/admin/category/categoryApi";
 import { searchProductsByCondition } from "../../../api/admin/product/productApi";
 
-const temp_categories = {
-  스킨케어: {
-    "스킨/토너": { "3차카테1": {}, "3차카테2": {} },
-    에센스: {},
-    크림: {},
-  },
-  메이크업: { 립: {}, 베이스: {}, 아이: {} },
-};
-
 const initialCondition = {
   searchType: "productName",
   productName: "",
-  keywords: "",
-  brandName: "",
+  searchKeywords: "",
   categoryIds: [],
   category1: "",
   category2: "",
   category3: "",
   category4: "",
   dateType: "registerDate",
-  fromDate: "",
-  toDate: "",
+  startDate: "",
+  endDate: "",
   saleStatuses: ["ON_SALE", "SOLD_OUT", "STOP_SALE"],
   exposureStatuses: ["EXPOSURE", "HIDDEN", "SCHEDULED"],
 };
@@ -51,7 +41,9 @@ const ProductSearchFilter = () => {
   const [searchConditions, setSearchConditions] = useState({
     ...initialCondition,
   });
+  const [searchResults, setSearchResults] = useState([]);
 
+  // 로그 찍는 용도
   useEffect(() => {
     console.log(searchConditions);
   }, [searchConditions]);
@@ -70,7 +62,7 @@ const ProductSearchFilter = () => {
       ...prev,
       [name]: value,
       productName: "",
-      keywords: "",
+      searchKeywordss: "",
       brandName: "",
     }));
   };
@@ -202,40 +194,45 @@ const ProductSearchFilter = () => {
 
   const getDateRange = (period) => {
     const today = new Date();
-    const toDate = today.toLocaleDateString("sv-SE");
-    let fromDate = new Date(today);
+    const endDate = today.toLocaleDateString("sv-SE");
+    let startDate = new Date(today);
 
     switch (period) {
       case "오늘":
         break;
       case "3일간":
-        fromDate.setDate(today.getDate() - 2);
+        startDate.setDate(today.getDate() - 2);
         break;
       case "1주일":
-        fromDate.setDate(today.getDate() - 6);
+        startDate.setDate(today.getDate() - 6);
         break;
       case "1개월":
-        fromDate.setMonth(today.getMonth() - 1);
+        startDate.setMonth(today.getMonth() - 1);
         break;
       case "3개월":
-        fromDate.setMonth(today.getMonth() - 3);
+        startDate.setMonth(today.getMonth() - 3);
         break;
       default:
-        return { fromDate: "", toDate: "" };
+        return { startDate: "", endDate: "" };
     }
 
-    return { fromDate: fromDate.toISOString().split("T")[0], toDate };
+    return { startDate: startDate.toISOString().split("T")[0], endDate };
   };
 
   const onDatePeriodHandler = (period) => {
-    const { fromDate, toDate } = getDateRange(period);
-    setSearchConditions((prev) => ({ ...prev, fromDate, toDate }));
+    const { startDate, endDate } = getDateRange(period);
+    setSearchConditions((prev) => ({ ...prev, startDate, endDate }));
   };
 
   const searchClick = () => {
-    console.log("searchClick");
-    const data = searchProductsByCondition(searchConditions);
-    console.log(data);
+    console.log("searchResult");
+
+    const loadProductsData = async () => {
+      const data = await searchProductsByCondition(searchConditions);
+      console.log(data);
+      setSearchResults(data);
+    };
+    loadProductsData();
   };
 
   const reSetCondition = () => {
@@ -272,8 +269,7 @@ const ProductSearchFilter = () => {
               className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md"
             >
               <option value="productName">상품명</option>
-              <option value="keywords">검색어</option>
-              <option value="brandName">브랜드</option>
+              <option value="searchKeywords">검색어</option>
             </select>
             <input
               type="text"
@@ -329,16 +325,16 @@ const ProductSearchFilter = () => {
             </select>
             <input
               type="date"
-              name="fromDate"
-              value={searchConditions.fromDate}
+              name="startDate"
+              value={searchConditions.startDate}
               onChange={onChangeHandler}
               className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md h-[32px]"
             />
             <span className="text-gray-500">~</span>
             <input
               type="date"
-              name="toDate"
-              value={searchConditions.toDate}
+              name="endDate"
+              value={searchConditions.endDate}
               onChange={onChangeHandler}
               className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md h-[32px]"
             />
@@ -431,7 +427,7 @@ const ProductSearchFilter = () => {
         </button>
       </div>
 
-      <ProductList />
+      <ProductList products={searchResults} />
     </div>
   );
 };
