@@ -13,6 +13,10 @@ const ReviewAddComponent = ({ closeModal, productId }) => {
   const uploadRef = useRef();
 
   const reviewAddHandler = async () => {
+    if (!review.content.trim()) {
+      alert("리뷰 내용을 입력해주세요");
+      return;
+    }
     reviewAdd(review);
     alert("리뷰가 등록되었습니다");
     closeModal();
