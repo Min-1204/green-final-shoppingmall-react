@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import { registerProduct } from "../../../api/admin/product/productApi";
+import { useParams } from "react-router-dom";
+import {
+  fetchProductById,
+  registerProduct,
+} from "../../../api/admin/product/productApi";
 import DeliveryPolicy from "../../../components/admin/product/DeliveryPolicy";
 import OptionRegistration from "../../../components/admin/product/OptionRegistration";
-import ProductBasicInfo from "../../../components/admin/product/ProductBasicInfo";
 import ProductBrand from "../../../components/admin/product/ProductBrand";
-import ProductCategory from "../../../components/admin/product/ProductCategory";
-import ProductMainImages from "../../../components/admin/product/ProductMainImages";
-import ProductSaleInfo from "../../../components/admin/product/ProductSaleInfo";
 import ProductDetailImages from "../../../components/admin/product/ProductDetailImages";
 import ProductDetailInfo from "../../../components/admin/product/ProductDetailInfo";
+import ProductMainImages from "../../../components/admin/product/ProductMainImages";
+import ProductSaleInfo from "../../../components/admin/product/ProductSaleInfo";
+import ProductBasicInfoModify from "../../../components/admin/product/modify/ProductBasicInfoModify";
+import ProductCategoryModify from "../../../components/admin/product/modify/ProductCategoryModify";
 
 const initForm = {
   category: {},
@@ -51,13 +55,39 @@ const initForm = {
   detailInfo: {},
 };
 
-const ProductAddPage = () => {
+const ProductModifyPage = () => {
   const [productForm, setProductForm] = useState(initForm);
-
-  // const formDataHandler = (data) => {};
+  const { id } = useParams();
+  const [product, setProduct] = useState({});
 
   useEffect(() => {
-    console.log(productForm);
+    const loadData = async () => {
+      const productData = await fetchProductById(parseInt(id));
+      setProduct(productData);
+      setProductForm({
+        category: { ...productData.category },
+        brand: { ...productData.brand },
+        basicInfo: { ...productData.basicInfo },
+        saleInfo: productData.saleInfo,
+        mainImages: {
+          thumbnailImage: { ...productData.mainImages[0], image: null },
+          galleryImages: [
+            ...productData.mainImages.filter((_, idx) => idx !== 0),
+          ],
+        },
+        detailImages: [...productData.detailImages],
+        deliveryPolicy: { ...productData.deliveryPolicy },
+        options: [...productData.options],
+        detailInfo: { ...productData.detailInfo },
+      });
+      console.log("id : ", id);
+      console.log("product : ", productData);
+    };
+    loadData();
+  }, [id]);
+
+  useEffect(() => {
+    console.log("productForm : ", productForm);
   }, [productForm]);
 
   const submitHandler = () => {
@@ -83,47 +113,56 @@ const ProductAddPage = () => {
   return (
     <div className="min-h-screen">
       <div className="space-y-8 pb-40">
-        <ProductBasicInfo
+        <ProductBasicInfoModify
+          existingData={productForm?.basicInfo}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, basicInfo: data }))
           }
         />
-        <ProductCategory
+        <ProductCategoryModify
+          existingData={productForm?.category}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, category: data }))
           }
         />
         <ProductBrand
+          existingData={productForm?.brand}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, brand: data }))
           }
         />
         <ProductSaleInfo
+          existingData={productForm?.saleInfo}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, saleInfo: data }))
           }
         />
         <ProductMainImages
+          existingData={productForm?.mainImages}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, mainImages: data }))
           }
         />
         <ProductDetailImages
+          existingData={productForm?.detailImages}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, detailImages: data }))
           }
         />
         <DeliveryPolicy
+          existingData={productForm?.deliveryPolicy}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, deliveryPolicy: data }))
           }
         />
         <OptionRegistration
+          existingData={productForm?.options}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, options: data }))
           }
         />
         <ProductDetailInfo
+          existingData={productForm?.detailInfo}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, detailInfo: data }))
           }
@@ -155,4 +194,4 @@ const ProductAddPage = () => {
   );
 };
 
-export default ProductAddPage;
+export default ProductModifyPage;

@@ -5,6 +5,9 @@ const ProductSearch = lazy(() =>
   import("../pages/admin/product/ProductSearchPage")
 );
 const ProductAdd = lazy(() => import("../pages/admin/product/ProductAddPage"));
+const ProductModify = lazy(() =>
+  import("../pages/admin/product/ProductModifyPage")
+);
 const RestockNoti = lazy(() =>
   import("../pages/admin/restock/RestockNotiPage")
 );
@@ -37,6 +40,14 @@ const adminRouter = () => {
       element: (
         <Suspense fallback={Loading}>
           <ProductAdd />
+        </Suspense>
+      ),
+    },
+    {
+      path: "product/modify/:id",
+      element: (
+        <Suspense fallback={Loading}>
+          <ProductModify />
         </Suspense>
       ),
     },
