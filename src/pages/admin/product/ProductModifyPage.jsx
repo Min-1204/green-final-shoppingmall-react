@@ -2,17 +2,18 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   fetchProductById,
-  registerProduct,
+  modifyProduct,
 } from "../../../api/admin/product/productApi";
-import DeliveryPolicy from "../../../components/admin/product/DeliveryPolicy";
-import OptionRegistration from "../../../components/admin/product/OptionRegistration";
-import ProductBrand from "../../../components/admin/product/ProductBrand";
-import ProductDetailImages from "../../../components/admin/product/ProductDetailImages";
-import ProductDetailInfo from "../../../components/admin/product/ProductDetailInfo";
-import ProductMainImages from "../../../components/admin/product/ProductMainImages";
-import ProductSaleInfo from "../../../components/admin/product/ProductSaleInfo";
+
 import ProductBasicInfoModify from "../../../components/admin/product/modify/ProductBasicInfoModify";
 import ProductCategoryModify from "../../../components/admin/product/modify/ProductCategoryModify";
+import ProductBrandModify from "../../../components/admin/product/modify/ProductBrandModify";
+import ProductSaleInfoModify from "../../../components/admin/product/modify/ProductSaleInfoModify";
+import DeliveryPolicyModify from "../../../components/admin/product/modify/DeliveryPolicyModify";
+import ProductDetailInfoModify from "../../../components/admin/product/modify/ProductDetailInfoModify";
+import OptionRegistrationModify from "../../../components/admin/product/modify/OptionRegistrationModify";
+import ProductDetailImagesModify from "../../../components/admin/product/modify/ProductDetailImagesModify";
+import ProductMainImagesModify from "../../../components/admin/product/modify/ProductMainImagesModify";
 
 const initForm = {
   category: {},
@@ -58,12 +59,11 @@ const initForm = {
 const ProductModifyPage = () => {
   const [productForm, setProductForm] = useState(initForm);
   const { id } = useParams();
-  const [product, setProduct] = useState({});
 
   useEffect(() => {
     const loadData = async () => {
       const productData = await fetchProductById(parseInt(id));
-      setProduct(productData);
+
       setProductForm({
         category: { ...productData.category },
         brand: { ...productData.brand },
@@ -80,7 +80,7 @@ const ProductModifyPage = () => {
         options: [...productData.options],
         detailInfo: { ...productData.detailInfo },
       });
-      console.log("id : ", id);
+
       console.log("product : ", productData);
     };
     loadData();
@@ -91,9 +91,9 @@ const ProductModifyPage = () => {
   }, [productForm]);
 
   const submitHandler = () => {
-    const register = async () => {
+    const modify = async () => {
       try {
-        const data = await registerProduct(productForm);
+        const data = await modifyProduct(id, productForm);
 
         console.log("응답 data :", data);
 
@@ -103,7 +103,7 @@ const ProductModifyPage = () => {
         alert("상품 등록에 실패했습니다.");
       }
     };
-    register();
+    modify();
   };
 
   const onReset = () => {
@@ -125,43 +125,43 @@ const ProductModifyPage = () => {
             setProductForm((prev) => ({ ...prev, category: data }))
           }
         />
-        <ProductBrand
+        <ProductBrandModify
           existingData={productForm?.brand}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, brand: data }))
           }
         />
-        <ProductSaleInfo
+        <ProductSaleInfoModify
           existingData={productForm?.saleInfo}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, saleInfo: data }))
           }
         />
-        <ProductMainImages
+        <ProductMainImagesModify
           existingData={productForm?.mainImages}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, mainImages: data }))
           }
         />
-        <ProductDetailImages
+        <ProductDetailImagesModify
           existingData={productForm?.detailImages}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, detailImages: data }))
           }
         />
-        <DeliveryPolicy
+        <DeliveryPolicyModify
           existingData={productForm?.deliveryPolicy}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, deliveryPolicy: data }))
           }
         />
-        <OptionRegistration
+        <OptionRegistrationModify
           existingData={productForm?.options}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, options: data }))
           }
         />
-        <ProductDetailInfo
+        <ProductDetailInfoModify
           existingData={productForm?.detailInfo}
           onChangeForm={(data) =>
             setProductForm((prev) => ({ ...prev, detailInfo: data }))
@@ -185,7 +185,7 @@ const ProductModifyPage = () => {
               // disabled={isLoading}
               className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
             >
-              상품 등록
+              상품 수정
             </button>
           </div>
         </div>

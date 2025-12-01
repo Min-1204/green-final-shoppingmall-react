@@ -12,7 +12,6 @@ const getCategoryPath = (category) => {
   // 최하위에서 최상위까지 순회하며 경로 구성
   while (current && current.name) {
     path.unshift(current.name); // 배열 앞에 추가 (역순 방지)
-    console.log("path : ", path);
     current = current.parent;
   }
 
@@ -49,8 +48,6 @@ export default function ProductCategory({ existingData, onChangeForm }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categoriesData, setCategoriesData] = useState([]);
 
-  console.log("existingData: ", existingData);
-
   useEffect(() => {
     if (existingData && existingData.id && selectedCategories.length === 0) {
       // 서버에서 받은 카테고리 객체를 그대로 사용
@@ -60,8 +57,6 @@ export default function ProductCategory({ existingData, onChangeForm }) {
           name: getCategoryPath(existingData),
         },
       ]);
-
-      console.log("existingData : ", existingData);
     }
   }, [existingData]);
 
@@ -101,21 +96,18 @@ export default function ProductCategory({ existingData, onChangeForm }) {
     // 현재 레벨 전까지 자르고 새 카테고리를 추가
     const newPath = currentSelectedPath.slice(0, depth);
     const temp = [...newPath, category];
-    console.log("currentSelectedPath : ", temp);
+
     setCurrentSelectedPath(temp);
   };
 
   const addCategoryHandler = () => {
     if (currentSelectedPath.length > 0) {
-      console.log("currentSelectedPath ==== ", currentSelectedPath);
       const lastCategory = currentSelectedPath[currentSelectedPath.length - 1];
 
       // currentSelectedPath 배열에서 직접 경로 생성
       const categoryName = currentSelectedPath
         .map((cat) => cat.name)
         .join(" > ");
-
-      console.log("categoryName === ", categoryName);
 
       const newCategory = {
         id: lastCategory.id,
