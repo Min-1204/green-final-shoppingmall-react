@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import Stepper from "./Stepper";
 import { useDaumPostalCode } from "../../../hooks/useDaumPostalCode";
+import { useDispatch, useSelector } from "react-redux";
+// prettier-ignore
+import {  checkLoginIdThunk,  resetLoginIdCheck} from "../../../redux/slices/features/user/signUpSlice";
+import { validate } from "../util/validation";
 
 // Input 컴포넌트: error prop을 받아서 에러 발생 시 빨간색 테두리 적용
 function Input({ label, required, error, className = "", ...props }) {
@@ -23,97 +27,118 @@ function Input({ label, required, error, className = "", ...props }) {
 export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
   const [errors, setErrors] = useState({});
   const { openPostcode } = useDaumPostalCode(); // 다음주소API
+  const dispatch = useDispatch();
+  // prettier-ignore
+  const { checkingLoginId, loginIdCheckResult, loginIdCheckError } = useSelector((state) => state.signUpSlice); // Redux signUpSlice 사용
 
-  // 콘솔은 개발 중에만 확인하세요
-  console.log(signUpForm);
+  console.log(signUpForm); // 회원가입 폼 출력
 
-  //prettier-ignore
-  const validate = () => { // 유효성 검사 함수
-    const e = {}; // 빈 객체 속성 및 데이터추가 가능
-    const loginIdRegex = /^[a-zA-Z0-9]+$/; // 영어,숫자만 허용
-    if (!signUpForm.loginId || signUpForm.loginId.length < 4) {
-      e.loginId = "아이디는 4자 이상 입력하세요.";
-    } else if (!loginIdRegex.test(signUpForm.loginId)) {
-      e.loginId = "아이디는 영어(대/소문자와)와 숫자만 사용할 수 있습니다.";
-    }
-    if (!signUpForm.password || signUpForm.password.length < 8)
-      e.password = "비밀번호는 8자 이상 입력하세요.";
-    if (signUpForm.confirmPassword !== signUpForm.password)
-      e.confirmPassword = "비밀번호가 일치하지 않습니다.";
-    if (!signUpForm.name) e.name = "이름을 입력하세요.";
-    if (!signUpForm.birthY || !signUpForm.birthM || !signUpForm.birthD) {
-      e.birthDate = "생년월일을 모두 입력하세요.";
-    } else {
-      // 상세 검증
-      const year = parseInt(signUpForm.birthY);
-      const month = parseInt(signUpForm.birthM);
-      const day = parseInt(signUpForm.birthD);
+  // 유효성 검사 함수
+  const validation = () => {
+    const validError = validate(signUpForm); // 회원가입 State 전달
+    setErrors(validError);
 
-      if (year < 1900 || year > new Date().getFullYear()) {
-        e.birthDate = "올바른 연도를 입력하세요.";
-      } else if (month < 1 || month > 12) {
-        e.birthDate = "월은 1~12 사이여야 합니다.";
-      } else if (day < 1 || day > 31) {
-        e.birthDate = "일은 1~31 사이여야 합니다.";
-      }
-    }
-    if (!signUpForm.email || !/^\S+@\S+\.\S+$/.test(signUpForm.email))
-      e.email = "이메일 형식 오류";
-    if (!signUpForm.phoneNumber || !/^\d{10,11}$/.test(signUpForm.phoneNumber))
-      e.phoneNumber = "휴대전화 숫자만 10~11자리 입력하세요.";
-
-    if (!signUpForm.postalCode || !/^\d{5}$/.test(signUpForm.postalCode))
-      e.postalCode = "우편번호는 5자리 숫자입니다.";
-    if (!signUpForm.address) e.address = "기본 주소를 입력하세요.";
-    if (!signUpForm.addressDetail) e.addressDetail = "상세 주소를 입력하세요.";
-
-    setErrors(e);
-
-    if (Object.keys(e).length > 0) {
-      const firstErrorKey = Object.keys(e)[0];
-      const firstErrorMessage = e[firstErrorKey];
-
-      alert(`입력 오류 입니다 : ${firstErrorMessage}`);
+    if (Object.keys(validError).length > 0) {
+      const firstErrorKey = Object.keys(validError)[0];
+      const firstMessage = validError[firstErrorKey];
+      alert(`입력 오류 입니다: ${firstMessage}`);
       return false;
     }
-
     return true;
   };
 
   const handleAddressSearch = () => {
+    // 주소찾기 API
     openPostcode((data) => {
       onChange({
         ...signUpForm,
         postalCode: data.zonecode,
         address: data.address,
-        addressDetail: "",
+        addressDetail: ""
       });
     });
   };
 
-  const handleSubmit = (e) => {
+  // prettier-ignore
+  const handleSubmit = (e) => { // 회원가입 Form 전송
     e.preventDefault();
-    if (validate()) onSubmit();
+    if (validation()) onSubmit();
+  };
+
+  // prettier-ignore
+  const handleDuplicateCheck = async () => { // 중복확인 핸들러
+    console.log("중복확인 버튼이 눌렸습니다");
+
+    const validationErrors = validate(signUpForm);
+    const loginIdError = validationErrors.loginId;
+
+    if (loginIdError) {
+      setErrors({...errors, loginId: loginIdError});
+      alert(`아이디 입력 오류, ${loginIdError}`);
+      return;
+  }
+
+  // 구현부 Redux SignUpSlice 사용
+    try {
+      const resultId = await dispatch( checkLoginIdThunk(signUpForm.loginId)).unwrap(); // Redux Thunk 함수 호출
+      if (resultId.isDuplicate) {   setErrors( { ...errors, loginId: resultId.message || " 이미 사용중인 아이디 입니다."  });
+        alert(resultId.message);
+      } else {
+        setErrors({ ...errors, loginId: "" }); // 에러제거
+        alert(resultId.message || "사용 가능한 아이디 입니다.");
+      }
+    } catch (error) {
+      console.error("중복 확인 오류:", error);
+    }
+  };
+
+  const handleLoginIdChange = (e) => {
+    const filteredValue = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+    onChange({ ...signUpForm, loginId: filteredValue });
+    dispatch(resetLoginIdCheck());
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <Stepper step={2} />
       <div className="grid gap-5">
-        {/* 아이디  입력란 */}
+        {/* 아이디 입력란 */}
         <div>
-          <Input
-            label="아이디 입력"
-            required
-            value={signUpForm.loginId || ""}
-            onChange={(e) =>
-              onChange({ ...signUpForm, loginId: e.target.value })
-            }
-            placeholder="예) product1234"
-            error={errors.loginId}
-          />
+          <label className="block text-sm font-medium mb-2">
+            아이디 입력 <span className="text-rose-600">*</span>
+          </label>
+          <div className="flex gap-2 items-start">
+            <input
+              type="text"
+              required
+              value={signUpForm.loginId || ""}
+              onChange={handleLoginIdChange}
+              placeholder="예) product1234"
+              className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-80 ${
+                errors.loginId ? "border-rose-500" : "border-gray-300"
+              }`}
+            />
+            <button
+              type="button"
+              onClick={handleDuplicateCheck}
+              disabled={checkingLoginId}
+              className="px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors whitespace-nowrap"
+            >
+              {checkingLoginId ? "확인 중..." : "중복 확인"}
+            </button>
+          </div>
           {errors.loginId && (
             <p className="text-xs text-rose-600 mt-1">{errors.loginId}</p>
+          )}
+
+          {loginIdCheckError && (
+            <p className="text-xs text-rose-600 mt-1">{loginIdCheckError}</p>
+          )}
+
+          {loginIdCheckResult?.available && (
+            <p className="text-xs text-green-600 mt-1">
+              {loginIdCheckResult.message}
+            </p>
           )}
         </div>
 
@@ -218,7 +243,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
               onChange={(e) =>
                 onChange({
                   ...signUpForm,
-                  phoneNumber: e.target.value.replace(/\D/g, ""),
+                  phoneNumber: e.target.value.replace(/\D/g, "")
                 })
               }
               placeholder="01012345678"
@@ -256,7 +281,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...signUpForm,
-                    birthY: e.target.value.replace(/\D/g, ""),
+                    birthY: e.target.value.replace(/\D/g, "")
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
@@ -269,7 +294,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...signUpForm,
-                    birthM: e.target.value.replace(/\D/g, ""),
+                    birthM: e.target.value.replace(/\D/g, "")
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
@@ -282,7 +307,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...signUpForm,
-                    birthD: e.target.value.replace(/\D/g, ""),
+                    birthD: e.target.value.replace(/\D/g, "")
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"

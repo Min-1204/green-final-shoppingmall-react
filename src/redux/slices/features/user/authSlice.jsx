@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { loginApi } from "../../../../api/user/userapi";
+import { loginApi } from "../../../../api/user/userApi";
 
 export const loginAsyncThunk = createAsyncThunk(
   "auth/login",
@@ -26,7 +26,7 @@ const initialState = {
   isLoggedIn: false, // 로그인 상태!
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
   error: null, // 에러 상태
-  loading: false, // 로딩 상태
+  loading: false // 로딩 상태
 };
 
 // prettier-ignore

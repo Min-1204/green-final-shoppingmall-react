@@ -28,7 +28,7 @@ export const signUpApi = async (signUpForm) => {
       address: signUpForm.address, // 기본주소
       addressDetail: signUpForm.addressDetail, // 상세주소
       smsAgreement: signUpForm.smsAgreement, // SMS 알림 동의
-      emailAgreement: signUpForm.emailAgreement, // Email 알림 동의
+      emailAgreement: signUpForm.emailAgreement // Email 알림 동의
     };
 
     console.log("백엔드로 보내는 데이터 콘솔", requestData);
@@ -53,6 +53,20 @@ export const loginApi = async (loginForm) => {
     return res.data;
   } catch (error) {
     console.error("로그인 API 에러", error);
+    throw error;
+  }
+};
+
+//prettier-ignore
+export const checkLoginIdApi = async (loginId) => {
+  try {
+    console.log("아이디 중복확인 API", loginId);
+    const response = await axios.get(`${USER_API}/check-loginId`, { params: { loginId } });  // 받은 loginId를 get사용 params 방식으로 전달
+    // Query Parameter 형태로 변환. 즉, .../api/user/check-loginId?loginId=사용자입력값 형태로 요청이 전송됨
+    console.log("백엔드 응답 중복확인", response);
+    return response.data;
+  } catch (error) {
+    console.log("중복확인 API 에러", error);
     throw error;
   }
 };
