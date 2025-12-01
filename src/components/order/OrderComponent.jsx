@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import CouponModal from "./CouponModal";
-import { registerOrder } from "../../api/order/orderApi";
+import { getOneOrder, registerOrder } from "../../api/order/orderApi";
 
 // Helper function to format price with commas and '원'
 const formatPrice = (price) => {
@@ -106,37 +106,119 @@ const OrderComponent = () => {
       return;
     }
 
-    // // ✅ 주문번호 생성 (예: 20250207-38492034)
-    // const orderNumber = `ORD-${Date.now()}`;
-    // 백엔드에서 생성하는 걸로 변경
+    if (selectedPayment === "naver") {
+      alert("해당 결제 수단은 사업자 정보가 필요하여 미구현합니다.");
+      return;
+    }
 
-    const orderProducts = cartItems.map((item) => ({
-      productOptionId: item.productOptionId,
-      quantity: item.quantity,
-    }));
-    console.log("orderProducts", orderProducts);
+    if (
+      !receiverName ||
+      !receiverPhone ||
+      !postalCode ||
+      !streetAddress ||
+      !detailedAddress
+    ) {
+      alert("배송지 정보를 모두 입력해 주세요.");
+      return;
+    }
 
-    const dto = {
-      paymentMethod: selectedPayment,
-      receiverName: receiverName,
-      receiverPhone: receiverPhone,
-      postalCode: postalCode,
-      streetAddress: streetAddress,
-      detailedAddress: detailedAddress,
-      deliveryRequest:
-        deliveryRequest === "직접입력"
-          ? customDeliveryRequest
-          : deliveryRequest,
-      couponId: null,
-      usedPoints: usePoint,
-      orderProducts: orderProducts,
-    };
+    try {
+      const orderProducts = cartItems.map((item) => ({
+        productOptionId: item.productOptionId,
+        quantity: item.quantity,
+      }));
+      console.log("orderProducts", orderProducts);
 
-    const resultOrderId = await registerOrder(dto, 1);
-    console.log("백엔드로부터 받은 주문 id", resultOrderId);
-    navigate("/order/complete", {
-      state: { orderId: resultOrderId },
-    });
+      const dto = {
+        paymentMethod: selectedPayment,
+        receiverName: receiverName,
+        receiverPhone: receiverPhone,
+        postalCode: postalCode,
+        streetAddress: streetAddress,
+        detailedAddress: detailedAddress,
+        deliveryRequest:
+          deliveryRequest === "직접입력"
+            ? customDeliveryRequest
+            : deliveryRequest,
+        couponId: null,
+        usedPoints: usePoint,
+        orderProducts: orderProducts,
+      };
+
+      // 1. 주문 생성(결제 전)
+      const resultOrderId = await registerOrder(dto, 1);
+      console.log("백엔드로부터 받은 주문 id", resultOrderId);
+
+      const resultOrder = await getOneOrder(resultOrderId);
+      console.log("백엔드로부터 받은 주문", resultOrder);
+
+      // 2. 결제 진행
+      // 아임포트 객체 destructuring
+      const { IMP } = window;
+      if (!IMP) {
+        alert("결제 모듈 로딩에 실패했습니다. 페이지를 새로고침해주세요.");
+        return;
+      }
+
+      // SDK 초기화
+      IMP.init("imp62835818");
+
+      // 결제 수단에 따른 PG 및 pay_method 매핑
+      const getPgCode = (method) => {
+        const pgMap = {
+          card: "nice.iamport00m", //나이스페이먼츠 - 카드
+          kakao: "kakaopay.TC0ONETIME",
+          payco: "payco.PARTNERTEST",
+          phone: "nice.iamport00m",
+          bank: "nice.iamport00m",
+        };
+        return pgMap[method];
+      };
+
+      const getPayMethod = (method) => {
+        const payMethodMap = {
+          card: "card",
+          bank: "trans",
+          phone: "phone",
+          kakao: "kakaopay",
+          payco: "payco",
+        };
+        return payMethodMap[method];
+      };
+
+      IMP.request_pay(
+        {
+          pg: getPgCode(selectedPayment), // PG사 설정 추가
+          pay_method: getPayMethod(selectedPayment), //선택한 결제 수단 반영
+          merchant_uid: resultOrder.orderNumber, // 주문 고유 번호
+          digital: true,
+          name:
+            cartItems.length > 1
+              ? `${cartItems[0].productName} 외 ${cartItems.length - 1}건`
+              : cartItems[0].productName,
+          amount: finalPrice, // 최종 결제 금액
+          buyer_email: "user@example.com", //실제 사용자 이메일로 변경 필요
+          buyer_name: receiverName,
+          buyer_tel: receiverPhone,
+          buyer_addr: `${streetAddress} ${detailedAddress}`,
+          buyer_postcode: postalCode,
+        },
+        async (response) => {
+          console.log("결제 응답:", response);
+          if (response.error_code != null) {
+            return alert(
+              `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
+            );
+          }
+          if (response.success) {
+            console.log("결제 성공! imp_uid:", response.imp_uid);
+            navigate("/order/complete", {
+              state: { orderId: resultOrderId },
+            });
+          }
+        }
+      );
+    } catch {}
   };
 
   const handleOrdererInfoChange = (e) => {
