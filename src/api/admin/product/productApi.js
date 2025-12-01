@@ -73,10 +73,19 @@ export const modifyProduct = async (id, productForm) => {
   //   formData.append("optionImages", productForm?.options[i].image);
   // }
 
-  // formData.append("mainImages", productForm.mainImages.thumbnailImage);
+  // 이미지파일과 url 을 별도로 보내라고 한다.
+  // thumbnailImage 가 파일일 수도 있고, url 일수도 있다 어떻게 처리해서 보내지?
+  // mainImages 들이 url 과 File 이 섞여 있다. 별도로 보내면 서버에서 순서를 어떻게 구분하지?
+
+  // formData.append("mainImages", productForm.mainImages.thumbnailImage?.file instanceof File ?
+  //   productForm.mainImages.thumbnailImage.file : productForm.mainImages.thumbnailImage.imageUrl
+  // );
 
   // for (var i = 0; i < productForm?.mainImages?.galleryImages.length; i++) {
-  //   formData.append("mainImages", productForm?.mainImages?.galleryImages[i]);
+  //   formData.append("mainImages", productForm?.mainImages?.galleryImages[i]?.file instanceof File ?
+  //     productForm?.mainImages?.galleryImages[i]?.file : productForm?.mainImages?.galleryImages[i]?.imageUrl
+
+  //   );
   // }
 
   // for (var i = 0; i < productForm?.detailImages?.length; i++) {
