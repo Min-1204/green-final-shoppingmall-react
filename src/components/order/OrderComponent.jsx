@@ -163,17 +163,34 @@ const OrderComponent = () => {
       // SDK 초기화
       IMP.init("imp62835818");
 
+      // 테스트 모드 플래그 추가
+      const IS_TEST_MODE = true; // 프로덕션 배포시 false로 변경
+
       // 결제 수단에 따른 PG 및 pay_method 매핑
       const getPgCode = (method) => {
+        //테스트 모드일 때
+        if (IS_TEST_MODE) {
+        // ⭐ 테스트 모드 - 자정에 자동 취소되는 PG사 사용
+        const testPgMap = {
+          card: "html5_inicis.INIpayTest", // KG이니시스 테스트 (자동취소)
+          kakao: "kakaopay.TC0ONETIME",   // 카카오페이 테스트
+          payco: "payco.PARTNERTEST",     // 페이코 테스트 
+          phone: "danal_tpay.9810030929", // 다날 테스트 (자동취소)
+          bank: "html5_inicis.INIpayTest", // 계좌이체 테스트
+        };
+        return testPgMap[method];
+      } else {
+        // 실제 운영 모드일 때
         const pgMap = {
-          card: "nice.iamport00m", //나이스페이먼츠 - 카드
-          kakao: "kakaopay.TC0ONETIME",
-          payco: "payco.PARTNERTEST",
-          phone: "nice.iamport00m",
-          bank: "nice.iamport00m",
+        card: "nice.iamport00m",
+        kakao: "kakaopay.TC0ONETIME",
+        payco: "payco.PARTNERTEST",
+        phone: "nice.iamport00m",
+        bank: "nice.iamport00m",
         };
         return pgMap[method];
-      };
+      }
+    }
 
       const getPayMethod = (method) => {
         const payMethodMap = {
@@ -196,7 +213,9 @@ const OrderComponent = () => {
             cartItems.length > 1
               ? `${cartItems[0].productName} 외 ${cartItems.length - 1}건`
               : cartItems[0].productName,
-          amount: finalPrice, // 최종 결제 금액
+          
+          // 테스트 모드일 때는 안전한 금액 사용
+          amount: IS_TEST_MODE? 1 : finalPrice, // 최종 결제 금액
           buyer_email: "user@example.com", //실제 사용자 이메일로 변경 필요
           buyer_name: receiverName,
           buyer_tel: receiverPhone,
@@ -212,6 +231,12 @@ const OrderComponent = () => {
           }
           if (response.success) {
             console.log("결제 성공! imp_uid:", response.imp_uid);
+            if (IS_TEST_MODE) {
+              console.log(" 테스트 결제 완료");
+              console.log(" 실제 금액이 출금되었습니다.");
+              console.log(" 자정(23:00~23:50)에 자동 취소됩니다.");
+              console.log(" 신용카드 사용을 권장합니다.");
+            }
             navigate("/order/complete", {
               state: { orderId: resultOrderId },
             });
