@@ -6,8 +6,13 @@ import CancleModal from "./CancleModal";
 import ExchangeModal from "./ExchangeModal";
 import sampleOrders from "../../data/sampleOrders";
 import { getOrderList } from "../../api/order/orderApi";
+import { useSelector } from "react-redux";
 
 export default function OrderHistoryComponent() {
+  const { user } = useSelector((state) => state.authSlice);
+
+  console.log("user", user);
+
   const [selectedPeriod, setSelectedPeriod] = useState("1개월");
   const [reviewModal, setReviewModal] = useState(false);
   const [countStatus, setCountStatus] = useState({
@@ -75,20 +80,13 @@ export default function OrderHistoryComponent() {
   };
 
   useEffect(() => {
+    console.log("userId", user.id);
     const fetchOrderList = async (userId) => {
       const data = await getOrderList(userId);
       setOrderList(data);
     };
 
-    fetchOrderList(1);
-
-    // sampleOrders
-    //   .flatMap((o) => o.product)
-    //   .forEach((p) => {
-    //     newCountState[p.status] += 1;
-    //   });
-
-    // setCountStatus(newCountState);
+    fetchOrderList(user.id);
   }, []);
 
   useEffect(() => {
