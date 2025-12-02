@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import CouponModal from "./CouponModal";
 import { getOneOrder, registerOrder } from "../../api/order/orderApi";
+import axios from "axios";
+
+const API_SERVER_HOST = "http://localhost:8080";
 
 // Helper function to format price with commas and '원'
 const formatPrice = (price) => {
@@ -164,33 +167,33 @@ const OrderComponent = () => {
       IMP.init("imp62835818");
 
       // 테스트 모드 플래그 추가
-      const IS_TEST_MODE = true; // 프로덕션 배포시 false로 변경
+      const IS_TEST_MODE = false; // 프로덕션 배포시 false로 변경
 
       // 결제 수단에 따른 PG 및 pay_method 매핑
       const getPgCode = (method) => {
         //테스트 모드일 때
         if (IS_TEST_MODE) {
-        // ⭐ 테스트 모드 - 자정에 자동 취소되는 PG사 사용
-        const testPgMap = {
-          card: "html5_inicis.INIpayTest", // KG이니시스 테스트 (자동취소)
-          kakao: "kakaopay.TC0ONETIME",   // 카카오페이 테스트
-          payco: "payco.PARTNERTEST",     // 페이코 테스트 
-          phone: "danal_tpay.9810030929", // 다날 테스트 (자동취소)
-          bank: "html5_inicis.INIpayTest", // 계좌이체 테스트
-        };
-        return testPgMap[method];
-      } else {
-        // 실제 운영 모드일 때
-        const pgMap = {
-        card: "nice.iamport00m",
-        kakao: "kakaopay.TC0ONETIME",
-        payco: "payco.PARTNERTEST",
-        phone: "nice.iamport00m",
-        bank: "nice.iamport00m",
-        };
-        return pgMap[method];
-      }
-    }
+          // ⭐ 테스트 모드 - 자정에 자동 취소되는 PG사 사용
+          const testPgMap = {
+            card: "html5_inicis.INIpayTest", // KG이니시스 테스트 (자동취소)
+            kakao: "kakaopay.TC0ONETIME", // 카카오페이 테스트
+            payco: "payco.PARTNERTEST", // 페이코 테스트
+            phone: "danal_tpay.9810030929", // 다날 테스트 (자동취소)
+            bank: "html5_inicis.INIpayTest", // 계좌이체 테스트
+          };
+          return testPgMap[method];
+        } else {
+          // 실제 운영 모드일 때
+          const pgMap = {
+            card: "nice.iamport00m",
+            kakao: "kakaopay.TC0ONETIME",
+            payco: "payco.PARTNERTEST",
+            phone: "nice.iamport00m",
+            bank: "nice.iamport00m",
+          };
+          return pgMap[method];
+        }
+      };
 
       const getPayMethod = (method) => {
         const payMethodMap = {
@@ -213,9 +216,9 @@ const OrderComponent = () => {
             cartItems.length > 1
               ? `${cartItems[0].productName} 외 ${cartItems.length - 1}건`
               : cartItems[0].productName,
-          
+
           // 테스트 모드일 때는 안전한 금액 사용
-          amount: IS_TEST_MODE? 1 : finalPrice, // 최종 결제 금액
+          amount: IS_TEST_MODE ? 1 : finalPrice, // 최종 결제 금액
           buyer_email: "user@example.com", //실제 사용자 이메일로 변경 필요
           buyer_name: receiverName,
           buyer_tel: receiverPhone,
@@ -231,19 +234,52 @@ const OrderComponent = () => {
           }
           if (response.success) {
             console.log("결제 성공! imp_uid:", response.imp_uid);
-            if (IS_TEST_MODE) {
-              console.log(" 테스트 결제 완료");
-              console.log(" 실제 금액이 출금되었습니다.");
-              console.log(" 자정(23:00~23:50)에 자동 취소됩니다.");
-              console.log(" 신용카드 사용을 권장합니다.");
+
+            try {
+              const verificationResponse = await axios.post(
+                `${API_SERVER_HOST}/api/payments/verify`,
+                {
+                  imp_uid: response.imp_uid,
+                  merchant_uid: response.merchant_uid,
+                }
+              );
+
+              if (verificationResponse.status === 200) {
+                //서버 검증까지 최종 성공 시 페이지 이동
+                console.log("결제 및 서버 검증이 완료되었습니다.");
+                navigate("/order/complete", {
+                  state: { orderId: resultOrderId },
+                });
+              }
+            } catch (error) {
+              alert("서버 검증 실패:", error);
+              if (error.response) {
+                // 서버가 응답을 보냈지만 에러 상태 (400,500 등)
+                alert(
+                  `결제는 성공했지만 서버 검증 실패: ${error.response.data}`
+                );
+              } else if (error.request) {
+                //요청은 보냈지만 응답이 없음 (네트워크 오류)
+                alert("서버와 통신할 수 없습니다. 네트워크를 확인해주세요.");
+              } else {
+                //요청 설정 중 오류
+                alert("요청 중 오류가 발생했습니다: " + error.message);
+              }
             }
-            navigate("/order/complete", {
-              state: { orderId: resultOrderId },
-            });
+
+            // if (IS_TEST_MODE) {
+            //   console.log(" 테스트 결제 완료");
+            //   console.log(" 실제 금액이 출금되었습니다.");
+            //   console.log(" 자정(23:00~23:50)에 자동 취소됩니다.");
+            //   console.log(" 신용카드 사용을 권장합니다.");
+            // }
           }
         }
       );
-    } catch {}
+    } catch (error) {
+      console.error("주문 생성 중 오류:", error);
+      alert("주문 처리 중 오류가 발생했습니다.");
+    }
   };
 
   const handleOrdererInfoChange = (e) => {
