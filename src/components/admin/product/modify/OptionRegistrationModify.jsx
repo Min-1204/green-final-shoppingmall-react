@@ -68,7 +68,7 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
   const inputChangeHandler = (index, field, value) => {
     const updatedOptions = options.map((option, idx) =>
       // 수정한 옵션의 값만 바뀌도록
-      idx === index ? { ...option, [field]: value, type: "new" } : option
+      idx === index ? { ...option, [field]: value } : option
     );
     setOptions(updatedOptions);
     onChangeForm(updatedOptions);
@@ -77,7 +77,9 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
   const inputImgChangeHandler = (index, field, value) => {
     const updatedOptions = options.map((option, idx) =>
       // 수정한 옵션의 값만 바뀌도록
-      idx === index ? { ...option, [field]: value, imageUrl: null } : option
+      idx === index
+        ? { ...option, [field]: value, imageUrl: null, type: "new" }
+        : option
     );
     setOptions(updatedOptions);
     onChangeForm(updatedOptions);
