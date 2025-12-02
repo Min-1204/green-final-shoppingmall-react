@@ -15,7 +15,7 @@ const MyPageReviewList = () => {
   // 화면에 리뷰 목록 보이기
   useEffect(() => {
     const getReviews = async () => {
-      const review = await getMyReviews(2);
+      const review = await getMyReviews(1);
       setReviews(review);
       console.log("review => ", review);
     };
@@ -102,6 +102,9 @@ const MyPageReviewList = () => {
                   </p>
                   <div className="flex items-center gap-2 text-xs text-zinc-500">
                     <span>주문일자</span>
+                    <span>
+                      {review.purchaseDate.slice(0, 10).replace(/-/g, ".")}
+                    </span>
                   </div>
                 </div>
               </div>
