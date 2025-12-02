@@ -1,17 +1,62 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useDaumPostalCode } from "../../../hooks/useDaumPostalCode";
+import { useNavigate } from "react-router-dom";
+import { getUserProfileThunk } from "../../../redux/slices/features/user/authSlice";
+import {
+  formatPhoneNumber,
+  unformatPhoneNumber,
+} from "../util/formatPhoneNumber.js";
 
 export default function ProfileForm() {
-  const { user = null } = useSelector((state) => state.authSlice || {});
+  const { user, loading } = useSelector((state) => state.authSlice);
+  const { openPostcode } = useDaumPostalCode(); // 다음주소API
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  console.log("Redux User 출력 :", user);
 
   // prettier-ignore
-  const [modifyform, setModifyForm] = useState({ ...(user || {}),
-    // Y, M, D가 분리되어 있는상태로 문자열 결합하기
-    birthDate: // birth_date 속성 추가
-      user?.birthY && user?.birthM && user?.birthD // user 데이터의 birth Y , M , D 데이터가 전부 있는지
-        ? `${user.birthY} - ${String(user.birthM).padStart(2, "0")} - ${String( user.birthD).padStart(2, "0")}` // 있다면 백틱 객체리터럴사용해서 문자열 결합
-        : "",
+  const [modifyForm, setModifyForm] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    phoneNumber: user?.phoneNumber || "",
+    birthDate: user?.birthDate || "",
+    postalCode: user?.postalCode || "",
+    address: user?.address || "",
+    addressDetail: user?.addressDetail || "",
+    smsAgreement: user?.smsAgreement || false,
+    emailAgreement: user?.emailAgreement || false,
+    password: "",
   });
+
+  // 로그인한 사용자만 마이페이지 접근할 수 있는 로직 현재는 주석처리
+  useEffect(() => {
+    if (!user) {
+      // navigate("/login");
+      return;
+    }
+    dispatch(getUserProfileThunk(user.loginId));
+    console.log("개인정보수정 Form 확인 : ", user);
+  }, [user?.loginId, navigate, dispatch]);
+
+  useEffect(() => {
+    if (user && user.loginId && user.name) {
+      setModifyForm({
+        name: user?.name || "",
+        email: user?.email || "",
+        phoneNumber: user?.phoneNumber || "",
+        birthDate: user?.birthDate || "",
+        postalCode: user?.postalCode || "",
+        address: user?.address || "",
+        addressDetail: user?.addressDetail || "",
+        smsAgreement: user?.smsAgreement || false,
+        emailAgreement: user?.emailAgreement || false,
+        password: "",
+      });
+    }
+  }, [user]);
+
+  console.log("ModifyForm 출력 :", modifyForm);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -21,18 +66,30 @@ export default function ProfileForm() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!modifyform.password) {
+    if (!modifyForm.password) {
       alert("수정하려면 현재 비밀번호를 입력하세요.");
       return;
     }
-    console.log("profile update payload:", modifyform);
-    alert("지금은 스케치 단계입니다. 백엔드 붙인 후 실제로 저장하세요 🙂");
+    try {
+      const result = await dispatch(modifyUserProfile(modifyForm)).unwrap();
+      alert("개인정보 수정이 완료되었습니다");
+      console.log("profile update payload:", modifyForm);
+    } catch (error) {
+      alert("개인정보 수정이 실패 하였습니다.", error);
+    }
   };
 
-  const handleFindAddress = () => {
-    alert("여기에 다음/카카오 우편번호 팝업 붙일 예정입니다.");
+  const handleAddressSearch = () => {
+    openPostcode((data) => {
+      setModifyForm({
+        ...modifyForm,
+        postalCode: data.zonecode,
+        address: data.address,
+        addressDetail: "",
+      });
+    });
   };
 
   return (
@@ -44,7 +101,7 @@ export default function ProfileForm() {
           <input
             name="name"
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={modifyform.name}
+            value={modifyForm.name}
             readOnly
           />
         </div>
@@ -54,18 +111,17 @@ export default function ProfileForm() {
             name="email"
             type="email"
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={modifyform.email}
+            value={modifyForm.email}
             onChange={handleChange}
-            readOnly
           />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">휴대전화번호</label>
           <input
-            name="phone_Number"
+            name="phoneNumber"
             maxLength={11}
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={modifyform.phoneNumber}
+            value={formatPhoneNumber(modifyForm.phoneNumber)}
             onChange={handleChange}
             readOnly
           />
@@ -78,7 +134,7 @@ export default function ProfileForm() {
             name="birthDate"
             maxLength={8}
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={modifyform.birthDate}
+            value={modifyForm.birthDate}
             readOnly
           />
         </div>
@@ -93,13 +149,12 @@ export default function ProfileForm() {
             name="postalCode"
             placeholder="우편번호"
             className="sm:w-48 border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={modifyform.postalCode}
-            onChange={handleChange}
+            value={modifyForm.postalCode}
             readOnly
           />
           <button
             type="button"
-            onClick={handleFindAddress}
+            onClick={handleAddressSearch}
             className="inline-flex items-center justify-center px-4 h-11 rounded-lg bg-zinc-900 text-white text-sm hover:bg-zinc-800"
           >
             주소찾기
@@ -110,8 +165,8 @@ export default function ProfileForm() {
             name="address"
             placeholder="도로명주소"
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={modifyform.address}
-            onChange={handleChange}
+            value={modifyForm.address}
+            readOnly
           />
         </div>
         <div>
@@ -119,7 +174,7 @@ export default function ProfileForm() {
             name="addressDetail"
             placeholder="상세주소"
             className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
-            value={modifyform.addressDetail}
+            value={modifyForm.addressDetail}
             onChange={handleChange}
           />
         </div>
@@ -131,7 +186,7 @@ export default function ProfileForm() {
           <input
             type="checkbox"
             name="smsAgreement"
-            checked={modifyform.smsAgreement}
+            checked={modifyForm.smsAgreement}
             onChange={handleChange}
             className="w-4 h-4"
           />
@@ -141,7 +196,7 @@ export default function ProfileForm() {
           <input
             type="checkbox"
             name="emailAgreement"
-            checked={modifyform.emailAgreement}
+            checked={modifyForm.emailAgreement}
             onChange={handleChange}
             className="w-4 h-4"
           />
@@ -159,12 +214,10 @@ export default function ProfileForm() {
           name="password"
           placeholder="정보를 수정하려면 현재 비밀번호를 입력하세요."
           className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-red-400/30"
-          value={modifyform.password}
+          value={modifyForm.password}
           onChange={handleChange}
         />
-        <p className="text-xs text-zinc-400 mt-1">
-          서버에서 실제 로그인 비밀번호와 일치하는지 다시 검증해야 합니다.
-        </p>
+        <p className="text-xs text-zinc-400 mt-1">안내글 설정은 아직입니다.</p>
       </div>
 
       {/* 저장 버튼 */}

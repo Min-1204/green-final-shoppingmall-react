@@ -27,7 +27,7 @@ export const validate = (signUpForm) => { // 유효성 검사 함수
     if (!signUpForm.email || !/^\S+@\S+\.\S+$/.test(signUpForm.email))            e.email = "이메일 형식 오류";
 
     // 연락처 검사 로직
-    if (!signUpForm.phoneNumber || !/^\d{10,11}$/.test(signUpForm.phoneNumber))   e.phoneNumber = "휴대전화 숫자만 10~11자리 입력하세요.";
+    if (!signUpForm.phoneNumber || !/^\d{11}$/.test(signUpForm.phoneNumber))   e.phoneNumber = "휴대전화 숫자만 11자리 입력하세요.";
 
     // 우편번호 검사 로직
     if (!signUpForm.postalCode || !/^\d{5}$/.test(signUpForm.postalCode))         e.postalCode = "우편번호는 5자리 숫자입니다.";
