@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import ReviewModifyDelete from "../../review/ReviewModifyDelete";
 import ReviewSee from "../../review/ReviewSee";
 import { getMyReviews } from "../../../api/review/reviewApi";
+import { useNavigate } from "react-router-dom";
 
 const MyPageReviewList = () => {
-  const [reviewModal, setReviewModal] = useState(false);
-  const [reviewSeeModal, setReviewSeeModal] = useState(false);
-  const [selectedReviewEdit, setSelectedReviewEdit] = useState(null);
-  const [selectedReviewSee, setSelectedReviewSee] = useState(null);
-  const [reviews, setReviews] = useState([]);
+  const [reviewModal, setReviewModal] = useState(false); //리뷰 수정용 모달
+  const [reviewSeeModal, setReviewSeeModal] = useState(false); //리뷰 보기 모달
+  const [selectedReviewEdit, setSelectedReviewEdit] = useState(null); //수정할 리뷰
+  const [selectedReviewSee, setSelectedReviewSee] = useState(null); //리뷰 보기로 보려는 리뷰
+  const [reviews, setReviews] = useState([]); //리뷰 목록
+  const navigate = useNavigate();
 
+  // 화면에 리뷰 목록 보이기
   useEffect(() => {
     const getReviews = async () => {
       const review = await getMyReviews(2);
@@ -19,6 +22,7 @@ const MyPageReviewList = () => {
     getReviews();
   }, []);
 
+  //리뷰 수정(업데이트) 핸들러
   const reviewUpdatedHandler = (updatedReview) => {
     if (updatedReview.deleted) {
       //삭제일때
@@ -47,6 +51,10 @@ const MyPageReviewList = () => {
     }
   };
 
+  const productDetailPageHandler = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <div className="w-full bg-white">
       <div className="px-8 pt-6 pb-8">
@@ -68,30 +76,33 @@ const MyPageReviewList = () => {
           {reviews.map((review) => (
             <div
               key={review.id}
-              className="grid grid-cols-12 gap-4 py-6 items-start hover:bg-zinc-50 transition"
+              className="grid grid-cols-12 gap-4 py-6 items-start"
             >
               {/* 상품 정보 */}
               <div className="col-span-6 flex gap-4">
-                <div className="relative">
+                <div
+                  className="relative cursor-pointer"
+                  onClick={() => productDetailPageHandler(review.productId)}
+                >
                   <img
-                    src={review.image}
-                    alt={review.productName}
-                    className="w-24 h-24 object-cover rounded border"
+                    src={review.productImage}
+                    alt="product"
+                    className="w-24 h-24 object-cover rounded"
                   />
-                  <span className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded">
-                    {review.id}
-                  </span>
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 text-xs text-zinc-500 mb-2">
-                    <span>구매일자</span>
-                    <span>{review.date}</span>
-                    <span>| 매장</span>
-                  </div>
-                  <p className="font-medium text-sm mb-1">
+                  <p className="text-sm text-zinc-800 mb-1 font-bold">
+                    {review.brandName}
+                  </p>
+                  <p
+                    className="font-medium text-sm mb-2 cursor-pointer hover:text-zinc-900"
+                    onClick={() => productDetailPageHandler(review.productId)}
+                  >
                     {review.productName}
                   </p>
-                  <p className="text-xs text-zinc-500">{review.option}</p>
+                  <div className="flex items-center gap-2 text-xs text-zinc-500">
+                    <span>주문일자</span>
+                  </div>
                 </div>
               </div>
 
