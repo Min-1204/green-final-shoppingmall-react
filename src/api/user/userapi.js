@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const APISERVER = "http://localhost:8080";
-const USER_API = `${APISERVER}/api/user`;
+const API_SERVER = "http://localhost:8080";
+const USER_API = `${API_SERVER}/api/user`;
 
 export const signUpApi = async (signUpForm) => {
   try {
@@ -28,31 +28,34 @@ export const signUpApi = async (signUpForm) => {
       address: signUpForm.address, // 기본주소
       addressDetail: signUpForm.addressDetail, // 상세주소
       smsAgreement: signUpForm.smsAgreement, // SMS 알림 동의
-      emailAgreement: signUpForm.emailAgreement // Email 알림 동의
+      emailAgreement: signUpForm.emailAgreement, // Email 알림 동의
     };
 
     console.log("백엔드로 보내는 데이터 콘솔", requestData);
 
     const res = await axios.post(`${USER_API}/signup`, requestData);
-    console.log("여기는 응답 데이터 확인 콘솔", res.data);
+    console.log("1) 여기는 응답 데이터 확인 콘솔", res.data);
     return res.data;
   } catch (error) {
-    console.error("회원가입 API 에러", error.response?.data || error.message);
+    console.error(
+      "2) 회원가입 API 에러",
+      error.response?.data || error.message
+    );
     throw error.response?.data.message || "회원가입에 실패했습니다.";
   }
 };
 
 export const loginApi = async (loginForm) => {
   try {
-    console.log("로그인 API 호출 + 요청 데이터", loginForm);
+    console.log("1) 로그인 API 호출 + 요청 데이터", loginForm);
     const res = await axios.post(`${USER_API}/login`, loginForm);
-    console.log("로그인 API + 응답 데이터", res.data);
+    console.log("2) 로그인 API + 응답 데이터", res.data);
     if (!res.data) {
       throw new Error("데이터가 없습니다");
     }
     return res.data;
   } catch (error) {
-    console.error("로그인 API 에러", error);
+    console.error("3) 로그인 API 에러", error);
     throw error;
   }
 };
@@ -60,13 +63,38 @@ export const loginApi = async (loginForm) => {
 //prettier-ignore
 export const checkLoginIdApi = async (loginId) => {
   try {
-    console.log("아이디 중복확인 API", loginId);
+    console.log("1) 아이디 중복확인 API", loginId);
     const response = await axios.get(`${USER_API}/check-loginId`, { params: { loginId } });  // 받은 loginId를 get사용 params 방식으로 전달
     // Query Parameter 형태로 변환. 즉, .../api/user/check-loginId?loginId=사용자입력값 형태로 요청이 전송됨
-    console.log("백엔드 응답 중복확인", response);
+    console.log("2) 백엔드 응답 중복확인", response);
     return response.data;
   } catch (error) {
-    console.log("중복확인 API 에러", error);
+    console.log("3 ) 중복확인 API 에러", error);
+    throw error;
+  }
+};
+
+//prettier-ignore
+export const getProfileApi = async (loginId) => {
+  try {
+    const response = await axios.get(`${USER_API}/profile`, { params: { loginId }});
+    console.log("1) 프로필 조회 API : ", response.data);
+    return response.data;
+  } catch (error) {
+    console.log("2) 프로필 조회 에러 : ", error);
+    throw error;
+  }
+};
+
+//prettier-ignore
+export const modifyProfileApi = async (modifyForm) => {
+  try{ 
+  console.log("1) 개인정보수정 출력", modifyForm);
+  const response = await axios.put(`${USER_API}/profile-modify`, modifyForm);
+  console.log("2) 개인정보수정 백엔드 응답 :", response.data);
+  return response.data;
+  } catch (error) {
+    console.log("3) 개인정보수정 API 에러", error);
     throw error;
   }
 };

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { loginApi } from "../../../../api/user/userApi";
+import { getProfileApi, loginApi } from "../../../../api/user/userApi";
 
 export const loginAsyncThunk = createAsyncThunk(
   "auth/login",
@@ -20,13 +20,25 @@ export const loginAsyncThunk = createAsyncThunk(
   }
 );
 
+export const getUserProfileThunk = createAsyncThunk(
+  "auth/getUserProfile",
+  async (loginId, { rejectWithValue }) => {
+    try {
+      const response = await getProfileApi(loginId);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "프로필 조회 실패");
+    }
+  }
+);
+
 const initialState = {
   // 기본 State
   user: null, // 로그인한 사용자의 정보
   isLoggedIn: false, // 로그인 상태!
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
   error: null, // 에러 상태
-  loading: false // 로딩 상태
+  loading: false, // 로딩 상태
 };
 
 // prettier-ignore
@@ -99,7 +111,22 @@ export const authSlice = createSlice({// Slice 생성
         state.user = null;
 
         console.log("여기는 AuthSlice rejected 로그인 실패:", action.payload);
-      });
+      })
+      .addCase(getUserProfileThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserProfileThunk.fulfilled, (state,action) => {
+        state.loading = false;
+        state.error = null;
+        state.user = action.payload;
+        localStorage.setItem("currentUser", JSON.stringify(action.payload))
+        console.log("프로필 조회 성공 : ", action.payload)
+      })
+      .addCase(getUserProfileThunk.rejected, (state,action) => {
+        state.loading= false;
+        state.error = action.payload
+      })
   },
 });
 
