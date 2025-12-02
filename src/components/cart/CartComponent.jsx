@@ -6,6 +6,11 @@ import useCustomCart from "../../hooks/useCustomCart";
 
 //장바구니 페이지 컴포넌트
 const CartComponent = () => {
+  // 유저 정보
+  const { user } = useSelector((state) => state.authSlice);
+
+  console.log("userId", user.id);
+
   const navigate = useNavigate();
 
   // cartSlice에 action을 전달할 dispatch 불러오기
@@ -14,9 +19,6 @@ const CartComponent = () => {
   // 장바구니 기능
   const { refreshCart, changeCart, removeItem, removeAll } = useCustomCart();
 
-  // 유저 아이디
-  const [userId, setUserId] = useState(1);
-
   //store 전역 저장소에서 장바구니 내역 불러오기
   const cart = useSelector((state) => state.cartSlice);
   // console.log("cart", cart);
@@ -24,7 +26,7 @@ const CartComponent = () => {
   const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
-    refreshCart(userId);
+    refreshCart(user.id);
   }, []);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const CartComponent = () => {
     console.log("handleChangeQty 함수 발생 : item => ", item);
     const newQuantity = item.quantity + delta;
     const dto = {
-      userId: userId,
+      userId: user.id,
       id: item.id,
       productOptionId: item.productOptionId,
       quantity: newQuantity,
