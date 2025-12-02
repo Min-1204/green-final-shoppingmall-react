@@ -1,27 +1,18 @@
 import { X, Plus, ChevronUp, ChevronDown } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
-const initialImages = {
-  detailImages: [{ file: null, imageUrl: "" }],
-};
-
 function ProductDetailImagesModify({ existingData, onChangeForm }) {
   const detailRef = useRef(null);
   const [isOpen, setIsOpen] = useState(true);
-  const [images, setImages] = useState(initialImages);
+  const [images, setImages] = useState([]);
   // 선택된 미리보기 이미지의 인덱스
-  const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(null);
+  const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   // 전체 이미지 미리보기 모달
   const [showFullPreview, setShowFullPreview] = useState(false);
 
   useEffect(() => {
     if (existingData) {
-      const data = existingData.map((img) => ({
-        ...img,
-        file: img.file ? img.file : null,
-      }));
-      setImages({ detailImages: [...data] });
-      setSelectedPreviewIndex(0);
+      setImages([...existingData]);
     }
   }, [existingData]);
 
@@ -29,16 +20,22 @@ function ProductDetailImagesModify({ existingData, onChangeForm }) {
     // const files = Array.from(e.target.files);
     const file = e.target.files[0];
     if (file) {
-      const updatedImages = {
-        detailImages: [...images.detailImages, { file: file, imageUrl: null }],
-      };
-      setImages(updatedImages);
-      onChangeForm(updatedImages.detailImages);
+      const updatedImages = [
+        ...images,
+        {
+          type: "new",
+          file: file,
+          imageUrl: null,
+          displayOrder: images.length,
+        },
+      ];
 
-      // 첫 이미지가 추가되면 자동으로 미리보기 표시
-      if (images.detailImages.length === 0) {
-        setSelectedPreviewIndex(0);
-      }
+      setImages(updatedImages);
+      onChangeForm(updatedImages);
+
+      // 자동으로 미리보기 표시
+      // console.log("images.length : ", images.length);
+      // setSelectedPreviewIndex(images.length);
     }
     // 파일 선택 후 input 값 초기화
     e.target.value = "";
@@ -46,33 +43,28 @@ function ProductDetailImagesModify({ existingData, onChangeForm }) {
 
   // 이미지 삭제 핸들러
   const removeImageHandler = (index) => {
-    const updatedImages = {
-      detailImages: images.detailImages.filter((_, idx) => idx !== index),
-    };
+    const updatedImages = images
+      .filter((_, idx) => idx !== index)
+      .map((img, idx) => ({ ...img, displayOrder: idx }));
 
     setImages(updatedImages);
-    onChangeForm(updatedImages.detailImages);
-
-    // setImages((prev) => ({
-    //   ...prev,
-    //   detailImages: prev.detailImages.filter((_, i) => i !== index),
-    // }));
+    onChangeForm(updatedImages);
 
     // 미리보기 인덱스 재설정
     if (selectedPreviewIndex === index) {
-      setSelectedPreviewIndex(images.detailImages.length > 1 ? 0 : null);
+      setSelectedPreviewIndex(images.length > 1 ? 0 : null);
     } else if (selectedPreviewIndex > index) {
       setSelectedPreviewIndex((prev) => prev - 1);
     }
   };
 
   // 현재 선택된 미리보기 파일
-  const currentPreviewFile = images.detailImages[selectedPreviewIndex]?.file;
+  const currentPreviewFile = images[selectedPreviewIndex]?.file;
 
   // 현재 선택된 파일의 URL
   const currentPreviewUrl = currentPreviewFile
     ? URL.createObjectURL(currentPreviewFile)
-    : images.detailImages[selectedPreviewIndex]?.imageUrl;
+    : images[selectedPreviewIndex]?.imageUrl;
 
   // 현재 선택된 파일의 정보
   const currentPreviewInfo = {
@@ -123,7 +115,7 @@ function ProductDetailImagesModify({ existingData, onChangeForm }) {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {/* 상세 이미지 목록 */}
-                {images.detailImages.map((img, index) => (
+                {images.map((img, index) => (
                   <tr
                     key={index}
                     className={`hover:bg-gray-50 transition divide-x divide-gray-200 ${
@@ -154,7 +146,7 @@ function ProductDetailImagesModify({ existingData, onChangeForm }) {
                 ))}
 
                 {/* 이미지가 없을 때 */}
-                {images.detailImages.length === 0 && (
+                {images.length === 0 && (
                   <tr>
                     <td
                       colSpan="4"
@@ -185,8 +177,7 @@ function ProductDetailImagesModify({ existingData, onChangeForm }) {
                     colSpan="2"
                     className="px-3 py-3 text-left text-gray-500 bg-gray-50"
                   >
-                    {images.detailImages.length}개의 상세 이미지가
-                    등록되었습니다.
+                    {images.length}개의 상세 이미지가 등록되었습니다.
                   </td>
                 </tr>
               </tbody>
@@ -198,7 +189,7 @@ function ProductDetailImagesModify({ existingData, onChangeForm }) {
             <div className="flex border-b border-gray-300 items-stretch bg-gray-50">
               <div className="w-full px-4 py-3 text-gray-700 font-semibold flex justify-between items-center">
                 <span>미리보기</span>
-                {images.detailImages.length > 0 && (
+                {images.length > 0 && (
                   <button
                     onClick={() => setShowFullPreview(true)}
                     className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm text-sm font-normal"
@@ -312,7 +303,7 @@ function ProductDetailImagesModify({ existingData, onChangeForm }) {
             {/* 모달 내용 - 이미지들을 세로로 나열 */}
             <div className="overflow-y-auto p-6 bg-gray-50">
               <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-2xl mx-auto">
-                {images.detailImages.map((img, index) => (
+                {images.map((img, index) => (
                   <div key={index} className="relative">
                     <img
                       src={
@@ -331,7 +322,7 @@ function ProductDetailImagesModify({ existingData, onChangeForm }) {
 
               {/* 안내 문구 */}
               <div className="text-center mt-4 text-sm text-gray-500">
-                총 {images.detailImages.length}개의 이미지가 등록되었습니다.
+                총 {images.length}개의 이미지가 등록되었습니다.
               </div>
             </div>
 

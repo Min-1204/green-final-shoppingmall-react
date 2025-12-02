@@ -48,6 +48,26 @@ export const registerProduct = async (productForm) => {
 
 export const modifyProduct = async (id, productForm) => {
   const formData = new FormData();
+
+  // 이미지 순서, url 정보 만들기
+  const mainImagesOrderData = productForm.mainImages.map((img) => ({
+    type: img.type,
+    imageUrl: img.type === "existing" ? img.imageUrl : null,
+    displayOrder: img.displayOrder,
+    imageType: img.imageType,
+  }));
+
+  const detailImagesOrderData = productForm.detailImages.map((img) => ({
+    type: img.type,
+    imageUrl: img.type === "existing" ? img.imageUrl : null,
+    displayOrder: img.displayOrder,
+  }));
+
+  const optionsOrderData = productForm.options.map((o) => ({
+    ...o,
+    file: null,
+  }));
+
   formData.append(
     "product",
     new Blob(
@@ -57,44 +77,39 @@ export const modifyProduct = async (id, productForm) => {
           brand: productForm?.brand,
           basicInfo: productForm?.basicInfo,
           saleInfo: productForm?.saleInfo,
-          // options: productForm?.options.map((option) => ({
-          //   ...option,
-          //   image: null,
-          // })),
           deliveryPolicy: productForm?.deliveryPolicy,
           detailInfo: productForm?.detailInfo,
+          mainImages: mainImagesOrderData,
+          detailImages: detailImagesOrderData,
+          options: optionsOrderData,
         }),
       ],
       { type: "application/json" }
     )
   );
 
-  // for (var i = 0; i < productForm?.options.length; i++) {
-  //   formData.append("optionImages", productForm?.options[i].image);
-  // }
+  // 이미지 파일 담기
+  for (const img of productForm.mainImages.filter(
+    (img) => img.type === "new"
+  )) {
+    formData.append(`mainImageFile-${img.displayOrder}`, img?.file);
+  }
 
-  // 이미지파일과 url 을 별도로 보내라고 한다.
-  // thumbnailImage 가 파일일 수도 있고, url 일수도 있다 어떻게 처리해서 보내지?
-  // mainImages 들이 url 과 File 이 섞여 있다. 별도로 보내면 서버에서 순서를 어떻게 구분하지?
+  for (const img of productForm.detailImages.filter(
+    (img) => img.type === "new"
+  )) {
+    formData.append(`detailImageFile-${img.displayOrder}`, img?.file);
+  }
 
-  // formData.append("mainImages", productForm.mainImages.thumbnailImage?.file instanceof File ?
-  //   productForm.mainImages.thumbnailImage.file : productForm.mainImages.thumbnailImage.imageUrl
-  // );
+  productForm.options
+    .filter((o) => o.type === "new")
+    .forEach((o) => {
+      formData.append(`optionImageFile-${o.displayOrder}`, o?.file);
+    });
 
-  // for (var i = 0; i < productForm?.mainImages?.galleryImages.length; i++) {
-  //   formData.append("mainImages", productForm?.mainImages?.galleryImages[i]?.file instanceof File ?
-  //     productForm?.mainImages?.galleryImages[i]?.file : productForm?.mainImages?.galleryImages[i]?.imageUrl
+  // const header = { headers: { "Content-Type": "multipart/form-data" } };
 
-  //   );
-  // }
-
-  // for (var i = 0; i < productForm?.detailImages?.length; i++) {
-  //   formData.append("detailImages", productForm?.detailImages?.[i]);
-  // }
-
-  const header = { headers: { "Content-Type": "multipart/form-data" } };
-
-  const res = await axios.put(`${prefix}/${id}`, formData, header);
+  const res = await axios.put(`${prefix}/${id}`, formData);
   return res.data;
 };
 
