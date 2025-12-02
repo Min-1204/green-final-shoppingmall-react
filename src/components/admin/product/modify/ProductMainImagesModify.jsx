@@ -1,82 +1,59 @@
 import { X, Plus, ChevronUp, ChevronDown } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
-const initialImages = {
-  thumbnailImage: null,
-  galleryImages: [],
-};
-
 function ProductMainImagesModify({ existingData, onChangeForm }) {
   const thumbnailRef = useRef(null);
   const galleryRef = useRef(null);
   const [isOpen, setIsOpen] = useState(true);
-  const [images, setImages] = useState(initialImages);
+  const [images, setImages] = useState([]);
   // 선택된 미리보기 이미지의 인덱스 (미리보기 상세 정보를 보여주기 위함)
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
 
   useEffect(() => {
     if (existingData) {
-      const thumnailImg = {
-        ...existingData.thumbnailImage,
-        file: existingData?.thumbnailImage?.file
-          ? existingData.thumbnailImage.file
-          : null,
-      };
-      const galleryImgs = existingData.galleryImages.map((img) => ({
-        ...img,
-        file: img?.file ? img.file : null,
-      }));
-      setImages({ thumbnailImage: thumnailImg, galleryImages: galleryImgs });
+      setImages([...existingData]);
     }
   }, [existingData]);
 
   const thumbnailImgChangeHandler = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      const updatedImages = { ...images, thumbnailImage: { file: file } };
-      console.log("updatedImages", updatedImages);
+      const updatedImages = [
+        {
+          file: file,
+          displayOrder: 0,
+          imageType: "THUMBNAIL",
+          imageUrl: null,
+          type: "new",
+        },
+        ...images.filter((_, i) => i !== 0),
+      ];
       setImages(updatedImages);
       onChangeForm(updatedImages);
 
-      // setImages((prev) => {
-      //   const updatedImages = { ...prev, thumbnailImage: { file: file } };
-      //   console.log("updatedImages", updatedImages);
-      //   onChangeForm(updatedImages);
-      //   return updatedImages;
-      // });
       // 대표 이미지가 선택되면 자동으로 미리보기 상세 정보 표시 (인덱스 0)
       setSelectedPreviewIndex(0);
     }
   };
 
   const galleryImgChangeHandler = (e) => {
-    if (!images?.thumbnailImage) {
+    if (!images[0]?.file && !images[0]?.imageUrl) {
       alert("썸네일 이미지를 먼저 등록해 주세요.");
     } else {
       const files = Array.from(e.target.files);
       if (files.length > 0) {
-        const updatedImages = {
+        const updatedImages = [
           ...images,
-          galleryImages: [
-            ...images.galleryImages,
-            ...files.map((f) => ({ file: f })),
-          ],
-        };
-        console.log("updatedImages : ", updatedImages);
+          ...files.map((f, idx) => ({
+            file: f,
+            displayOrder: images.length + idx,
+            type: "new",
+            imageType: "GALLERY",
+            imageUrl: null,
+          })),
+        ];
         setImages(updatedImages);
         onChangeForm(updatedImages);
-        // setImages((prev) => {
-        //   const updatedImages = {
-        //     ...prev,
-        //     galleryImages: [
-        //       ...prev.galleryImages,
-        //       ...files.map((f) => ({ file: f })),
-        //     ],
-        //   };
-        //   console.log("updatedImages : ", updatedImages);
-        //   onChangeForm(updatedImages);
-        //   return updatedImages;
-        // });
       }
       // 파일 선택 후 input 값 초기화 (같은 파일을 다시 선택해도 onChange 이벤트 발생시키기 위함)
       e.target.value = "";
@@ -87,38 +64,19 @@ function ProductMainImagesModify({ existingData, onChangeForm }) {
   const removeImageHandler = (index) => {
     if (index === 0) {
       // 대표 이미지 삭제
-      const updatedImages = { ...images, thumbnailImage: null };
-      console.log("updatedImages : ", updatedImages);
+      const updatedImages = [
+        { imageUrl: "", displayOrder: 0 },
+        ...images.filter((_, i) => i !== 0),
+      ];
       setImages(updatedImages);
       onChangeForm(updatedImages);
-
-      // setImages((prev) => {
-      //   const updatedImages = { ...prev, thumbnailImage: null };
-      //   console.log("updatedImages : ", updatedImages);
-      //   onChangeForm(updatedImages);
-      //   return updatedImages;
-      // });
     } else {
       // 추가 이미지 삭제 (인덱스는 1부터 시작)
-      const updatedImages = {
-        ...images,
-        galleryImages: images.galleryImages.filter(
-          (_, idx) => idx !== index - 1
-        ),
-      };
-      console.log("updatedImages : ", updatedImages);
+      const updatedImages = images
+        .filter((_, idx) => idx !== index)
+        .map((img, idx) => ({ ...img, displayOrder: idx }));
       setImages(updatedImages);
       onChangeForm(updatedImages);
-
-      // setImages((prev) => {
-      //   const updatedImages = {
-      //     ...prev,
-      //     galleryImages: prev.galleryImages.filter((_, i) => i !== index - 1),
-      //   };
-      //   console.log("updatedImages : ", updatedImages);
-      //   onChangeForm(updatedImages);
-      //   return updatedImages;
-      // });
     }
 
     // 미리보기 인덱스 재설정
@@ -130,9 +88,8 @@ function ProductMainImagesModify({ existingData, onChangeForm }) {
   };
 
   // 미리보기 목록
-  const previewList = [images.thumbnailImage, ...images.galleryImages].filter(
-    (img) => Boolean(img)
-  );
+  const previewList = [...images].filter((img) => Boolean(img));
+  // const previewList = [{ imageUrl: "" }];
 
   // 현재 선택된 미리보기 파일
   const currentPreviewFile = previewList[selectedPreviewIndex]?.file;
@@ -192,7 +149,7 @@ function ProductMainImagesModify({ existingData, onChangeForm }) {
                 >
                   <td className="px-3 py-3 text-center">1</td>
                   <td className="px-3 py-3">
-                    {images.thumbnailImage?.file?.name || "썸네일 이미지"}
+                    {images[0]?.file?.name || "썸네일 이미지"}
                   </td>
                   <td className="px-3 py-3 text-center">
                     <label className="cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-md border border-gray-300 transition shadow-sm inline-block">
@@ -218,35 +175,37 @@ function ProductMainImagesModify({ existingData, onChangeForm }) {
                 </tr>
 
                 {/* 추가 이미지 */}
-                {images.galleryImages.map((img, index) => (
-                  <tr
-                    key={index}
-                    className={`hover:bg-gray-50 transition divide-x divide-gray-200 ${
-                      selectedPreviewIndex === index + 1 ? "bg-blue-50" : ""
-                    }`}
-                  >
-                    <td className="px-3 py-3 text-center">{index + 2}</td>
-                    <td className="px-3 py-3">
-                      {img?.file?.name || `이미지 ${index + 2}`}
-                    </td>
-                    <td className="px-3 py-3 text-center">
-                      <button
-                        className="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1 rounded-md border border-red-200 cursor-pointer transition shadow-sm"
-                        onClick={() => removeImageHandler(index + 1)}
-                      >
-                        파일 삭제
-                      </button>
-                    </td>
-                    <td className="px-3 py-3 text-center">
-                      <button
-                        className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1 rounded-md border border-green-200 cursor-pointer transition shadow-sm"
-                        onClick={() => setSelectedPreviewIndex(index + 1)}
-                      >
-                        보기
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {images
+                  .filter((_, i) => i !== 0)
+                  .map((img, index) => (
+                    <tr
+                      key={index}
+                      className={`hover:bg-gray-50 transition divide-x divide-gray-200 ${
+                        selectedPreviewIndex === index + 1 ? "bg-blue-50" : ""
+                      }`}
+                    >
+                      <td className="px-3 py-3 text-center">{index + 2}</td>
+                      <td className="px-3 py-3">
+                        {img?.file?.name || `추가 이미지`}
+                      </td>
+                      <td className="px-3 py-3 text-center">
+                        <button
+                          className="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1 rounded-md border border-red-200 cursor-pointer transition shadow-sm"
+                          onClick={() => removeImageHandler(index + 1)}
+                        >
+                          파일 삭제
+                        </button>
+                      </td>
+                      <td className="px-3 py-3 text-center">
+                        <button
+                          className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1 rounded-md border border-green-200 cursor-pointer transition shadow-sm"
+                          onClick={() => setSelectedPreviewIndex(index + 1)}
+                        >
+                          보기
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
 
                 {/* 파일 추가 버튼 행 */}
                 <tr className="divide-x divide-gray-200">
@@ -268,8 +227,7 @@ function ProductMainImagesModify({ existingData, onChangeForm }) {
                     colSpan="2"
                     className="px-3 py-3 text-left text-gray-500 bg-gray-50"
                   >
-                    {images.galleryImages.length}개의 추가 이미지가
-                    등록되었습니다.
+                    {images.length}개의 이미지가 등록되었습니다.
                   </td>
                 </tr>
               </tbody>

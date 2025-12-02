@@ -13,6 +13,9 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
       safetyStock: "",
       image: null,
       imageUrl: null,
+      displayOrder: 0,
+      type: "new",
+      deleted: false,
     },
   ]);
 
@@ -32,7 +35,11 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
         currentStock: "",
         initialStock: "",
         safetyStock: "",
-        image: null,
+        file: null,
+        type: "new",
+        displayOrder: options.length,
+        imageUrl: null,
+        deleted: false,
       },
     ];
 
@@ -42,7 +49,17 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
 
   const removeOptionHandler = (index) => {
     if (options.length > 1) {
-      const updatedOptions = options.filter((_, i) => i !== index);
+      const updatedOptions = options.map((o, idx) => {
+        if (idx === index) {
+          if (o.deleted === true) {
+            return { ...o, deleted: false };
+          } else {
+            return { ...o, deleted: true };
+          }
+        } else {
+          return o;
+        }
+      });
       setOptions(updatedOptions);
       onChangeForm(updatedOptions);
     }
@@ -51,7 +68,7 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
   const inputChangeHandler = (index, field, value) => {
     const updatedOptions = options.map((option, idx) =>
       // 수정한 옵션의 값만 바뀌도록
-      idx === index ? { ...option, [field]: value } : option
+      idx === index ? { ...option, [field]: value, type: "new" } : option
     );
     setOptions(updatedOptions);
     onChangeForm(updatedOptions);
@@ -121,9 +138,19 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                 {options.map((option, index) => (
                   <tr
                     key={index}
-                    className="hover:bg-gray-50 transition divide-x divide-gray-200"
+                    className={`transition divide-x divide-gray-200 ${
+                      option.deleted === true
+                        ? "bg-gray-100 opacity-60"
+                        : "hover:bg-gray-50"
+                    }`}
                   >
-                    <td className="px-3 py-3">{index + 1}</td>
+                    <td
+                      className={`px-3 py-3 ${
+                        option.deleted === true ? "text-gray-400" : ""
+                      }`}
+                    >
+                      {index + 1}
+                    </td>
                     <td className="px-3 py-3">
                       <input
                         type="text"
@@ -135,8 +162,13 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                             e.target.value
                           )
                         }
-                        className="w-full border border-gray-300 rounded-md px-2 py-1"
+                        className={`w-full border rounded-md px-2 py-1 ${
+                          option.deleted === true
+                            ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                            : "border-gray-300"
+                        }`}
                         placeholder="옵션 이름"
+                        disabled={option.deleted === true}
                       />
                     </td>
                     <td className="px-3 py-3">
@@ -150,8 +182,13 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                             e.target.value
                           )
                         }
-                        className="w-full border border-gray-300 rounded-md px-2 py-1"
+                        className={`w-full border rounded-md px-2 py-1 ${
+                          option.deleted === true
+                            ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                            : "border-gray-300"
+                        }`}
                         placeholder="0"
+                        disabled={option.deleted === true}
                       />
                     </td>
                     <td className="px-3 py-3">
@@ -165,8 +202,13 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                             e.target.value
                           )
                         }
-                        className="w-full border border-gray-300 rounded-md px-2 py-1"
+                        className={`w-full border rounded-md px-2 py-1 ${
+                          option.deleted === true
+                            ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                            : "border-gray-300"
+                        }`}
                         placeholder="0"
+                        disabled={option.deleted === true}
                       />
                     </td>
                     <td className="px-3 py-3">
@@ -180,8 +222,13 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                             e.target.value
                           )
                         }
-                        className="w-full border border-gray-300 rounded-md px-2 py-1"
+                        className={`w-full border rounded-md px-2 py-1 ${
+                          option.deleted === true
+                            ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                            : "border-gray-300"
+                        }`}
                         placeholder="0"
+                        disabled={option.deleted === true}
                       />
                     </td>
                     <td className="px-3 py-3">
@@ -195,8 +242,13 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                             e.target.value
                           )
                         }
-                        className="w-full border border-gray-300 rounded-md px-2 py-1"
+                        className={`w-full border rounded-md px-2 py-1 ${
+                          option.deleted === true
+                            ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                            : "border-gray-300"
+                        }`}
                         placeholder="0"
+                        disabled={option.deleted === true}
                       />
                     </td>
                     <td className="px-3 py-3">
@@ -210,8 +262,13 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                             e.target.value
                           )
                         }
-                        className="w-full border border-gray-300 rounded-md px-2 py-1"
+                        className={`w-full border rounded-md px-2 py-1 ${
+                          option.deleted === true
+                            ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                            : "border-gray-300"
+                        }`}
                         placeholder="0"
+                        disabled={option.deleted === true}
                       />
                     </td>
                     <td className="px-3 py-3">
@@ -223,32 +280,47 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                             onChange={(e) =>
                               inputImgChangeHandler(
                                 index,
-                                "image",
+                                "file",
                                 e.target.files[0]
                               )
                             }
                             className="hidden"
                             id={`file-input-${index}`}
+                            disabled={option.deleted === true}
                           />
                           <label
                             htmlFor={`file-input-${index}`}
-                            className="cursor-pointer inline-block px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded-md hover:bg-gray-300 transition border border-gray-300 shadow-sm"
+                            className={`inline-block px-3 py-1 text-xs rounded-md transition border shadow-sm ${
+                              option.deleted === true
+                                ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                                : "bg-gray-200 text-gray-700 border-gray-300 hover:bg-gray-300 cursor-pointer"
+                            }`}
                           >
                             파일 선택
                           </label>
-                          {option.image && (
+                          {option.file && (
                             <div
-                              className="mt-1 text-xs text-gray-600 truncate max-w-[120px]"
-                              title={option.image.name}
+                              className={`mt-1 text-xs truncate max-w-[120px] ${
+                                option.deleted === true
+                                  ? "text-gray-400"
+                                  : "text-gray-600"
+                              }`}
+                              title={option.file.name}
                             >
-                              {option.image.name}
+                              {option.file.name}
                             </div>
                           )}
                         </div>
-                        <div className="w-16 h-16 border border-gray-300 rounded-md bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
-                          {option.image ? (
+                        <div
+                          className={`w-16 h-16 border rounded-md flex items-center justify-center overflow-hidden flex-shrink-0 ${
+                            option.deleted === true
+                              ? "border-gray-200 bg-gray-50 grayscale"
+                              : "border-gray-300 bg-gray-50"
+                          }`}
+                        >
+                          {option.file ? (
                             <img
-                              src={URL.createObjectURL(option.image)}
+                              src={URL.createObjectURL(option.file)}
                               alt="미리보기"
                               className="w-full h-full object-cover"
                             />
@@ -259,7 +331,13 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <span className="text-xs text-gray-400 text-center px-1">
+                            <span
+                              className={`text-xs text-center px-1 ${
+                                option.deleted === true
+                                  ? "text-gray-300"
+                                  : "text-gray-400"
+                              }`}
+                            >
                               미리보기
                             </span>
                           )}
@@ -270,9 +348,13 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                       {options.length > 1 && (
                         <button
                           onClick={() => removeOptionHandler(index)}
-                          className="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1 rounded-md border border-red-200 cursor-pointer transition shadow-sm"
+                          className={`px-3 py-1 rounded-md border transition shadow-sm ${
+                            option.deleted === true
+                              ? "bg-green-50 text-green-700 hover:bg-green-100 border-green-200 cursor-pointer"
+                              : "bg-red-50 text-red-700 hover:bg-red-100 border-red-200 cursor-pointer"
+                          }`}
                         >
-                          삭제
+                          {option.deleted === true ? "복구" : "삭제"}
                         </button>
                       )}
                     </td>

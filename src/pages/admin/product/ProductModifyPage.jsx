@@ -29,10 +29,7 @@ const initForm = {
     isCancelable: true,
     useRestockNoti: false,
   },
-  mainImages: {
-    thumbnailImage: null,
-    galleryImages: [],
-  },
+  mainImages: [],
   detailImages: [],
   deliveryPolicy: {
     id: 2,
@@ -56,6 +53,8 @@ const initForm = {
   detailInfo: {},
 };
 
+// const createMainImagesForm = ()
+
 const ProductModifyPage = () => {
   const [productForm, setProductForm] = useState(initForm);
   const { id } = useParams();
@@ -69,15 +68,28 @@ const ProductModifyPage = () => {
         brand: { ...productData.brand },
         basicInfo: { ...productData.basicInfo },
         saleInfo: productData.saleInfo,
-        mainImages: {
-          thumbnailImage: { ...productData.mainImages[0], image: null },
-          galleryImages: [
-            ...productData.mainImages.filter((_, idx) => idx !== 0),
-          ],
-        },
-        detailImages: [...productData.detailImages],
+        mainImages: [
+          ...productData.mainImages.map((img) => ({
+            ...img,
+            file: null,
+            type: "existing",
+          })),
+        ],
+        detailImages: [
+          ...productData.detailImages.map((img) => ({
+            ...img,
+            file: null,
+            type: "existing",
+          })),
+        ],
         deliveryPolicy: { ...productData.deliveryPolicy },
-        options: [...productData.options],
+        options: [
+          ...productData.options.map((o) => ({
+            ...o,
+            file: null,
+            type: "existing",
+          })),
+        ],
         detailInfo: { ...productData.detailInfo },
       });
 
