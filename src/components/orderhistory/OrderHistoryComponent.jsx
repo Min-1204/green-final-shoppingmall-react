@@ -398,7 +398,10 @@ export default function OrderHistoryComponent() {
                             <button
                               className="text-xs px-3 py-1 bg-black text-white hover:bg-gray-800 transition-colors"
                               onClick={() => {
-                                setSelectedProduct(item);
+                                setSelectedProduct({
+                                  ...item,
+                                  orderId: order.id,
+                                });
                                 setReviewModal(true);
                               }}
                             >
@@ -509,6 +512,7 @@ export default function OrderHistoryComponent() {
         <ReviewAddComponent
           closeModal={() => setReviewModal(false)}
           productId={selectedProduct.productId}
+          orderId={selectedProduct.orderId}
         />
       )}
       {deliveryModal && selectedItem && (
