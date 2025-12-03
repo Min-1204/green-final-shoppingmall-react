@@ -14,9 +14,7 @@ const RestockNoti = lazy(() =>
 const SalesStatistics = lazy(() =>
   import("../pages/admin/statistics/SalesStatisticsPage")
 );
-const CouponManagement = lazy(() =>
-  import("../pages/admin/coupon/CouponManagementPage")
-);
+const CouponAddPage = lazy(() => import("../pages/admin/coupon/CouponAddPage"));
 const CouponSearchPage = lazy(() =>
   import("../pages/admin/coupon/CouponSearchPage")
 );
@@ -71,7 +69,7 @@ const adminRouter = () => {
       path: "coupon/register",
       element: (
         <Suspense fallback={Loading}>
-          <CouponManagement />
+          <CouponAddPage />
         </Suspense>
       ),
     },
