@@ -5,12 +5,15 @@ import {
   reviewCommentModify,
   reviewCommentDelete,
 } from "../../api/review/reviewCommentApi";
+import { useSelector } from "react-redux";
 
 const ReviewCommentMgr = ({ reviewId }) => {
   const [content, setContent] = useState(""); //댓글 내용
   const [commentList, setCommentList] = useState([]); // 댓글 목록
   const [editId, setEditId] = useState(null); // 수정중인 댓글 ID
   const [updatedComment, setUpdatedComment] = useState({}); // 수정된 댓글
+
+  const { user } = useSelector((state) => state.authSlice);
 
   // 댓글 목록 가져오기
   const getCommentList = async () => {
@@ -28,7 +31,7 @@ const ReviewCommentMgr = ({ reviewId }) => {
       alert("댓글 내용을 입력해주세요!");
       return;
     }
-    await reviewCommentAdd(reviewId, content);
+    await reviewCommentAdd(user.id, reviewId, content);
     setContent("");
     getCommentList();
   };

@@ -1,14 +1,17 @@
 import { useRef, useState } from "react";
 import { reviewAdd } from "../../api/review/reviewApi";
+import { useSelector } from "react-redux";
 
 const ReviewAddComponent = ({ closeModal, productId, orderId }) => {
   const [currentRating, setCurrentRating] = useState(0);
+  const { user } = useSelector((state) => state.authSlice);
   const [review, setReview] = useState({
     content: "",
     rating: 0,
     images: [],
     productId: productId,
     orderId: orderId,
+    userId: user.id,
   }); //서버 전송용 파일 객체
   const [images, setImages] = useState([]); //이미지 미리보기용
   const uploadRef = useRef();

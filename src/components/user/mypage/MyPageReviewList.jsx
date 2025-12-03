@@ -3,6 +3,7 @@ import ReviewModifyDelete from "../../review/ReviewModifyDelete";
 import ReviewSee from "../../review/ReviewSee";
 import { getMyReviews } from "../../../api/review/reviewApi";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const MyPageReviewList = () => {
   const [reviewModal, setReviewModal] = useState(false); //리뷰 수정용 모달
@@ -12,10 +13,12 @@ const MyPageReviewList = () => {
   const [reviews, setReviews] = useState([]); //리뷰 목록
   const navigate = useNavigate();
 
-  // 화면에 리뷰 목록 보이기
+  const { user } = useSelector((state) => state.authSlice); //로그인한 유저 정보
+
   useEffect(() => {
+    if (!user) return; //로그인 안 됐으면 종료
     const getReviews = async () => {
-      const review = await getMyReviews(1);
+      const review = await getMyReviews(user.id);
       setReviews(review);
       console.log("review => ", review);
     };
