@@ -9,19 +9,19 @@ export const reviewList = async (productId, sort) => {
       sort: sort,
     },
   });
-  console.log("API 요청 data => ", data, "productId => ", productId);
+  console.log("리뷰 목록 => ", data, "제품 Id => ", productId);
   return data;
 };
 
 export const getMyReviews = async (userId) => {
   const { data } = await axios.get(`${prefix}/user/${userId}`);
-  console.log("아이디 => ", userId);
+  console.log("유저 아이디 => ", userId);
   console.log("내 리뷰 => ", data);
   return data;
 };
 
 export const reviewAdd = async (review) => {
-  console.log("review => ", review);
+  console.log("리뷰 등록 => ", review);
   const formData = new FormData();
   formData.append(
     "review",
@@ -71,13 +71,13 @@ export const reviewModify = async (reviewId, updatedReview) => {
   }
 
   const { data } = await axios.put(`${prefix}/modify/${reviewId}`, formData);
-  console.log("reviewId => ", reviewId);
+  console.log("수장하려는 리뷰 Id => ", reviewId);
   return data;
 };
 
 export const reviewDelete = async (reviewId) => {
   const { data } = await axios.delete(`${prefix}/delete/${reviewId}`);
-  console.log("delete reviewId => ", reviewId);
+  console.log("삭제한 리뷰 Id => ", reviewId);
   return data;
 };
 

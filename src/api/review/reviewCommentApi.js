@@ -10,9 +10,13 @@ export const reviewCommentGetList = async (reviewId) => {
   return data;
 };
 
-export const reviewCommentAdd = async (reviewId, content) => {
+export const reviewCommentAdd = async (userId, reviewId, content) => {
   console.log("reviewId => ", reviewId, "content => ", content);
-  const { data } = await axios.post(`${prefix}/add`, { reviewId, content });
+  const { data } = await axios.post(`${prefix}/add`, {
+    userId,
+    reviewId,
+    content,
+  });
   console.log("리뷰 댓글 => ", data);
   return data;
 };
