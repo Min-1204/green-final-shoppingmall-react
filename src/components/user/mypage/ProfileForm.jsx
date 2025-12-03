@@ -29,24 +29,24 @@ export default function ProfileForm() {
   // prettier-ignore
   const [modifyForm, setModifyForm] = useState(initializeForm(null));
 
-  // 로그인한 사용자만 마이페이지 접근할 수 있는 로직 현재는 주석처리
-  useEffect(() => {
-    // if (!user) {
-    //   // navigate("/login");
-    //   return;
-    // }
-    console.log("여기는 ProfileForm user 객체 확인 : ", user);
-    console.log("여기는 ProfileForm user.loginid 확인", user.loginId);
-    dispatch(getUserProfileThunk(user.loginId))
-      .unwrap()
-      .then((profileData) => {
-        console.log("여기는 unwrap Promise then 결과 확인 :", profileData);
-        setModifyForm(initializeForm(profileData));
-      })
-      .catch((err) => {
-        console.error("여기는 then 데이터 결과 프로필 조회 실패:", err);
-      });
-  }, [user?.loginId, navigate, dispatch]);
+  // // 로그인한 사용자만 마이페이지 접근할 수 있는 로직 현재는 주석처리
+  // useEffect(() => {
+  // if (!user) {
+  //   // navigate("/login");
+  //   return;
+  // }
+  // console.log("여기는 ProfileForm user 객체 확인 : ", user);
+  // console.log("여기는 ProfileForm user.loginid 확인", user.loginId);
+  //   dispatch(getUserProfileThunk(user.loginId))
+  //     .unwrap()
+  //     .then((profileData) => {
+  //       console.log("여기는 unwrap Promise then 결과 확인 :", profileData);
+  //       setModifyForm(initializeForm(profileData));
+  //     })
+  //     .catch((err) => {
+  //       console.error("여기는 then 데이터 결과 프로필 조회 실패:", err);
+  //     });
+  // }, [user?.loginId, navigate, dispatch]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { changePasswordThunk } from "../../../redux/slices/features/user/authSlice";
 
 export default function PasswordChangeBox() {
   const { user } = useSelector((state) => state.authSlice);
+  const dispatch = useDispatch();
 
   const [pwForm, setPwForm] = useState({
     password: "",
@@ -15,12 +17,13 @@ export default function PasswordChangeBox() {
     setPwForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("현재 비밀번호 :", pwForm.password);
     console.log("새 비밀번호 :", pwForm.newPassword);
     console.log("새 비밀번호확인 :", pwForm.newPasswordConfirm);
 
+    // 유효성 검사
     if (!pwForm.password) {
       alert("현재 비밀번호를 입력하세요.");
       return;
@@ -40,9 +43,25 @@ export default function PasswordChangeBox() {
       return;
     }
 
-    // TODO: axios.post("/api/members/change-password", pwForm, {...})
-    console.log("password change payload:", pwForm);
-    alert("저장 완료. 실제 변경은 백엔드 개발 시 테스트 후 수정");
+    // Thunk 처리 반환 값 활용
+    try {
+      const result = await dispatch(
+        changePasswordThunk({
+          password: pwForm.password,
+          newPassword: pwForm.newPassword,
+        })
+      ).unwrap();
+      if (result.success) {
+        alert(result.message);
+        setPwForm({
+          password: "",
+          newpassword: "",
+          newPasswordConfirm: "",
+        });
+      }
+    } catch (error) {
+      alert(error.message || "비밀번호 변경에 실패했습니다.");
+    }
   };
 
   return (

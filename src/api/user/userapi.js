@@ -98,3 +98,10 @@ export const modifyProfileApi = async (modifyForm) => {
     throw error;
   }
 };
+
+//prettier-ignore
+export const changePasswordApi = async (passwordForm) => {
+  const response = await axios.patch(`${USER_API}/password-change`, passwordForm);
+  console.log("1) 여기는 비밀번호변경 출력", passwordForm);
+  return response.data;
+};

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  changePasswordApi,
   getProfileApi,
   loginApi,
   modifyProfileApi,
@@ -44,6 +45,18 @@ export const modifyProfileThunk = createAsyncThunk(
       return response;
     } catch (error) {
       throw rejectWithValue(error.response.data || { message: "서버 오류" });
+    }
+  }
+);
+
+export const changePasswordThunk = createAsyncThunk(
+  "auth/changPassword",
+  async (changePasswordForm, { rejectWithValue }) => {
+    try {
+      const response = await changePasswordApi(changePasswordForm);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message || { message: "서버 오류" });
     }
   }
 );
@@ -158,6 +171,18 @@ export const authSlice = createSlice({// Slice 생성
         }
       })
       .addCase(modifyProfileThunk.rejected, (state,action) =>{
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(changePasswordThunk.pending, (state) => {
+        state.loading = true;
+        error = null;
+      })
+      .addCase(changePasswordThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        error = null;
+      })
+      .addCase(changePasswordThunk.rejected, (state,action) => {
         state.loading = false;
         state.error = action.payload;
       })
