@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ReviewRatingComponent from "./ReviewRatingComponent";
 import { reviewList } from "../../api/review/reviewApi";
 import ReviewCommentMgr from "./ReviewCommentMgr";
+import ReviewLike from "./ReviewLike";
 
 const ReviewListComponent = ({ productId }) => {
   const sortOptions = [
@@ -132,17 +133,13 @@ const ReviewListComponent = ({ productId }) => {
                 </div>
 
                 <div className="flex items-center justify-end space-x-4 text-sm text-gray-500 pt-3">
-                  <button className="cursor-pointer hover:text-gray-900 transition">
-                    👍 도움이 돼요 {review.likeCount || 0}
-                  </button>
+                  {/* 리뷰 좋아요 컴포넌트 */}
+                  <ReviewLike reviewId={review.id} />
 
+                  {/* 댓글 보기 버튼 */}
                   <button
                     onClick={() => toggleComments(review.id)}
-                    className={`cursor-pointer transition ${
-                      showComments[review.id]
-                        ? "text-blue-600 font-semibold"
-                        : "text-gray-900 hover:text-blue-600"
-                    }`}
+                    className="cursor-pointer text-gray-900"
                   >
                     💬 댓글 보기
                   </button>
