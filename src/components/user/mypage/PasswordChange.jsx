@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changePasswordThunk } from "../../../redux/slices/features/user/authSlice";
 
-export default function PasswordChangeBox() {
+export default function PasswordChange() {
   const { user } = useSelector((state) => state.authSlice);
   const dispatch = useDispatch();
 
   const [pwForm, setPwForm] = useState({
     password: "",
     newPassword: "",
-    newPasswordConfirm: "",
+    newPasswordConfirm: ""
   });
 
   const handleChange = (e) => {
@@ -17,6 +17,7 @@ export default function PasswordChangeBox() {
     setPwForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  //prettier-ignore
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("현재 비밀번호 :", pwForm.password);
@@ -29,13 +30,12 @@ export default function PasswordChangeBox() {
       return;
     }
 
-    if (user && pwForm.password !== user.password) {
-      alert("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
     if (!pwForm.newPassword) {
       alert("새 비밀번호를 입력하세요.");
+      return;
+    }
+    if (!pwForm.newPasswordConfirm) {
+      alert("새 비밀번호를 확인을 입력하세요.");
       return;
     }
     if (pwForm.newPassword !== pwForm.newPasswordConfirm) {
@@ -47,20 +47,24 @@ export default function PasswordChangeBox() {
     try {
       const result = await dispatch(
         changePasswordThunk({
+          loginId: user.loginId,
           password: pwForm.password,
-          newPassword: pwForm.newPassword,
+          newPassword: pwForm.newPassword
         })
       ).unwrap();
+
+      console.log("여기는 Submit 반환결과 :", result)
+
       if (result.success) {
         alert(result.message);
         setPwForm({
           password: "",
-          newpassword: "",
-          newPasswordConfirm: "",
+          newPassword: "",
+          newPasswordConfirm: ""
         });
       }
     } catch (error) {
-      alert(error.message || "비밀번호 변경에 실패했습니다.");
+      alert(error.message);
     }
   };
 

@@ -23,7 +23,7 @@ export default function ProfileForm() {
     addressDetail: profileData?.addressDetail || "",
     smsAgreement: profileData?.smsAgreement || false,
     emailAgreement: profileData?.emailAgreement || false,
-    password: "",
+    password: ""
   });
 
   // prettier-ignore
@@ -31,12 +31,12 @@ export default function ProfileForm() {
 
   // // 로그인한 사용자만 마이페이지 접근할 수 있는 로직 현재는 주석처리
   // useEffect(() => {
-  // if (!user) {
-  //   // navigate("/login");
-  //   return;
-  // }
-  // console.log("여기는 ProfileForm user 객체 확인 : ", user);
-  // console.log("여기는 ProfileForm user.loginid 확인", user.loginId);
+  //   if (!user) {
+  //     // navigate("/login");
+  //     return;
+  //   }
+  //   console.log("여기는 ProfileForm user 객체 확인 : ", user);
+  //   console.log("여기는 ProfileForm user.loginid 확인", user.loginId);
   //   dispatch(getUserProfileThunk(user.loginId))
   //     .unwrap()
   //     .then((profileData) => {
@@ -52,7 +52,7 @@ export default function ProfileForm() {
     const { name, value, type, checked } = e.target;
     setModifyForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : value
     }));
   };
 
@@ -72,26 +72,21 @@ export default function ProfileForm() {
     const finalModifyData = {
       ...modifyForm,
       loginId: user.loginId,
-      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber),
+      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber)
     };
 
     try {
-      const response = await dispatch(
+      const result = await dispatch(
         modifyProfileThunk(finalModifyData)
       ).unwrap();
-
-      const result = response;
 
       console.log("profile update payload:", finalModifyData);
       console.log("여기는 result 확인용 로그 : ", result);
       if (result.success) {
-        alert(result.message || "개인정보 수정이 완료되었습니다.");
-      } else {
-        alert(result.message || "수정에 실패하였습니다.");
+        alert(result.message);
       }
     } catch (error) {
-      console.error("수정 오류:", error);
-      alert(error.message || "개인정보 수정이 실패 하였습니다.");
+      alert(error.message);
     }
   };
 
@@ -101,7 +96,7 @@ export default function ProfileForm() {
         ...modifyForm,
         postalCode: data.zonecode,
         address: data.address,
-        addressDetail: "",
+        addressDetail: ""
       });
     });
   };

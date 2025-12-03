@@ -3,7 +3,7 @@ import {
   changePasswordApi,
   getProfileApi,
   loginApi,
-  modifyProfileApi,
+  modifyProfileApi
 } from "../../../../api/user/userApi";
 
 export const loginAsyncThunk = createAsyncThunk(
@@ -44,19 +44,19 @@ export const modifyProfileThunk = createAsyncThunk(
       const response = await modifyProfileApi(modifyData);
       return response;
     } catch (error) {
-      throw rejectWithValue(error.response.data || { message: "서버 오류" });
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
 export const changePasswordThunk = createAsyncThunk(
-  "auth/changPassword",
+  "auth/changePassword",
   async (changePasswordForm, { rejectWithValue }) => {
     try {
       const response = await changePasswordApi(changePasswordForm);
       return response;
     } catch (error) {
-      return rejectWithValue(error.message || { message: "서버 오류" });
+      return rejectWithValue(error.response?.data || "서버 오류");
     }
   }
 );
@@ -68,7 +68,7 @@ const initialState = {
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
   profile: null,
   error: null, // 에러 상태
-  loading: false, // 로딩 상태
+  loading: false // 로딩 상태
 };
 
 // prettier-ignore
@@ -160,15 +160,8 @@ export const authSlice = createSlice({// Slice 생성
         state.loading = true;
         state.error = null;
       })
-      .addCase(modifyProfileThunk.fulfilled, (state,action) => {
+      .addCase(modifyProfileThunk.fulfilled, (state) => {
         state.loading = false;
-        if (action.payload) {
-          if (action.payload.success && action.payload.updateProfile) {
-          state.profile = action.payload.updateProfile;
-          }
-        } else {
-          console.warn("프로필 수정 성공 응답을 받았으나, 응답 본문payload가 없음")
-        }
       })
       .addCase(modifyProfileThunk.rejected, (state,action) =>{
         state.loading = false;
@@ -176,11 +169,10 @@ export const authSlice = createSlice({// Slice 생성
       })
       .addCase(changePasswordThunk.pending, (state) => {
         state.loading = true;
-        error = null;
+        state.error = null;
       })
-      .addCase(changePasswordThunk.fulfilled, (state, action) => {
+      .addCase(changePasswordThunk.fulfilled, (state) => {
         state.loading = false;
-        error = null;
       })
       .addCase(changePasswordThunk.rejected, (state,action) => {
         state.loading = false;

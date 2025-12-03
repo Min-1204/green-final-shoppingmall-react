@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   loginAsyncThunk,
-  clearError,
+  clearError
 } from "../../../redux/slices/features/user/authSlice";
 
 // prettier-ignore
@@ -45,7 +45,7 @@ const LoginComponent = () => {
 
   // prettier-ignore
   const loginHandleClick = () => { // 로그인핸들러
-    console.log("여기는 로그인컴포넌트 로그인클릭 실행되었다:", loginData); // 로그인 버튼 클릭 시 데이터 확인
+    console.log("여기는 로그인컴포넌트 로그인버튼이 클릭되었다:", loginData); // 로그인 버튼 클릭 시 데이터 확인
 
     if(!loginData.loginId.trim()) { // loginData의 loginId 공백제거 => 조건반대
       // 즉, 로그인아이디가 공백이라면, 입력되지 않았다면

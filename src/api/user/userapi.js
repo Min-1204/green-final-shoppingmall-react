@@ -28,7 +28,7 @@ export const signUpApi = async (signUpForm) => {
       address: signUpForm.address, // 기본주소
       addressDetail: signUpForm.addressDetail, // 상세주소
       smsAgreement: signUpForm.smsAgreement, // SMS 알림 동의
-      emailAgreement: signUpForm.emailAgreement, // Email 알림 동의
+      emailAgreement: signUpForm.emailAgreement // Email 알림 동의
     };
 
     console.log("백엔드로 보내는 데이터 콘솔", requestData);
@@ -101,7 +101,11 @@ export const modifyProfileApi = async (modifyForm) => {
 
 //prettier-ignore
 export const changePasswordApi = async (passwordForm) => {
+  try{
   const response = await axios.patch(`${USER_API}/password-change`, passwordForm);
   console.log("1) 여기는 비밀번호변경 출력", passwordForm);
   return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
