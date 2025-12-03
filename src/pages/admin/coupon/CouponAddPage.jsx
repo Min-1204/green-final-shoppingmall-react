@@ -32,6 +32,18 @@ const initState = {
   },
 };
 
+const getStartTimeOfDay = (day) => {
+  let startDay = new Date(day);
+  startDay.setUTCHours(0, 0, 0, 0);
+  return startDay.toISOString();
+};
+
+const getEndTimeOfDay = (day) => {
+  let endDay = new Date(day);
+  endDay.setUTCHours(23, 59, 59, 999);
+  return endDay.toISOString();
+};
+
 const CouponAddPage = () => {
   const [couponRegisterForm, setCouponRegisterForm] = useState({
     ...initState,
@@ -48,6 +60,16 @@ const CouponAddPage = () => {
         ...couponRegisterForm.discountSetting,
         ...couponRegisterForm.issueSetting,
         ...couponRegisterForm.periodSetting,
+        validFrom: getStartTimeOfDay(
+          couponRegisterForm.periodSetting.validFrom
+        ),
+        validTo: getEndTimeOfDay(couponRegisterForm.periodSetting.validTo),
+        issuableStartDate: getStartTimeOfDay(
+          couponRegisterForm.periodSetting.issuableStartDate
+        ),
+        issuableEndDate: getEndTimeOfDay(
+          couponRegisterForm.periodSetting.issuableEndDate
+        ),
       });
       console.log("result : ", result);
     };
