@@ -9,12 +9,12 @@ const CartComponent = () => {
   // 유저 정보
   const { user } = useSelector((state) => state.authSlice);
 
-  console.log("userId", user.id);
+  console.log("userId", user?.id);
 
   const navigate = useNavigate();
 
   // cartSlice에 action을 전달할 dispatch 불러오기
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   // 장바구니 기능
   const { refreshCart, changeCart, removeItem, removeAll } = useCustomCart();
@@ -26,7 +26,11 @@ const CartComponent = () => {
   const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
-    refreshCart(user.id);
+    if (user?.id) {
+      refreshCart(user.id);
+    } else {
+      navigate("/login");
+    }
   }, []);
 
   useEffect(() => {
