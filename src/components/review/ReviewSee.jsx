@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
+import { fetchProductById } from "../../api/admin/product/productApi";
 
 const ReviewSee = ({ closeModal, review }) => {
-  console.log("리뷰 보기 => ", review);
   const [currentRating, setCurrentRating] = useState(0);
   const [reviewContent, setReviewContent] = useState("");
   const [images, setImages] = useState([]);
-
-  // 임시 상품 정보
-  const productName = "스트라이덱스";
-  const productOption = "[여드름/좁쌀] 스트라이덱스 맥스플러스패드 55매";
-  const productPrice = "₩12,900";
-  const reviewDate = "2025.09.02";
+  const [product, setProduct] = useState(null);
 
   useEffect(() => {
     if (review) {
@@ -18,7 +13,18 @@ const ReviewSee = ({ closeModal, review }) => {
       setReviewContent(review.content || "");
       setImages(review.imageUrls);
     }
+    const fetchProduct = async () => {
+      const data = await fetchProductById(review.productId);
+      setProduct(data);
+      console.log("받아온 상품 정보 => ", data);
+    };
+    fetchProduct();
   }, [review]);
+
+  const productImage = product?.mainImages?.[0]?.imageUrl;
+  const productName = product?.basicInfo?.productName;
+  const productOption = product?.options?.[0]?.optionName;
+  const productPrice = product?.options?.[0]?.sellingPrice;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -35,13 +41,20 @@ const ReviewSee = ({ closeModal, review }) => {
 
         {/* 상품 + 별점 */}
         <div className="flex items-center space-x-4 border-b pb-4 mb-4">
-          <div className="w-20 h-20 bg-gray-200 rounded-md flex items-center justify-center text-xs text-gray-500">
-            이미지
+          <div className="w-20 h-20 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
+            {productImage && (
+              <img
+                src={productImage}
+                alt="product"
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
+
           <div className="flex-1">
             <p className="text-sm font-semibold text-gray-800">{productName}</p>
             <p className="text-xs text-gray-500 mt-1">{productOption}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{productPrice}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{productPrice} 원</p>
 
             <div className="flex items-center space-x-4 mt-2">
               {/* 별점 */}
@@ -59,7 +72,7 @@ const ReviewSee = ({ closeModal, review }) => {
               </div>
               {/* 작성일자 */}
               <span className="text-gray-500 text-sm">
-                작성일자: {reviewDate}
+                작성일자: {review.createdAt?.slice(0, 10).replace(/-/g, ".")}
               </span>
             </div>
           </div>
