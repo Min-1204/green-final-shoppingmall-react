@@ -2,61 +2,51 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDaumPostalCode } from "../../../hooks/useDaumPostalCode";
 import { useNavigate } from "react-router-dom";
-import { getUserProfileThunk } from "../../../redux/slices/features/user/authSlice";
-import {
-  formatPhoneNumber,
-  unformatPhoneNumber,
-} from "../util/formatPhoneNumber.js";
+//prettier-ignore
+import {  authSlice,  getUserProfileThunk,  modifyProfileThunk } from "../../../redux/slices/features/user/authSlice";
+//prettier-ignore
+import {  formatPhoneNumber,  unformatPhoneNumber } from "../util/formatPhoneNumber.js";
 
 export default function ProfileForm() {
-  const { user, loading } = useSelector((state) => state.authSlice);
+  const { user } = useSelector((state) => state.authSlice);
   const { openPostcode } = useDaumPostalCode(); // 다음주소API
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  console.log("Redux User 출력 :", user);
 
-  // prettier-ignore
-  const [modifyForm, setModifyForm] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phoneNumber: user?.phoneNumber || "",
-    birthDate: user?.birthDate || "",
-    postalCode: user?.postalCode || "",
-    address: user?.address || "",
-    addressDetail: user?.addressDetail || "",
-    smsAgreement: user?.smsAgreement || false,
-    emailAgreement: user?.emailAgreement || false,
+  const initializeForm = (profileData) => ({
+    name: profileData?.name || "",
+    email: profileData?.email || "",
+    phoneNumber: profileData?.phoneNumber || "",
+    birthDate: profileData?.birthDate || "",
+    postalCode: profileData?.postalCode || "",
+    address: profileData?.address || "",
+    addressDetail: profileData?.addressDetail || "",
+    smsAgreement: profileData?.smsAgreement || false,
+    emailAgreement: profileData?.emailAgreement || false,
     password: "",
   });
 
+  // prettier-ignore
+  const [modifyForm, setModifyForm] = useState(initializeForm(null));
+
   // 로그인한 사용자만 마이페이지 접근할 수 있는 로직 현재는 주석처리
   useEffect(() => {
-    if (!user) {
-      // navigate("/login");
-      return;
-    }
-    dispatch(getUserProfileThunk(user.loginId));
-    console.log("개인정보수정 Form 확인 : ", user);
-  }, [user?.loginId, navigate, dispatch]);
-
-  useEffect(() => {
-    if (user && user.loginId && user.name) {
-      setModifyForm({
-        name: user?.name || "",
-        email: user?.email || "",
-        phoneNumber: user?.phoneNumber || "",
-        birthDate: user?.birthDate || "",
-        postalCode: user?.postalCode || "",
-        address: user?.address || "",
-        addressDetail: user?.addressDetail || "",
-        smsAgreement: user?.smsAgreement || false,
-        emailAgreement: user?.emailAgreement || false,
-        password: "",
+    // if (!user) {
+    //   // navigate("/login");
+    //   return;
+    // }
+    console.log("여기는 ProfileForm user 객체 확인 : ", user);
+    console.log("여기는 ProfileForm user.loginid 확인", user.loginId);
+    dispatch(getUserProfileThunk(user.loginId))
+      .unwrap()
+      .then((profileData) => {
+        console.log("여기는 unwrap Promise then 결과 확인 :", profileData);
+        setModifyForm(initializeForm(profileData));
+      })
+      .catch((err) => {
+        console.error("여기는 then 데이터 결과 프로필 조회 실패:", err);
       });
-    }
-  }, [user]);
-
-  console.log("ModifyForm 출력 :", modifyForm);
+  }, [user?.loginId, navigate, dispatch]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -68,16 +58,40 @@ export default function ProfileForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!user || !user.loginId) {
+      alert("로그인 아이디정보가 유효하지 않습니다.");
+      return;
+    }
+
     if (!modifyForm.password) {
       alert("수정하려면 현재 비밀번호를 입력하세요.");
       return;
     }
+
+    const finalModifyData = {
+      ...modifyForm,
+      loginId: user.loginId,
+      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber),
+    };
+
     try {
-      const result = await dispatch(modifyUserProfile(modifyForm)).unwrap();
-      alert("개인정보 수정이 완료되었습니다");
-      console.log("profile update payload:", modifyForm);
+      const response = await dispatch(
+        modifyProfileThunk(finalModifyData)
+      ).unwrap();
+
+      const result = response;
+
+      console.log("profile update payload:", finalModifyData);
+      console.log("여기는 result 확인용 로그 : ", result);
+      if (result.success) {
+        alert(result.message || "개인정보 수정이 완료되었습니다.");
+      } else {
+        alert(result.message || "수정에 실패하였습니다.");
+      }
     } catch (error) {
-      alert("개인정보 수정이 실패 하였습니다.", error);
+      console.error("수정 오류:", error);
+      alert(error.message || "개인정보 수정이 실패 하였습니다.");
     }
   };
 
