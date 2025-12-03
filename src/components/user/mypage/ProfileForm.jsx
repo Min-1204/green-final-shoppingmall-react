@@ -2,18 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDaumPostalCode } from "../../../hooks/useDaumPostalCode";
 import { useNavigate } from "react-router-dom";
-import {
-  authSlice,
-  getUserProfileThunk,
-  modifyProfileThunk
-} from "../../../redux/slices/features/user/authSlice";
-import {
-  formatPhoneNumber,
-  unformatPhoneNumber
-} from "../util/formatPhoneNumber.js";
+//prettier-ignore
+import {  authSlice,  getUserProfileThunk,  modifyProfileThunk } from "../../../redux/slices/features/user/authSlice";
+//prettier-ignore
+import {  formatPhoneNumber,  unformatPhoneNumber } from "../util/formatPhoneNumber.js";
 
 export default function ProfileForm() {
-  const { user, loading, error } = useSelector((state) => state.authSlice);
+  const { user } = useSelector((state) => state.authSlice);
   const { openPostcode } = useDaumPostalCode(); // 다음주소API
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -28,7 +23,7 @@ export default function ProfileForm() {
     addressDetail: profileData?.addressDetail || "",
     smsAgreement: profileData?.smsAgreement || false,
     emailAgreement: profileData?.emailAgreement || false,
-    password: ""
+    password: "",
   });
 
   // prettier-ignore
@@ -36,21 +31,20 @@ export default function ProfileForm() {
 
   // 로그인한 사용자만 마이페이지 접근할 수 있는 로직 현재는 주석처리
   useEffect(() => {
-    if (!user) {
-      // navigate("/login");
-      return;
-    }
-
-    console.log("개인정보수정 Form user 확인 : ", user);
-    console.log("여기는 unwrap Promise 확인", user.loginId);
+    // if (!user) {
+    //   // navigate("/login");
+    //   return;
+    // }
+    console.log("여기는 ProfileForm user 객체 확인 : ", user);
+    console.log("여기는 ProfileForm user.loginid 확인", user.loginId);
     dispatch(getUserProfileThunk(user.loginId))
       .unwrap()
       .then((profileData) => {
-        console.log("여기는 unwrap Promise 결과 확인 :", profileData);
+        console.log("여기는 unwrap Promise then 결과 확인 :", profileData);
         setModifyForm(initializeForm(profileData));
       })
       .catch((err) => {
-        console.error("프로필 조회 실패:", err);
+        console.error("여기는 then 데이터 결과 프로필 조회 실패:", err);
       });
   }, [user?.loginId, navigate, dispatch]);
 
@@ -58,7 +52,7 @@ export default function ProfileForm() {
     const { name, value, type, checked } = e.target;
     setModifyForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -78,7 +72,7 @@ export default function ProfileForm() {
     const finalModifyData = {
       ...modifyForm,
       loginId: user.loginId,
-      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber)
+      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber),
     };
 
     try {
@@ -107,7 +101,7 @@ export default function ProfileForm() {
         ...modifyForm,
         postalCode: data.zonecode,
         address: data.address,
-        addressDetail: ""
+        addressDetail: "",
       });
     });
   };

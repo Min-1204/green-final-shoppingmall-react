@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   getProfileApi,
   loginApi,
-  modifyProfileApi
+  modifyProfileApi,
 } from "../../../../api/user/userApi";
 
 export const loginAsyncThunk = createAsyncThunk(
@@ -53,8 +53,9 @@ const initialState = {
   user: null, // 로그인한 사용자의 정보
   isLoggedIn: false, // 로그인 상태!
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
+  profile: null,
   error: null, // 에러 상태
-  loading: false // 로딩 상태
+  loading: false, // 로딩 상태
 };
 
 // prettier-ignore
@@ -135,8 +136,7 @@ export const authSlice = createSlice({// Slice 생성
       .addCase(getUserProfileThunk.fulfilled, (state,action) => {
         state.loading = false;
         state.error = null;
-        state.user = action.payload;
-        localStorage.setItem("currentUser", JSON.stringify(action.payload))
+        state.profile = action.payload;
         console.log("프로필 조회 성공 : ", action.payload)
       })
       .addCase(getUserProfileThunk.rejected, (state,action) => {
@@ -151,8 +151,7 @@ export const authSlice = createSlice({// Slice 생성
         state.loading = false;
         if (action.payload) {
           if (action.payload.success && action.payload.updateProfile) {
-          state.user = action.payload.updateProfile;
-          localStorage.setItem("currentUser", JSON.stringify(action.payload.updateProfile))
+          state.profile = action.payload.updateProfile;
           }
         } else {
           console.warn("프로필 수정 성공 응답을 받았으나, 응답 본문payload가 없음")
