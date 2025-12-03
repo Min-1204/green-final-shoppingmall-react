@@ -1,34 +1,70 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CouponBasicInfo from "../../../components/admin/coupon/CouponBasicInfo";
 import DiscountSetting from "../../../components/admin/coupon/DiscountSetting";
-import IssuranceSetting from "../../../components/admin/coupon/IssuranceSetting";
+import IssueSetting from "../../../components/admin/coupon/IssueSetting";
 import PeriodSetting from "../../../components/admin/coupon/PeriodSetting";
+import { registerCoupon } from "../../../api/admin/coupon/couponApi";
 
 const initState = {
-  basicInfo: {},
-  discountSetting: {},
-  issueSetting: {},
-  periodSetting: {},
+  basicInfo: { couponName: "", availability: "USABLE" },
+  discountSetting: {
+    discountType: "PERCENTAGE",
+    fixedDiscountAmount: 0,
+    discountPercentage: 0,
+    hasLimitMinOrder: false,
+    minOrderAmount: 0,
+    hasLimitMaxDiscount: false,
+    maxDiscountAmount: 0,
+  },
+  issueSetting: {
+    issueType: "AUTO",
+    couponCode: "",
+    autoIssueType: "NEWUSER",
+    autoIssueTrigger: "LOGIN",
+    totalQuantity: 0,
+  },
+  periodSetting: {
+    hasLimitUsagePeriod: true,
+    validFrom: "",
+    validTo: "",
+    issuableStartDate: "",
+    issuableEndDate: "",
+  },
 };
 
-const CouponManagementPage = () => {
+const CouponAddPage = () => {
   const [couponRegisterForm, setCouponRegisterForm] = useState({
     ...initState,
   });
 
+  useEffect(() => {
+    console.log("couponRegisterForm : ", couponRegisterForm);
+  }, [couponRegisterForm]);
+
   const submitHandler = () => {
-    console.log(couponRegisterForm);
+    const register = async () => {
+      const result = await registerCoupon({
+        ...couponRegisterForm.basicInfo,
+        ...couponRegisterForm.discountSetting,
+        ...couponRegisterForm.issueSetting,
+        ...couponRegisterForm.periodSetting,
+      });
+      console.log("result : ", result);
+    };
+    register();
   };
 
   return (
     <div className="min-h-screen">
       <div className="space-y-8 pb-40">
         <CouponBasicInfo
+          basicInfo={couponRegisterForm?.basicInfo}
           onChangeForm={(data) =>
             setCouponRegisterForm((prev) => ({ ...prev, basicInfo: data }))
           }
         />
         <DiscountSetting
+          discountSetting={couponRegisterForm?.discountSetting}
           onChangeForm={(data) =>
             setCouponRegisterForm((prev) => ({
               ...prev,
@@ -36,12 +72,14 @@ const CouponManagementPage = () => {
             }))
           }
         />
-        <IssuranceSetting
+        <IssueSetting
+          issueSetting={couponRegisterForm?.issueSetting}
           onChangeForm={(data) =>
             setCouponRegisterForm((prev) => ({ ...prev, issueSetting: data }))
           }
         />
         <PeriodSetting
+          periodSetting={couponRegisterForm?.periodSetting}
           onChangeForm={(data) =>
             setCouponRegisterForm((prev) => ({ ...prev, periodSetting: data }))
           }
@@ -53,6 +91,7 @@ const CouponManagementPage = () => {
           <div className="flex space-x-3">
             <button
               type="button"
+              onClick={() => setCouponRegisterForm({ ...initState })}
               className="px-6 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 transition-colors"
             >
               초기화
@@ -71,4 +110,4 @@ const CouponManagementPage = () => {
   );
 };
 
-export default CouponManagementPage;
+export default CouponAddPage;
