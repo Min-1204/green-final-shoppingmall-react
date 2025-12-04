@@ -7,3 +7,8 @@ export const registerCoupon = async (registerForm) => {
   const res = await axios.post(`${prefix}`, registerForm);
   return res.data;
 };
+
+export const searchCoupons = async (condition) => {
+  const res = await axios.post(`${prefix}/search`, condition);
+  return res.data;
+};
