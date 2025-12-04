@@ -18,6 +18,9 @@ const CouponAddPage = lazy(() => import("../pages/admin/coupon/CouponAddPage"));
 const CouponSearchPage = lazy(() =>
   import("../pages/admin/coupon/CouponSearchPage")
 );
+const CouponModifyPage = lazy(() =>
+  import("../pages/admin/coupon/CouponModifyPage")
+);
 const UserInfoMgr = lazy(() => import("../components/admin/user/UserInfoMgr"));
 const OrderMgr = lazy(() =>
   import("../components/admin/order/AdminOrderMgrComponent")
@@ -78,6 +81,14 @@ const adminRouter = () => {
       element: (
         <Suspense fallback={Loading}>
           <CouponSearchPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: "coupon/modify/:id",
+      element: (
+        <Suspense fallback={Loading}>
+          <CouponModifyPage />
         </Suspense>
       ),
     },

@@ -5,8 +5,10 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function CouponSearchList({ coupons }) {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [selectedCoupons, setSelectedCoupons] = useState([]);
@@ -19,6 +21,10 @@ export default function CouponSearchList({ coupons }) {
     setSelectedCoupons((prev) =>
       prev.includes(id) ? prev.filter((cId) => cId !== id) : [...prev, id]
     );
+  };
+
+  const goToModifyPage = (id) => {
+    navigate(`/admin/coupon/modify/${id}`);
   };
 
   return (
@@ -98,7 +104,10 @@ export default function CouponSearchList({ coupons }) {
                 </td>
                 <td className="px-4 py-3 text-center border-r border-gray-200">
                   <div className="flex gap-1 justify-center">
-                    <button className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm">
+                    <button
+                      className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm"
+                      onClick={() => goToModifyPage(coupon.id)}
+                    >
                       수정
                     </button>
                     <button className="bg-red-50 text-red-700 hover:bg-red-100 px-2 py-1 rounded-md border border-red-200 cursor-pointer transition shadow-sm">
