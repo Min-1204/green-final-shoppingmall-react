@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { changePasswordThunk } from "../../../redux/slices/features/user/authSlice";
 
-export default function PasswordChangeBox() {
+export default function PasswordChange() {
   const { user } = useSelector((state) => state.authSlice);
+  const dispatch = useDispatch();
 
   const [pwForm, setPwForm] = useState({
     password: "",
     newPassword: "",
-    newPasswordConfirm: "",
+    newPasswordConfirm: ""
   });
 
   const handleChange = (e) => {
@@ -15,19 +17,16 @@ export default function PasswordChangeBox() {
     setPwForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  //prettier-ignore
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("현재 비밀번호 :", pwForm.password);
     console.log("새 비밀번호 :", pwForm.newPassword);
     console.log("새 비밀번호확인 :", pwForm.newPasswordConfirm);
 
+    // 유효성 검사
     if (!pwForm.password) {
       alert("현재 비밀번호를 입력하세요.");
-      return;
-    }
-
-    if (user && pwForm.password !== user.password) {
-      alert("비밀번호가 일치하지 않습니다.");
       return;
     }
 
@@ -35,14 +34,38 @@ export default function PasswordChangeBox() {
       alert("새 비밀번호를 입력하세요.");
       return;
     }
+    if (!pwForm.newPasswordConfirm) {
+      alert("새 비밀번호를 확인을 입력하세요.");
+      return;
+    }
     if (pwForm.newPassword !== pwForm.newPasswordConfirm) {
       alert("새 비밀번호가 일치하지 않습니다.");
       return;
     }
 
-    // TODO: axios.post("/api/members/change-password", pwForm, {...})
-    console.log("password change payload:", pwForm);
-    alert("저장 완료. 실제 변경은 백엔드 개발 시 테스트 후 수정");
+    // Thunk 처리 반환 값 활용
+    try {
+      const result = await dispatch(
+        changePasswordThunk({
+          loginId: user.loginId,
+          password: pwForm.password,
+          newPassword: pwForm.newPassword
+        })
+      ).unwrap();
+
+      console.log("여기는 Submit 반환결과 :", result)
+
+      if (result.success) {
+        alert(result.message);
+        setPwForm({
+          password: "",
+          newPassword: "",
+          newPasswordConfirm: ""
+        });
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
