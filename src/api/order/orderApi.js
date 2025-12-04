@@ -20,3 +20,9 @@ export const getOrderList = async (userId) => {
   console.log("getOrderList => ", res.data);
   return res.data;
 };
+
+export const deleteOneOrder = async (orderId) => {
+  const res = await axios.delete(`${prefix}?orderId=${orderId}`);
+  console.log("deleteOneOrder => ", res.data);
+  return res.data;
+};
