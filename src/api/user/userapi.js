@@ -77,7 +77,7 @@ export const checkLoginIdApi = async (loginId) => {
 //prettier-ignore
 export const getProfileApi = async (loginId) => {
   try {
-    const response = await axios.get(`${USER_API}/profile`, { params: { loginId }});
+    const response = await axios.get(`${USER_API}/profile/${loginId }`);
     console.log("1) 프로필 조회 API : ", response.data);
     return response.data;
   } catch (error) {
@@ -106,6 +106,17 @@ export const changePasswordApi = async (passwordForm) => {
   console.log("1) 여기는 비밀번호변경 출력", passwordForm);
   return response.data;
   } catch (error) {
+    throw error;
+  }
+};
+
+export const withdrawalUserApi = async (withdrawalData) => {
+  try {
+    const response = await axios.post(`${USER_API}/withdraw`, withdrawalData);
+    console.log("회원탈퇴 API 콘솔", response);
+    return response.data;
+  } catch (error) {
+    console.error("회원탈퇴 API 에러", error);
     throw error;
   }
 };

@@ -1,6 +1,6 @@
 // src/pages/mypage/MyPagePasswordPage.jsx
 import React from "react";
-import PasswordChangeBox from "../../components/user/mypage/PasswordChangeBox";
+import PasswordChange from "../../components/user/mypage/PasswordChange";
 
 export default function MyPagePasswordPage() {
   return (
@@ -16,7 +16,7 @@ export default function MyPagePasswordPage() {
       {/* 내용 */}
       <div className="px-8 pb-8">
         <div className="max-w-2xl">
-          <PasswordChangeBox />
+          <PasswordChange />
         </div>
       </div>
     </div>
