@@ -1,31 +1,47 @@
 import React, { useEffect, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
+import CouponSearchList from "./CouponSearchList";
+import { searchCoupons } from "../../../api/admin/coupon/couponApi";
 
-const initFilters = {
+const initCondition = {
   searchType: "name",
-  searchKeyword: "",
-  createdFrom: "",
-  createdTo: "",
+  name: "",
+  couponCode: "",
   discountType: ["PERCENTAGE", "FIXED"],
-  issuanceType: ["MANUAL", "AUTO", "CODE"],
-  availability: ["USABLE", "USABLE_BUT_UNISSUABLE", "UNUSABLE"],
+  issueType: ["MANUAL", "AUTO", "CODE"],
+  availability: ["USABLE", "USABLE_BUT_UNISSUABLE", "EXPIRED"],
+  createdAtFrom: "",
+  createdAtTo: "",
 };
 
-export default function CouponSearchFilter({ onSearch }) {
-  const [filters, setFilters] = useState({ ...initFilters });
+export default function CouponSearchFilter() {
+  const [filters, setFilters] = useState({ ...initCondition });
+  const [searchResults, setSearchResults] = useState([]);
 
-  const onChangeHandler = (e) => {
+  useEffect(() => {
+    console.log("filters : ", filters);
+  }, [filters]);
+
+  const searchKeywordHandler = (e) => {
+    const { name, value } = e.target;
+    if (name === "searchType") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        name: "",
+        couponCode: "",
+      }));
+    } else {
+      setFilters((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const periodBasicHandler = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   const onResetHandler = () => {
-    setFilters({ ...initFilters });
+    setFilters({ ...initCondition });
   };
 
   const onCheckChangeHandler = (e) => {
@@ -35,11 +51,11 @@ export default function CouponSearchFilter({ onSearch }) {
       if (value === "전체") {
         if (name === "discountType") {
           newArray = checked ? ["PERCENTAGE", "FIXED"] : [];
-        } else if (name === "issuanceType") {
+        } else if (name === "issueType") {
           newArray = checked ? ["MANUAL", "AUTO", "CODE"] : [];
         } else if (name === "availability") {
           newArray = checked
-            ? ["USABLE", "USABLE_BUT_UNISSUABLE", "UNUSABLE"]
+            ? ["USABLE", "USABLE_BUT_UNISSUABLE", "EXPIRED"]
             : [];
         }
       } else {
@@ -53,7 +69,7 @@ export default function CouponSearchFilter({ onSearch }) {
     });
   };
 
-  const onDatePeriodHandler = (period) => {
+  const getDatePeriodHandler = (period) => {
     const toDate = new Date();
     let fromDate = new Date(toDate);
     switch (period) {
@@ -77,16 +93,24 @@ export default function CouponSearchFilter({ onSearch }) {
     }
     const today = toDate.toLocaleDateString("sv-SE");
     const fromday = fromDate.toLocaleDateString("sv-SE");
-    setFilters((prev) => ({ ...prev, createdFrom: fromday, createdTo: today }));
+    setFilters((prev) => ({
+      ...prev,
+      createdAtFrom: fromday,
+      createdAtTo: today,
+    }));
   };
 
   const searchHandler = () => {
-    console.log("검색 조건:", filters);
-    if (onSearch) onSearch(filters);
+    const loadCoupons = async () => {
+      const coupons = await searchCoupons(filters);
+      console.log("coupons : ", coupons);
+      setSearchResults([...coupons]);
+    };
+    loadCoupons();
   };
 
   const isAllDiscountChecked = filters.discountType.length === 2;
-  const isAllIssuranceChecked = filters.issuanceType.length === 3;
+  const isAllIssuranceChecked = filters.issueType.length === 3;
   const isAllAvailabilityChecked = filters.availability.length === 3;
 
   return (
@@ -107,57 +131,23 @@ export default function CouponSearchFilter({ onSearch }) {
             <select
               name="searchType"
               value={filters.searchType}
-              onChange={onChangeHandler}
+              onChange={searchKeywordHandler}
               className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md"
             >
               <option value="name">쿠폰 이름</option>
-              <option value="description">쿠폰 설명</option>
+              <option value="couponCode">쿠폰 코드</option>
             </select>
             <input
               type="text"
-              name="searchKeyword"
-              value={filters.searchKeyword}
-              onChange={onChangeHandler}
+              name={filters.searchType}
+              value={filters[filters.searchType]}
+              onChange={searchKeywordHandler}
               className="border border-gray-300 p-1 w-80 rounded-md"
               placeholder="검색어를 입력하세요"
             />
           </div>
         </div>
-
-        <div className="flex border-b border-gray-300 items-stretch">
-          <div className="w-40 bg-gray-50 border-r border-gray-300 text-gray-700 font-semibold flex items-center justify-center p-2">
-            등록 기간
-          </div>
-          <div className="flex items-center flex-grow p-2 gap-2">
-            <input
-              type="date"
-              name="createdFrom"
-              value={filters.createdFrom}
-              onChange={onChangeHandler}
-              className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md h-8"
-            />
-            <span className="text-gray-500">~</span>
-            <input
-              type="date"
-              name="createdTo"
-              value={filters.createdTo}
-              onChange={onChangeHandler}
-              className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md h-8"
-            />
-            <div className="flex gap-1 ml-3">
-              {["1주", "1개월", "3개월", "6개월"].map((period) => (
-                <button
-                  key={period}
-                  onClick={() => onDatePeriodHandler(period)}
-                  className="border border-gray-300 bg-white px-2 py-1 text-gray-700 text-xs cursor-pointer rounded-md hover:bg-blue-50 hover:border-blue-500 transition"
-                >
-                  {period}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
+        {/* 할인 타입 */}
         <div className="flex border-b border-gray-300 items-stretch">
           <div className="w-40 bg-gray-50 border-r border-gray-300 text-gray-700 font-semibold flex items-center justify-center p-2">
             할인 타입
@@ -198,7 +188,7 @@ export default function CouponSearchFilter({ onSearch }) {
             </label>
           </div>
         </div>
-
+        {/* 발급 방식 */}
         <div className="flex border-b border-gray-300 items-stretch">
           <div className="w-40 bg-gray-50 border-r border-gray-300 text-gray-700 font-semibold flex items-center justify-center p-2">
             발급 방식
@@ -207,7 +197,7 @@ export default function CouponSearchFilter({ onSearch }) {
             <label className="flex items-center mr-3 cursor-pointer">
               <input
                 type="checkbox"
-                name="issuanceType"
+                name="issueType"
                 value="전체"
                 onChange={onCheckChangeHandler}
                 checked={isAllIssuranceChecked}
@@ -218,9 +208,9 @@ export default function CouponSearchFilter({ onSearch }) {
             <label className="flex items-center mr-3 cursor-pointer">
               <input
                 type="checkbox"
-                name="issuanceType"
+                name="issueType"
                 value="MANUAL"
-                checked={filters.issuanceType.includes("MANUAL")}
+                checked={filters.issueType.includes("MANUAL")}
                 onChange={onCheckChangeHandler}
                 className="mr-1 accent-blue-600 cursor-pointer"
               />
@@ -229,9 +219,9 @@ export default function CouponSearchFilter({ onSearch }) {
             <label className="flex items-center mr-3 cursor-pointer">
               <input
                 type="checkbox"
-                name="issuanceType"
+                name="issueType"
                 value="AUTO"
-                checked={filters.issuanceType.includes("AUTO")}
+                checked={filters.issueType.includes("AUTO")}
                 onChange={onCheckChangeHandler}
                 className="mr-1 accent-blue-600 cursor-pointer"
               />
@@ -240,9 +230,9 @@ export default function CouponSearchFilter({ onSearch }) {
             <label className="flex items-center mr-3 cursor-pointer">
               <input
                 type="checkbox"
-                name="issuanceType"
+                name="issueType"
                 value="CODE"
-                checked={filters.issuanceType.includes("CODE")}
+                checked={filters.issueType.includes("CODE")}
                 onChange={onCheckChangeHandler}
                 className="mr-1 accent-blue-600 cursor-pointer"
               />
@@ -250,7 +240,7 @@ export default function CouponSearchFilter({ onSearch }) {
             </label>
           </div>
         </div>
-
+        {/* 사용 가능 여부 */}
         <div className="flex items-stretch">
           <div className="w-40 bg-gray-50 border-r border-gray-300 text-gray-700 font-semibold flex items-center justify-center p-2">
             사용 가능 여부
@@ -293,13 +283,48 @@ export default function CouponSearchFilter({ onSearch }) {
               <input
                 type="checkbox"
                 name="availability"
-                value="UNUSABLE"
-                checked={filters.availability.includes("UNUSABLE")}
+                value="EXPIRED"
+                checked={filters.availability.includes("EXPIRED")}
                 onChange={onCheckChangeHandler}
                 className="mr-1 accent-blue-600 cursor-pointer"
               />
               사용불가
             </label>
+          </div>
+        </div>
+
+        {/* 등록 기간 */}
+        <div className="flex border-t border-gray-300 items-stretch">
+          <div className="w-40 bg-gray-50 border-r border-gray-300 text-gray-700 font-semibold flex items-center justify-center p-2">
+            등록 기간
+          </div>
+          <div className="flex items-center flex-grow p-2 gap-2">
+            <input
+              type="date"
+              name="createdAtFrom"
+              value={filters.createdAtFrom}
+              onChange={periodBasicHandler}
+              className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md h-8"
+            />
+            <span className="text-gray-500">~</span>
+            <input
+              type="date"
+              name="createdAtTo"
+              value={filters.createdAtTo}
+              onChange={periodBasicHandler}
+              className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md h-8"
+            />
+            <div className="flex gap-1 ml-3">
+              {["1주", "1개월", "3개월", "6개월"].map((period) => (
+                <button
+                  key={period}
+                  onClick={() => getDatePeriodHandler(period)}
+                  className="border border-gray-300 bg-white px-2 py-1 text-gray-700 text-xs cursor-pointer rounded-md hover:bg-blue-50 hover:border-blue-500 transition"
+                >
+                  {period}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -318,6 +343,7 @@ export default function CouponSearchFilter({ onSearch }) {
           초기화
         </button>
       </div>
+      <CouponSearchList coupons={searchResults} />
     </div>
   );
 }

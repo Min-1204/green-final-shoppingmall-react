@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -6,58 +6,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 
-const coupons = [
-  {
-    id: 1,
-    name: "브리스 특가 쿠폰",
-    code: "MSCP220901250924",
-    description: "신규 회원 환영 쿠폰",
-    useDate: "제한 없음",
-    availability: "사용",
-    usage: "전체",
-    issueMethod: "관리자 수동 발급",
-    issueTarget: "전체 회원",
-    amount: "3,000",
-    discountType: "정액할인(원)",
-    status: "본사",
-    issuePeriod: "2022-09-01 00:00:00 ~ 2023-03-01 23:56:59",
-    issuanceCount: "3",
-  },
-  {
-    id: 2,
-    name: "특판가입 쿠폰",
-    code: "MSCP220901134244",
-    description: "특별 할인 쿠폰",
-    useDate: "2022-09-01 00:00:00 ~ 2023-03-01 23:56:59",
-    availability: "사용",
-    usage: "전체",
-    issueMethod: "관리자 수동 발급",
-    issueTarget: "전체 회원",
-    amount: "2,000",
-    discountType: "정액할인(원)",
-    status: "본사",
-    issuePeriod: "2022-09-01 00:00:00 ~ 2023-03-01 23:56:59",
-    issuanceCount: "3",
-  },
-  {
-    id: 3,
-    name: "생일 축하 쿠폰",
-    code: "MSCP220901134245",
-    description: "생일 고객 전용",
-    useDate: "발급일로부터 30일",
-    availability: "사용(발급불가)",
-    usage: "전체",
-    issueMethod: "특정 조건 자동 발급",
-    issueTarget: "생일 회원",
-    amount: "10",
-    discountType: "정률할인(%)",
-    status: "본사",
-    issuePeriod: "2022-09-01 00:00:00 ~ 2023-12-31 23:56:59",
-    issuanceCount: "12",
-  },
-];
-
-export default function CouponSearchList() {
+export default function CouponSearchList({ coupons }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [selectedCoupons, setSelectedCoupons] = useState([]);
@@ -111,16 +60,10 @@ export default function CouponSearchList() {
                 쿠폰 번호
               </th>
               <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
-                쿠폰 설명
-              </th>
-              <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
                 사용 기간
               </th>
               <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
                 사용 가능 여부
-              </th>
-              <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
-                사용 범위
               </th>
               <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
                 발급 방식
@@ -133,9 +76,6 @@ export default function CouponSearchList() {
               </th>
               <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
                 할인 타입
-              </th>
-              <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
-                할인 부담
               </th>
               <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
                 발급 기간
@@ -170,23 +110,21 @@ export default function CouponSearchList() {
                   </div>
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
-                  {coupon.name}
+                  {coupon.couponName}
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap text-gray-600">
-                  {coupon.code}
+                  {coupon.couponCode}
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
-                  {coupon.description}
-                </td>
-                <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
-                  {coupon.useDate}
+                  {coupon.validFrom?.replace("T", " ")} ~{" "}
+                  {coupon.validTo?.replace("T", " ")}
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
                   <span
                     className={`px-2 py-1 rounded text-xs ${
-                      coupon.availability === "사용"
+                      coupon.availability === "USABLE"
                         ? "bg-green-100 text-green-700"
-                        : coupon.availability === "사용(발급불가)"
+                        : coupon.availability === "USABLE_BUT_UNISSUABLE"
                         ? "bg-yellow-100 text-yellow-700"
                         : "bg-red-100 text-red-700"
                     }`}
@@ -195,28 +133,45 @@ export default function CouponSearchList() {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
-                  {coupon.usage}
+                  {(() => {
+                    switch (coupon.issueType) {
+                      case "MANUAL":
+                        return "관리자 발급";
+                      case "AUTO":
+                        return "자동 발급";
+                      case "CODE":
+                        return "쿠폰 코드 입력";
+                    }
+                  })()}
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
-                  {coupon.issueMethod}
+                  {(() => {
+                    switch (coupon.autoIssueTrigger) {
+                      case "LOGIN":
+                        return "로그인 유저";
+                      case "ALL_USER":
+                        return "전체 유저";
+                      default:
+                        return "";
+                    }
+                  })()}
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
-                  {coupon.issueTarget}
-                </td>
-                <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap font-semibold text-blue-600">
-                  {coupon.amount}
-                </td>
-                <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
-                  {coupon.discountType}
+                  {coupon.discountType === "FIXED"
+                    ? coupon.fixedDiscountAmount.toLocaleString()
+                    : coupon.discountPercentage}
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
-                  {coupon.status}
+                  {coupon.discountType === "FIXED"
+                    ? "정액할인(원)"
+                    : "정률할인(%)"}
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap text-gray-600">
-                  {coupon.issuePeriod}
+                  {coupon.issuableStartDate?.replace("T", " ")} ~{" "}
+                  {coupon.issuableEndDate?.replace("T", " ")}
                 </td>
                 <td className="px-4 py-3 text-sm text-center whitespace-nowrap">
-                  {coupon.issuanceCount}개
+                  {coupon.issueCount}개
                 </td>
               </tr>
             ))}
