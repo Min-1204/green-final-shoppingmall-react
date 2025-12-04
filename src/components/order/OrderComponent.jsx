@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import CouponModal from "./CouponModal";
-import { getOneOrder, registerOrder } from "../../api/order/orderApi";
+import {
+  deleteOneOrder,
+  getOneOrder,
+  registerOrder,
+} from "../../api/order/orderApi";
 import axios from "axios";
 
 const API_SERVER_HOST = "http://localhost:8080";
@@ -18,19 +22,10 @@ const OrderComponent = () => {
   const passedItems = location.state?.items || [];
 
   const [cartItems, setCartItems] = useState(
-    passedItems.length > 0
-      ? passedItems
-      : [
-          {
-            id: 1,
-            name: "진정 수분 토너",
-            brand: "HYGEE",
-            price: 18000,
-            qty: 1,
-            image: "/images/toner1.jpg",
-          },
-        ]
+    passedItems.length > 0 ? passedItems : []
   );
+
+  // console.log("cartItems", cartItems);
 
   const [showCouponModal, setShowCouponModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -96,7 +91,9 @@ const OrderComponent = () => {
     (sum, item) => sum + Number(item.sellingPrice) * Number(item.quantity),
     0
   );
-  const shippingFee = totalPrice >= 20000 ? 0 : 2500;
+
+  const shippingFee = totalPrice >= 30000 ? 0 : 3000;
+
   const couponDiscount = selectedCoupon ? selectedCoupon.amount : 0;
   // 최종 결제금액 계산: (총 상품금액 + 배송비) - 쿠폰할인 - 포인트사용
   const finalPrice = totalPrice + shippingFee - couponDiscount - usePoint;
@@ -150,10 +147,10 @@ const OrderComponent = () => {
 
       // 1. 주문 생성(결제 전)
       const resultOrderId = await registerOrder(dto, 1);
-      console.log("백엔드로부터 받은 주문 id", resultOrderId);
+      // console.log("백엔드로부터 받은 주문 id", resultOrderId);
 
       const resultOrder = await getOneOrder(resultOrderId);
-      console.log("백엔드로부터 받은 주문", resultOrder);
+      // console.log("백엔드로부터 받은 주문", resultOrder);
 
       // 2. 결제 진행
       // 아임포트 객체 destructuring
@@ -167,7 +164,7 @@ const OrderComponent = () => {
       IMP.init("imp62835818");
 
       // 테스트 모드 플래그 추가
-      const IS_TEST_MODE = false; // 프로덕션 배포시 false로 변경
+      const IS_TEST_MODE = true; // 프로덕션 배포시 false로 변경
 
       // 결제 수단에 따른 PG 및 pay_method 매핑
       const getPgCode = (method) => {
@@ -218,7 +215,7 @@ const OrderComponent = () => {
               : cartItems[0].productName,
 
           // 테스트 모드일 때는 안전한 금액 사용
-          amount: IS_TEST_MODE ? 1 : finalPrice, // 최종 결제 금액
+          amount: finalPrice, // 최종 결제 금액
           buyer_email: "user@example.com", //실제 사용자 이메일로 변경 필요
           buyer_name: receiverName,
           buyer_tel: receiverPhone,
@@ -228,12 +225,14 @@ const OrderComponent = () => {
         async (response) => {
           console.log("결제 응답:", response);
           if (response.error_code != null) {
+            const result = await deleteOneOrder(resultOrderId);
+            console.log(result);
             return alert(
               `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
             );
           }
           if (response.success) {
-            console.log("결제 성공! imp_uid:", response.imp_uid);
+            console.log("결제 성공(검증 전)! imp_uid:", response.imp_uid);
 
             try {
               const verificationResponse = await axios.post(
@@ -253,6 +252,8 @@ const OrderComponent = () => {
               }
             } catch (error) {
               alert("서버 검증 실패:", error);
+              const result = await deleteOneOrder(resultOrderId);
+              console.log(result);
               if (error.response) {
                 // 서버가 응답을 보냈지만 에러 상태 (400,500 등)
                 alert(
@@ -266,13 +267,6 @@ const OrderComponent = () => {
                 alert("요청 중 오류가 발생했습니다: " + error.message);
               }
             }
-
-            // if (IS_TEST_MODE) {
-            //   console.log(" 테스트 결제 완료");
-            //   console.log(" 실제 금액이 출금되었습니다.");
-            //   console.log(" 자정(23:00~23:50)에 자동 취소됩니다.");
-            //   console.log(" 신용카드 사용을 권장합니다.");
-            // }
           }
         }
       );

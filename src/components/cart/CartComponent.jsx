@@ -74,7 +74,7 @@ const CartComponent = () => {
     0
   );
 
-  const shipping = totalPrice >= 20000 ? 0 : 2500;
+  const shipping = totalPrice >= 30000 ? 0 : 3000;
 
   // ✅ 주문 페이지 이동 시 선택한 상품만 전달
   const handleOrderSelected = () => {
