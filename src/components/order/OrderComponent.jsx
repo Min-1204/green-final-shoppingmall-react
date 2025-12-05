@@ -22,7 +22,7 @@ const OrderComponent = () => {
 
   const passedItems = location.state?.items || [];
 
-  const { profile } = useSelector((state) => state.authSlice);
+  const { user, profile } = useSelector((state) => state.authSlice);
 
   const [cartItems, setCartItems] = useState(
     passedItems.length > 0 ? passedItems : []
@@ -30,8 +30,11 @@ const OrderComponent = () => {
 
   // console.log("cartItems", cartItems);
 
+  // const [showAddressModal, setShowAddressModal] = useState(false);
+
+  // 쿠폰모달
   const [showCouponModal, setShowCouponModal] = useState(false);
-  const [showAddressModal, setShowAddressModal] = useState(false);
+  // 선택한 쿠폰
   const [selectedCoupon, setSelectedCoupon] = useState(null);
 
   // 배송지명
@@ -91,25 +94,33 @@ const OrderComponent = () => {
   }, [agreePurchase, agreePersonal, agreeDelegate]);
 
   useEffect(() => {
-    console.log("profile", profile);
+    // console.log("profile", profile);
     const newOrdererInfo = {
-      name: profile.name,
-      phone: profile.phoneNumber,
+      name: profile?.name,
+      phone: profile?.phoneNumber,
     };
     setOrdererInfo(newOrdererInfo);
   }, [profile]);
+
+  useEffect(() => {
+    console.log("selectedCoupon", selectedCoupon);
+  }, [selectedCoupon]);
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + Number(item.sellingPrice) * Number(item.quantity),
     0
   );
 
-  const shippingFee = totalPrice >= 30000 ? 0 : 3000;
+  const shippingFee = totalPrice >= 50000 ? 0 : 3000;
 
-  const couponDiscount = selectedCoupon ? selectedCoupon.amount : 0;
+  const couponDiscount = selectedCoupon
+    ? (selectedCoupon.coupon.discountType = "FIXED"
+        ? selectedCoupon.coupon.fixedDiscountAmount
+        : (totalPrice * selectedCoupon.coupon.discountPercentage) / 100)
+    : 0;
   // 최종 결제금액 계산: (총 상품금액 + 배송비) - 쿠폰할인 - 포인트사용
   const finalPrice = totalPrice + shippingFee - couponDiscount - usePoint;
-  const couponName = selectedCoupon ? selectedCoupon.name : null;
+  const couponName = selectedCoupon ? selectedCoupon.coupon.couponName : null;
 
   const handleOrderCompleteClick = async () => {
     // 필수 약관 동의 확인 (디자인 변경이지만, 결제 로직에 필수적이므로 유지)
@@ -152,7 +163,7 @@ const OrderComponent = () => {
           deliveryRequest === "직접입력"
             ? customDeliveryRequest
             : deliveryRequest,
-        couponId: null,
+        coupon: selectedCoupon.coupon.id,
         usedPoints: usePoint,
         orderProducts: orderProducts,
       };
@@ -421,11 +432,11 @@ const OrderComponent = () => {
                     className="px-5 py-2.5 border border-[#d5d5d5] bg-white text-[#111] text-[13px] font-medium hover:border-[#111] transition-colors"
                     onClick={() => {
                       setAddressName("집");
-                      setReceiverName(profile.name);
-                      setReceiverPhone(profile.phoneNumber);
-                      setPostalCode(profile.postalCode);
-                      setStreetAddress(profile.address);
-                      setDetailedAddress(profile.addressDetail);
+                      setReceiverName(profile?.name);
+                      setReceiverPhone(profile?.phoneNumber);
+                      setPostalCode(profile?.postalCode);
+                      setStreetAddress(profile?.address);
+                      setDetailedAddress(profile?.addressDetail);
                     }}
                   >
                     기본 배송지
@@ -823,6 +834,8 @@ const OrderComponent = () => {
             setSelectedCoupon(coupon);
             setShowCouponModal(false);
           }}
+          userId={user.id}
+          totalPrice={totalPrice}
         />
       )}
     </div>
