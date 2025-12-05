@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_SERVER = "http://localhost:8080";
+export const API_SERVER = "http://localhost:8080";
 const USER_API = `${API_SERVER}/api/user`;
 
 export const signUpApi = async (signUpForm) => {
@@ -28,7 +28,7 @@ export const signUpApi = async (signUpForm) => {
       address: signUpForm.address, // 기본주소
       addressDetail: signUpForm.addressDetail, // 상세주소
       smsAgreement: signUpForm.smsAgreement, // SMS 알림 동의
-      emailAgreement: signUpForm.emailAgreement // Email 알림 동의
+      emailAgreement: signUpForm.emailAgreement, // Email 알림 동의
     };
 
     console.log("백엔드로 보내는 데이터 콘솔", requestData);
