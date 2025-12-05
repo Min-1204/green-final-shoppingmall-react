@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import CouponModal from "./CouponModal";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   deleteOneOrder,
   getOneOrder,
   registerOrder,
 } from "../../api/order/orderApi";
-import axios from "axios";
+import CouponModal from "./CouponModal";
 
 const API_SERVER_HOST = "http://localhost:8080";
 
@@ -20,6 +21,8 @@ const OrderComponent = () => {
   const location = useLocation();
 
   const passedItems = location.state?.items || [];
+
+  const { profile } = useSelector((state) => state.authSlice);
 
   const [cartItems, setCartItems] = useState(
     passedItems.length > 0 ? passedItems : []
@@ -73,6 +76,11 @@ const OrderComponent = () => {
   const [agreePersonal, setAgreePersonal] = useState(false);
   const [agreeDelegate, setAgreeDelegate] = useState(false);
 
+  const [ordererInfo, setOrdererInfo] = useState({
+    name: null,
+    phone: null,
+  });
+
   // 약관 전체 동의 상태 업데이트
   useEffect(() => {
     if (agreePurchase && agreePersonal && agreeDelegate) {
@@ -82,10 +90,14 @@ const OrderComponent = () => {
     }
   }, [agreePurchase, agreePersonal, agreeDelegate]);
 
-  const ordererInfo = {
-    name: "홍길동",
-    phone: "010-1234-5678",
-  };
+  useEffect(() => {
+    console.log("profile", profile);
+    const newOrdererInfo = {
+      name: profile.name,
+      phone: profile.phoneNumber,
+    };
+    setOrdererInfo(newOrdererInfo);
+  }, [profile]);
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + Number(item.sellingPrice) * Number(item.quantity),
@@ -409,11 +421,11 @@ const OrderComponent = () => {
                     className="px-5 py-2.5 border border-[#d5d5d5] bg-white text-[#111] text-[13px] font-medium hover:border-[#111] transition-colors"
                     onClick={() => {
                       setAddressName("집");
-                      setReceiverName("홍길동");
-                      setReceiverPhone("010-1234-5678");
-                      setPostalCode("06236");
-                      setStreetAddress("서울특별시 강남구 테헤란로 123");
-                      setDetailedAddress("삼성타워빌딩 10층");
+                      setReceiverName(profile.name);
+                      setReceiverPhone(profile.phoneNumber);
+                      setPostalCode(profile.postalCode);
+                      setStreetAddress(profile.address);
+                      setDetailedAddress(profile.addressDetail);
                     }}
                   >
                     기본 배송지
