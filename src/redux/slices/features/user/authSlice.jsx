@@ -160,9 +160,8 @@ export const authSlice = createSlice({// Slice 생성
         state.loading = true;
         state.error = null;
       })
-      .addCase(modifyProfileThunk.fulfilled, (state, action) => {
+      .addCase(modifyProfileThunk.fulfilled, (state) => {
         state.loading = false;
-        state.profile = action.payload;
       })
       .addCase(modifyProfileThunk.rejected, (state,action) =>{
         state.loading = false;
