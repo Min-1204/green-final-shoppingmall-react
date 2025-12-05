@@ -3,7 +3,7 @@ import {
   changePasswordApi,
   getProfileApi,
   loginApi,
-  modifyProfileApi
+  modifyProfileApi,
 } from "../../../../api/user/userApi";
 
 export const loginAsyncThunk = createAsyncThunk(
@@ -68,7 +68,7 @@ const initialState = {
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
   profile: null,
   error: null, // 에러 상태
-  loading: false // 로딩 상태
+  loading: false, // 로딩 상태
 };
 
 // prettier-ignore
@@ -160,8 +160,9 @@ export const authSlice = createSlice({// Slice 생성
         state.loading = true;
         state.error = null;
       })
-      .addCase(modifyProfileThunk.fulfilled, (state) => {
+      .addCase(modifyProfileThunk.fulfilled, (state, action) => {
         state.loading = false;
+        state.profile = action.payload;
       })
       .addCase(modifyProfileThunk.rejected, (state,action) =>{
         state.loading = false;

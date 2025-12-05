@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   loginAsyncThunk,
-  clearError
+  getUserProfileThunk,
+  clearError,
 } from "../../../redux/slices/features/user/authSlice";
 
 // prettier-ignore
 const LoginComponent = () => {
   const dispatch = useDispatch(); // Redux Dispatch 사용 함수
+  const navigate = useNavigate(); // useNaivate 경로Hook 
   const { isLoggedIn, error, loading } = useSelector( (state) => state.authSlice ); // 로그인상태, 에러상태, 로딩상태
 
   const [loginData, setLoginData] = useState({ // 로그인데이터 Form
@@ -17,7 +19,7 @@ const LoginComponent = () => {
     password: "", // 비밀번호
   });
 
-  const navigate = useNavigate(); // useNaivate 경로Hook 
+  
 
   const inputChangeHandler = (e) => { // 입력핸들러
     const { name, value } = e.target; // 이벤트객체 target 속성 name과 value 디스럭처링
@@ -36,7 +38,7 @@ const LoginComponent = () => {
   }, [isLoggedIn, navigate]);
 
   useEffect(() => { // useEffect Hook
-    if (error) { // error true ?
+    if (error) { // error true 
       alert(`로그인 실패: ${error}`); // 알림 + error
       dispatch(clearError()); // clearError authSlice 호출
     }
@@ -58,7 +60,19 @@ const LoginComponent = () => {
       return;
     }
     
-    dispatch( loginAsyncThunk(loginData) ); // loginAsyncThunk Reducer 호출 해당 loginData 인자 전달
+    dispatch(loginAsyncThunk(loginData)).unwrap()
+    .then(loginResult => { 
+        const loginId = loginResult.loginId || loginData.loginId;
+        if(loginId) {
+          dispatch(getUserProfileThunk(loginId))
+          .catch(profileError => {
+            console.log("로그인 성공 후 프로필 조회 실패", profileError)
+          });
+      }
+    })
+    .catch(err => {
+      console.error("로그인 Thunk rejected", err)
+    })
     console.log(`로그인 버튼이 눌렸습니다. \n 이메일: ${loginData.loginId} \n 비밀번호: ${loginData.password}`);
   };
 
