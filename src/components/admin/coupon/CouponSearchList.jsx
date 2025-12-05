@@ -63,7 +63,7 @@ export default function CouponSearchList({ coupons }) {
                 쿠폰 이름
               </th>
               <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
-                쿠폰 번호
+                쿠폰 코드
               </th>
               <th className="px-4 py-3 text-center border-r border-gray-300 whitespace-nowrap">
                 사용 기간
@@ -93,7 +93,12 @@ export default function CouponSearchList({ coupons }) {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {coupons.map((coupon) => (
-              <tr key={coupon.id} className="hover:bg-gray-50 transition">
+              <tr
+                key={coupon.id}
+                className={`transition ${
+                  coupon.deleted ? "bg-gray-100 opacity-60" : "hover:bg-gray-50"
+                }`}
+              >
                 <td className="px-4 py-3 text-center border-r border-gray-200">
                   <input
                     type="checkbox"
@@ -109,12 +114,6 @@ export default function CouponSearchList({ coupons }) {
                       onClick={() => goToModifyPage(coupon.id)}
                     >
                       수정
-                    </button>
-                    <button className="bg-red-50 text-red-700 hover:bg-red-100 px-2 py-1 rounded-md border border-red-200 cursor-pointer transition shadow-sm">
-                      삭제
-                    </button>
-                    <button className="bg-green-50 text-green-700 hover:bg-green-100 px-2 py-1 rounded-md border border-green-200 cursor-pointer transition shadow-sm">
-                      발급
                     </button>
                   </div>
                 </td>
@@ -138,7 +137,11 @@ export default function CouponSearchList({ coupons }) {
                         : "bg-red-100 text-red-700"
                     }`}
                   >
-                    {coupon.availability}
+                    {coupon.availability === "USABLE"
+                      ? "사용가능"
+                      : coupon.availability === "USABLE_BUT_UNISSUABLE"
+                      ? "사용가능(발급불가)"
+                      : "사용불가"}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
