@@ -82,16 +82,22 @@ export const authSlice = createSlice({// Slice 생성
       state.error = null; // 에러상태
       state.loading = false; // 로딩상태
       localStorage.removeItem("currentUser"); // localStorage의 currentUser 키값 삭제
+      localStorage.removeItem("profileUser"); // localStorage의 profileUser 키값 삭제
       console.log("여기는 AuthSlice : 로그아웃 성공"); // logout reducer 종료.
     },
 
     // prettier-ignore
     restoreLogin: (state) => { // 로그인유지 함수
       const user = localStorage.getItem("currentUser"); // localstorage의 currentUser 키값 불러와서 user에 저장
+      const profile = localStorage.getItem("profileUser");
       if (user) { // user가 true라면
         state.user = JSON.parse(user); // user를 JSON.parse적용 변환
         state.isLoggedIn = true; // 로그인상태를 true
         console.log( "여기는 AuthSlice: 로그인 상태 복구 완료", JSON.parse(user) ); // 변환된 user 로그 출력
+      }
+      if (profile) {
+        state.profile = JSON.parse(profile);
+        console.log("여기는 AuthSlice: 프로필 상태 복구 완료", JSON.parse(profile));
       }
     },
 
@@ -129,7 +135,6 @@ export const authSlice = createSlice({// Slice 생성
         state.isLoggedIn = true; // 로그인상태 true
         state.error = null; // 에러상태 null
         state.user = action.payload; // user의 정보 action.payload 변경 => action.payload는 해당 처리된 결과값 즉, response
-
         localStorage.setItem("currentUser", JSON.stringify(action.payload)); // localstorage에 해당 action.payload 값 stringify 변환 후 저장
         console.log("여기는 AuthSlice fulfiled 로그인 성공 ", action.payload);
       })
@@ -150,6 +155,7 @@ export const authSlice = createSlice({// Slice 생성
         state.loading = false;
         state.error = null;
         state.profile = action.payload;
+        localStorage.setItem("profileUser", JSON.stringify(action.payload));
         console.log("프로필 조회 성공 : ", action.payload)
       })
       .addCase(getUserProfileThunk.rejected, (state,action) => {
