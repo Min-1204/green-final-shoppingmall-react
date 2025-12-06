@@ -3,6 +3,8 @@ import ReviewRatingComponent from "./ReviewRatingComponent";
 import { reviewList } from "../../api/review/reviewApi";
 import ReviewCommentMgr from "./ReviewCommentMgr";
 import ReviewLike from "./ReviewLike";
+import { useSearchParams } from "react-router-dom";
+import Pagination from "../pagination/Pagination";
 
 const ReviewListComponent = ({ productId }) => {
   const sortOptions = [
@@ -12,21 +14,39 @@ const ReviewListComponent = ({ productId }) => {
     { label: "낮은별점순", value: "ratingAsc" },
   ];
 
-  const [reviews, setReviews] = useState([]);
+  const [pageResponse, setPageResponse] = useState(null); //백엔드 응답 저장할 상태(PageResponseDTO 저장)
+  const reviews = pageResponse?.dtoList || []; //리뷰 데이터는 응답에서 가져옴
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showComments, setShowComments] = useState({});
   const [selectedSort, setSelectedSort] = useState(sortOptions[0]);
   const sortRef = useRef();
   const [modalImage, setModalImage] = useState(null);
 
+  const [queryParams] = useSearchParams();
+
+  // URL 쿼리에서 숫자 값을 읽어오는 함수
+  const getNum = (param, defaultValue) => {
+    if (!param) return defaultValue;
+    return parseInt(param, 10);
+  };
+
   // 리뷰 목록 조회
   useEffect(() => {
+    const page = getNum(queryParams.get("page"), 1);
+    const size = getNum(queryParams.get("size"), 10);
+    //URL에서 현재 페이지와 사이즈 정보 읽어옴
+
     const getReviews = async () => {
-      const reviews = await reviewList(productId, selectedSort.value);
-      setReviews(reviews);
+      const reviews = await reviewList(
+        productId,
+        selectedSort.value,
+        page,
+        size
+      );
+      setPageResponse(reviews); //PageResponseDTO를 저장
     };
     getReviews();
-  }, [selectedSort, productId]);
+  }, [selectedSort, productId, queryParams]);
 
   // 정렬 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
@@ -53,7 +73,7 @@ const ReviewListComponent = ({ productId }) => {
   return (
     <div className="w-full min-h-screen">
       <div className="w-full mx-auto my-6">
-        <ReviewRatingComponent />
+        <ReviewRatingComponent productId={productId} />
 
         {/* 정렬 드롭다운 */}
         <div className="flex items-center space-x-3 py-4 text-sm text-gray-600">
@@ -157,6 +177,9 @@ const ReviewListComponent = ({ productId }) => {
         ) : (
           <p>리뷰가 없습니다.</p>
         )}
+
+        {/* 페이지네이션 컴포넌트 */}
+        {pageResponse && <Pagination pageResponseDTO={pageResponse} />}
 
         {/* 모달 */}
         {modalImage && (

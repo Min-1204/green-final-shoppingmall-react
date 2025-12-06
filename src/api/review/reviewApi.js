@@ -3,19 +3,22 @@ import axios from "axios";
 export const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/review`;
 
-export const reviewList = async (productId, sort) => {
+export const reviewList = async (productId, sort, page = 1, size = 10) => {
   const { data } = await axios.get(`${prefix}/product/${productId}`, {
     params: {
       sort: sort,
+      page: page,
+      size: size,
     },
   });
   console.log("리뷰 목록 => ", data, "제품 Id => ", productId);
   return data;
 };
 
-export const getMyReviews = async (userId) => {
-  const { data } = await axios.get(`${prefix}/user/${userId}`);
-  console.log("유저 아이디 => ", userId);
+export const getMyReviews = async (userId, page = 1, size = 10) => {
+  const { data } = await axios.get(`${prefix}/user/${userId}`, {
+    params: { page: page, size: size },
+  });
   console.log("내 리뷰 => ", data);
   return data;
 };
