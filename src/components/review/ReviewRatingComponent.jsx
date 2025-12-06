@@ -7,7 +7,7 @@ import {
   reviewPositive,
 } from "../../api/review/reviewApi";
 
-const ReviewRatingComponent = () => {
+const ReviewRatingComponent = ({ productId }) => {
   const [avgRating, setAvgRating] = useState(0);
   const [reviewTotalCount, setReviewTotalCount] = useState(0);
   const [ratingByCount, setRatingByCount] = useState({
@@ -17,46 +17,51 @@ const ReviewRatingComponent = () => {
     2: 0,
     1: 0,
   });
-  const [positiveCount, setPositiveCount] = useState(0);
+  const [positivePercent, setPositivePercent] = useState(0);
 
   // 리뷰 평균 별점
   useEffect(() => {
+    if (!productId) return;
     const productReviewAvgRating = async () => {
-      const data = await reviewAvgRating(1);
+      const data = await reviewAvgRating(productId);
       // console.log("평균별점 데이터 => ", data);
       setAvgRating(data);
     };
     productReviewAvgRating();
-  }, []);
+  }, [productId]);
 
   // 리뷰 개수
   useEffect(() => {
+    if (!productId) return;
     const productReviewCount = async () => {
-      const data = await reviewCount(1);
+      const data = await reviewCount(productId);
       // console.log("리뷰 개수 데이터 => ", data);
       setReviewTotalCount(data);
     };
     productReviewCount();
-  }, []);
+  }, [productId]);
 
-  // 별점별 리뷰 개수
+  // 별점별 리뷰(5,4,3,2,1) 개수
   useEffect(() => {
+    if (!productId) return;
     const productReviewRatingByCount = async () => {
       const counts = {};
       for (let rating = 1; rating <= 5; rating++) {
-        const data = await reviewRatingByCount(1, rating);
+        const data = await reviewRatingByCount(productId, rating);
         counts[rating] = data;
         // console.log(`별점 ${rating}점 개수 => `, data);
       }
       setRatingByCount(counts);
     };
     productReviewRatingByCount();
-  }, []);
+  }, [productId]);
 
+  // 긍정적 리뷰(5,4) 비율
   useEffect(() => {
+    if (!productId) return;
     const productReviewPositive = async () => {
-      const positive = await reviewPositive(1);
-      const total = await reviewCount(1);
+      const positive = await reviewPositive(productId);
+      const total = await reviewCount(productId);
 
       let percent = 0;
       if (total === 0) {
@@ -64,10 +69,13 @@ const ReviewRatingComponent = () => {
       } else {
         percent = Math.trunc((positive / total) * 100);
       }
-      setPositiveCount(percent);
+      setPositivePercent(percent);
+      // console.log("positive -> ", positive, "total -> ", total);
+      // console.log("percent -> ", percent);
     };
     productReviewPositive();
-  }, []);
+  }, [productId]);
+  // console.log("positivePercent -> ", positivePercent);
 
   // 그래프 너비 계산
   const maxCount = Math.max(...Object.values(ratingByCount));
@@ -90,8 +98,8 @@ const ReviewRatingComponent = () => {
             <span className="text-5xl">{Math.trunc(avgRating)}</span>
           </div>
           <p className="text-sm text-gray-700 font-medium mt-3">
-            <span className="font-bold text-blue-600">{positiveCount}%</span>의
-            구매자가 이 상품을 좋아합니다.
+            <span className="font-bold text-blue-600">{positivePercent}%</span>
+            의 구매자가 이 상품을 좋아합니다.
           </p>
           <p className="text-xs text-gray-400 mt-1">
             (총 {reviewTotalCount}개 리뷰)
