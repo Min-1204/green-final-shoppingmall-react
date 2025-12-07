@@ -53,7 +53,7 @@ export const reviewAdd = async (review) => {
   return data;
 };
 
-export const reviewModify = async (reviewId, updatedReview) => {
+export const reviewModify = async (reviewId, updatedReview, userId) => {
   const formData = new FormData();
   formData.append(
     "review",
@@ -62,6 +62,7 @@ export const reviewModify = async (reviewId, updatedReview) => {
         JSON.stringify({
           content: updatedReview?.content,
           rating: updatedReview?.rating,
+          userId: userId,
           deleteImgUrls: updatedReview?.deleteImgUrls,
         }),
       ],
@@ -78,8 +79,10 @@ export const reviewModify = async (reviewId, updatedReview) => {
   return data;
 };
 
-export const reviewDelete = async (reviewId) => {
-  const { data } = await axios.delete(`${prefix}/delete/${reviewId}`);
+export const reviewDelete = async (reviewId, userId) => {
+  const { data } = await axios.delete(`${prefix}/delete/${reviewId}`, {
+    params: { userId: userId },
+  });
   console.log("삭제한 리뷰 Id => ", reviewId);
   return data;
 };

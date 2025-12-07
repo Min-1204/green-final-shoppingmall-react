@@ -43,7 +43,7 @@ const ReviewCommentMgr = ({ reviewId }) => {
       alert("댓글 내용을 입력해주세요!");
       return;
     }
-    await reviewCommentModify(commentId, newContent);
+    await reviewCommentModify(commentId, newContent, user.id);
     setEditId(null);
     getCommentList();
   };
@@ -51,7 +51,7 @@ const ReviewCommentMgr = ({ reviewId }) => {
   // 댓글 삭제
   const commentDeleteHandler = async (commentId) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
-    await reviewCommentDelete(commentId);
+    await reviewCommentDelete(commentId, user.id);
     alert("댓글이 삭제되었습니다.");
     getCommentList();
   };

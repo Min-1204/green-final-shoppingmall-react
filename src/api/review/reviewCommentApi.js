@@ -21,18 +21,24 @@ export const reviewCommentAdd = async (userId, reviewId, content) => {
   return data;
 };
 
-export const reviewCommentModify = async (commentId, content) => {
+export const reviewCommentModify = async (commentId, content, userId) => {
   console.log("수정하려는 댓글 id => ", commentId, "수정 내용 => ", content);
-  const { data } = await axios.put(`${prefix}/modify/${commentId}`, {
-    content,
-  });
+  const { data } = await axios.put(
+    `${prefix}/modify/${commentId}`,
+    {
+      content,
+    },
+    { params: { userId } }
+  );
   console.log("수정 내용 => ", data);
   return data;
 };
 
-export const reviewCommentDelete = async (commentId) => {
+export const reviewCommentDelete = async (commentId, userId) => {
   console.log("삭제하려는 댓글 id => ", commentId);
-  const { data } = await axios.delete(`${prefix}/delete/${commentId}`);
+  const { data } = await axios.delete(`${prefix}/delete/${commentId}`, {
+    params: { userId: userId },
+  });
   console.log("삭제한 댓글 => ", data);
   return data;
 };
