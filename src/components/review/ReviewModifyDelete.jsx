@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { reviewDelete, reviewModify } from "../../api/review/reviewApi";
+import { useSelector } from "react-redux";
 
 const ReviewModifyDelete = ({ closeModal, review, update }) => {
   const [currentRating, setCurrentRating] = useState(0);
@@ -8,6 +9,8 @@ const ReviewModifyDelete = ({ closeModal, review, update }) => {
   const [newFiles, setNewFiles] = useState([]); // 새로 첨부한 파일 관리
   const [deleteImgUrls, setDeleteImgUrls] = useState([]); // 삭제할 기존 이미지 url
   const [originalImgUrls, setOriginalImgUrls] = useState([]); // 원본 이미지 URL 저장
+
+  const { user } = useSelector((state) => state.authSlice);
 
   const uploadRef = useRef();
 
@@ -28,12 +31,16 @@ const ReviewModifyDelete = ({ closeModal, review, update }) => {
       alert("리뷰 내용을 입력해주세요");
       return;
     }
-    const updateReview = await reviewModify(review.id, {
-      content: reviewContent,
-      rating: currentRating,
-      newImages: newFiles,
-      deleteImgUrls: deleteImgUrls,
-    });
+    const updateReview = await reviewModify(
+      review.id,
+      {
+        content: reviewContent,
+        rating: currentRating,
+        newImages: newFiles,
+        deleteImgUrls: deleteImgUrls,
+      },
+      user.id
+    );
     alert("리뷰가 수정되었습니다.");
 
     if (update) {
@@ -53,7 +60,7 @@ const ReviewModifyDelete = ({ closeModal, review, update }) => {
     const ok = window.confirm("정말 삭제하시겠습니까?");
     if (!ok) return;
 
-    await reviewDelete(id);
+    await reviewDelete(id, user.id);
 
     alert("리뷰가 삭제되었습니다.");
 
