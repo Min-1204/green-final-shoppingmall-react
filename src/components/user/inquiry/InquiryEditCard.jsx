@@ -1,13 +1,7 @@
 import React from "react";
 
-const InquiryEditCard = ({
-  inquiry,
-  formData,
-  onFormChange,
-  onSave,
-  onCancel,
-  onDelete
-}) => {
+// prettier-ignore
+const InquiryEditCard = ({  inquiry,  formData,  onFormChange,  onSave,  onCancel,}) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div className="p-6 bg-blue-50 border-b border-blue-200">
@@ -112,15 +106,6 @@ const InquiryEditCard = ({
             />
             <span className="text-sm text-slate-700">SMS로 답변 알림 받기</span>
           </label>
-        </div>
-
-        <div className="pt-4 border-t">
-          <button
-            onClick={onDelete}
-            className="w-full px-4 py-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm hover:bg-red-100 font-medium"
-          >
-            🗑️ 이 문의 삭제하기
-          </button>
         </div>
       </div>
     </div>

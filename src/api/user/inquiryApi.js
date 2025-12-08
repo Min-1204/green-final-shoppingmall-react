@@ -26,13 +26,11 @@ export const inquiryReadApi = async (loginId) => {
   }
 };
 
+//prettier-ignore
 export const inquiryModifyApi = async (inquiryId, inquiryData, loginId) => {
   try {
     const response = await axios.put(
-      `${INQUIRY_API}/inquiry-modify/${inquiryId}`,
-      inquiryData,
-      { params: { loginId } }
-    );
+      `${INQUIRY_API}/inquiry-modify/${inquiryId}`, inquiryData, { params: { loginId } } );
     console.log("여기는 수정 API : ", response.data);
     return response.data;
   } catch (error) {
@@ -41,14 +39,11 @@ export const inquiryModifyApi = async (inquiryId, inquiryData, loginId) => {
   }
 };
 
+//prettier-ignore
 export const inquiryDeleteApi = async (inquiryId, loginId) => {
   try {
     const response = await axios.delete(
-      `${INQUIRY_API}/inquiry-delete/${inquiryId}`,
-      {
-        params: { loginId }
-      }
-    );
+      `${INQUIRY_API}/inquiry-delete/${inquiryId}`,  {  params: { loginId } } );
     return response.data;
   } catch (error) {
     console.log("문의 삭제 API 에러 : ", error);
