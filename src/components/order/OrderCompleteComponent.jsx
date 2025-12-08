@@ -206,7 +206,7 @@ const OrderCompleteComponent = () => {
             {order.discountAmount > 0 && (
               <div className="flex justify-between items-center py-2">
                 <span className="text-[13px] text-[#888]">
-                  쿠폰 할인 ({couponName})
+                  쿠폰 할인 ({order.orderCoupon.userCouponName})
                 </span>
                 <span className="text-[14px] text-[#ff6e18] font-medium">
                   - {order.discountAmount.toLocaleString()}원

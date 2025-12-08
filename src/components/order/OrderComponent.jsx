@@ -118,8 +118,10 @@ const OrderComponent = () => {
         ? selectedCoupon.coupon.fixedDiscountAmount
         : (totalPrice * selectedCoupon.coupon.discountPercentage) / 100)
     : 0;
+  console.log("couponDiscount", couponDiscount);
   // 최종 결제금액 계산: (총 상품금액 + 배송비) - 쿠폰할인 - 포인트사용
   const finalPrice = totalPrice + shippingFee - couponDiscount - usePoint;
+  console.log("finalPrice", finalPrice);
   const couponName = selectedCoupon ? selectedCoupon.coupon.couponName : null;
 
   const handleOrderCompleteClick = async () => {
@@ -163,17 +165,22 @@ const OrderComponent = () => {
           deliveryRequest === "직접입력"
             ? customDeliveryRequest
             : deliveryRequest,
-        coupon: selectedCoupon.coupon.id,
+        userCouponId: selectedCoupon ? selectedCoupon.coupon.id : 0,
         usedPoints: usePoint,
         orderProducts: orderProducts,
       };
 
       // 1. 주문 생성(결제 전)
-      const resultOrderId = await registerOrder(dto, 1);
-      // console.log("백엔드로부터 받은 주문 id", resultOrderId);
+      const resultOrderId = await registerOrder(dto, user.id);
+      console.log("백엔드로부터 받은 주문 id", resultOrderId);
 
       const resultOrder = await getOneOrder(resultOrderId);
-      // console.log("백엔드로부터 받은 주문", resultOrder);
+      console.log("백엔드로부터 받은 주문", resultOrder);
+
+      // 🛑 수정 핵심: 서버에서 계산한 finalAmount를 결제 금액으로 사용
+      const serverFinalAmount = resultOrder.finalAmount; // 💡 서버가 계산한 정확한 금액!
+
+      console.log("serverFinalAmount", serverFinalAmount);
 
       // 2. 결제 진행
       // 아임포트 객체 destructuring
@@ -238,7 +245,7 @@ const OrderComponent = () => {
               : cartItems[0].productName,
 
           // 테스트 모드일 때는 안전한 금액 사용
-          amount: finalPrice, // 최종 결제 금액
+          amount: serverFinalAmount, // 최종 결제 금액
           buyer_email: "user@example.com", //실제 사용자 이메일로 변경 필요
           buyer_name: receiverName,
           buyer_tel: receiverPhone,
