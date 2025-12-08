@@ -4,6 +4,8 @@ const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/order`;
 
 export const registerOrder = async (dto, userId) => {
+  console.log("registerOrder 전달 데이터 => dto", dto);
+  console.log("registerOrder 전달 데이터 => userId", userId);
   const res = await axios.post(`${prefix}?userId=${userId}`, dto);
   console.log("registerOrder => ", res.data);
   return res.data;
