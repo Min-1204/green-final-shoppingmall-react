@@ -89,18 +89,23 @@ const AdminOrderMgrComponent = () => {
             검색어
           </div>
           <div className="p-2 flex items-center flex-wrap flex-grow gap-x-3">
+            <select className="border border-gray-300 p-1 mr-2 bg-white cursor-pointer h-[32px] rounded-md focus:ring-blue-500 focus:border-blue-500 transition">
+              <option>주문번호</option>
+              <option>주문자명</option>
+              <option>상품명</option>
+            </select>
             <input
               type="text"
               placeholder="주문번호, 주문자명, 상품명 등"
               className="border border-gray-300 p-1 w-80 rounded-md bg-white focus:ring-blue-500 focus:border-blue-500 transition"
             />
-            <label className="ml-2 flex items-center select-none cursor-pointer text-gray-600 hover:text-gray-800 transition">
+            {/* <label className="ml-2 flex items-center select-none cursor-pointer text-gray-600 hover:text-gray-800 transition">
               <input
                 type="checkbox"
                 className="w-3.5 h-3.5 mr-1 border border-gray-400 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
               />{" "}
               부분검색
-            </label>
+            </label> */}
           </div>
         </div>
 
