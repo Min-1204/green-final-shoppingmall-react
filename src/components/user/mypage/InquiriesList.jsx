@@ -6,7 +6,7 @@ import InquiryEditCard from "../inquiry/InquiryEditCard";
 import {
   inquiryDeleteApi,
   inquiryModifyApi,
-  inquiryReadApi
+  inquiryReadApi,
 } from "../../../api/user/inquiryApi";
 
 const InquiriesList = () => {
@@ -25,7 +25,7 @@ const InquiriesList = () => {
     content: "",
     inquiryType: "",
     emailAgreement: false,
-    smsAgreement: false
+    smsAgreement: false,
   });
 
   // 문의 목록 조회
@@ -53,18 +53,15 @@ const InquiriesList = () => {
   };
 
   // 문의 삭제
+  // prettier-ignore
   const handleDelete = async (inquiry) => {
-    // 확인 창 (확인=true, 취소=false)
-    const isConfirmed = window.confirm("정말 삭제하시겠습니까?");
-
-    // 사용자가 취소를 누르면 종료
-    if (!isConfirmed) {
+    const isConfirmed = window.confirm("정말 삭제하시겠습니까?"); // 확인 창 (확인=true, 취소=false)
+    if (!isConfirmed) { // 사용자가 취소를 누르면 종료
       return;
     }
-
     // 사용자가 확인을 눌렀으면 삭제 로직 진행
     try {
-      await inquiryDeleteApi(inquiry.id, user.loginId);
+      const response = await inquiryDeleteApi(inquiry.id, user.loginId); // 삭제 할 글 id, 사용자아이디
 
       // prev(이전 알고있는거), filter: 조건에 맞는 것만 새배열로 반환
       // item.id !== inquiry.id: 삭제한 문의의 ID가 아닌 것만
@@ -72,8 +69,7 @@ const InquiriesList = () => {
 
       // 만약 삭제한 문의가 수정 중이었다면 수정 모드 해제
       setEditingInquiryId(null);
-
-      alert("삭제되었습니다.");
+      alert(response);
     } catch (error) {
       console.error("삭제 실패:", error);
       alert("삭제 중 오류가 발생했습니다.");
@@ -91,7 +87,7 @@ const InquiriesList = () => {
       content: inquiry.content,
       inquiryType: inquiry.inquiryType,
       emailAgreement: inquiry.emailAgreement,
-      smsAgreement: inquiry.smsAgreement
+      smsAgreement: inquiry.smsAgreement,
     });
 
     // 문의 내용도 펼쳐진 상태로 만들기
@@ -109,7 +105,7 @@ const InquiriesList = () => {
       content: "",
       inquiryType: "",
       emailAgreement: false,
-      smsAgreement: false
+      smsAgreement: false,
     });
   };
 
@@ -132,7 +128,7 @@ const InquiriesList = () => {
                   // 기존 문의 데이터에 수정된 데이터를 덮기
                   ...inquiry, // 기존 데이터 유지
                   ...editFormData, // 수정된 데이터로 덮기
-                  inquiryTypeName: response.inquiryTypeName // 백엔드에서 받은 문의 유형 이름
+                  inquiryTypeName: response.inquiryTypeName, // 백엔드에서 받은 문의 유형 이름
                 }
               : inquiry // 수정하지 않은 문의는 그대로 유지
         )
@@ -147,7 +143,7 @@ const InquiriesList = () => {
         content: "",
         inquiryType: "",
         emailAgreement: false,
-        smsAgreement: false
+        smsAgreement: false,
       });
 
       alert("수정되었습니다.");
@@ -166,7 +162,7 @@ const InquiriesList = () => {
     setEditFormData((prev) => ({
       ...prev, // 이전 데이터 그대로 복사
       // checkbox면 checked 값, 아니면 value 값 사용
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -266,20 +262,19 @@ const InquiriesList = () => {
               editingInquiryId === inquiry.id ? (
                 <InquiryEditCard
                   key={inquiry.id}
-                  inquiry={inquiry} // 문의 데이터
+                  inquiry={inquiry} // 문의 데이터 => ★객체 자체를 전달 inquiry.title 형식으로 자식컴포넌트에서 바로 사용가능
                   formData={editFormData} // 수정 폼 데이터
-                  onFormChange={handleFormChange} // 입력 변경 핸들러
+                  onFormChange={handleFormChange} // 입력 변경 핸들러 인자가 필요 없을 때 고정된 동작만 수행, 아래처럼 인자가필요할땐 람다식으로 함수를 전달해야함
                   onSave={() => handleSaveEdit(inquiry.id)} // 저장 핸들러
                   onCancel={handleCancelEdit} // 취소 핸들러
-                  onDelete={() => handleDelete(inquiry)} // 삭제 핸들러
                 />
               ) : (
                 /* 조회 */
                 <InquiryReadCard
                   key={inquiry.id}
-                  inquiry={inquiry} // 문의 데이터
-                  isOpened={openedInquiryId === inquiry.id} // 펼쳐진 상태인가?
-                  onToggle={() => handleToggle(inquiry.id)} // 펼치기/접기 핸들러
+                  inquiry={inquiry} // 문의글
+                  isOpened={openedInquiryId === inquiry.id} // boolean 값을 전달 openedInquiryId = 3, inquiry.id = 3 → isOpened = true 값 전달 즉,자식 컴포넌트에서 펼쳐진 상태인지 판단하기 위해
+                  onToggle={() => handleToggle(inquiry.id)} // 펼치기/접기 핸들러 실행X, 함수 자체를 전달
                   onStartEdit={() => handleStartEdit(inquiry)} // 수정 시작 핸들러
                   onDelete={() => handleDelete(inquiry)} // 삭제 핸들러
                 />

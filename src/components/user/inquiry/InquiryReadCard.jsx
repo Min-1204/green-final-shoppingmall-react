@@ -1,12 +1,7 @@
 import React from "react";
 
-const InquiryReadCard = ({
-  inquiry,
-  isOpened,
-  onToggle,
-  onStartEdit,
-  onDelete
-}) => {
+// prettier-ignore
+const InquiryReadCard = ({  inquiry,  isOpened,  onToggle,  onStartEdit,  onDelete}) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div className="p-6 cursor-pointer" onClick={onToggle}>
