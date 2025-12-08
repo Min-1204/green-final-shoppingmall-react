@@ -31,28 +31,43 @@ const ReviewModifyDelete = ({ closeModal, review, update }) => {
       alert("리뷰 내용을 입력해주세요");
       return;
     }
-    const updateReview = await reviewModify(
-      review.id,
-      {
-        content: reviewContent,
-        rating: currentRating,
-        newImages: newFiles,
-        deleteImgUrls: deleteImgUrls,
-      },
-      user.id
-    );
-    alert("리뷰가 수정되었습니다.");
 
-    if (update) {
-      const formatReview = {
-        ...review,
-        content: reviewContent,
-        rating: currentRating,
-        imageUrls: updateReview.imageUrls || images,
-      };
-      update(formatReview);
+    try {
+      const updateReview = await reviewModify(
+        review.id,
+        {
+          content: reviewContent,
+          rating: currentRating,
+          newImages: newFiles,
+          deleteImgUrls: deleteImgUrls,
+        },
+        user.id
+      );
+
+      alert("리뷰가 수정되었습니다.");
+
+      if (update) {
+        const formatReview = {
+          ...review,
+          content: reviewContent,
+          rating: currentRating,
+          imageUrls: updateReview.imageUrls || images,
+        };
+        update(formatReview);
+      }
+      closeModal();
+    } catch (error) {
+      console.error("리뷰 수정 실패: ", error);
+
+      //백엔드 에러 메세지
+      if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else if (error.response?.status === 403) {
+        alert("본인의 리뷰만 수정할 수 있습니다.");
+      } else {
+        alert("리뷰 수정 중 오류가 발생했습니다.");
+      }
     }
-    closeModal();
   };
 
   //리뷰 삭제 핸들러
@@ -60,14 +75,25 @@ const ReviewModifyDelete = ({ closeModal, review, update }) => {
     const ok = window.confirm("정말 삭제하시겠습니까?");
     if (!ok) return;
 
-    await reviewDelete(id, user.id);
+    try {
+      await reviewDelete(id, user.id);
+      alert("리뷰가 삭제되었습니다.");
 
-    alert("리뷰가 삭제되었습니다.");
+      if (update) {
+        update({ deleted: true, id: id });
+      }
+      closeModal();
+    } catch (error) {
+      console.error("리뷰 삭제 실패:", error);
 
-    if (update) {
-      update({ deleted: true, id: id });
+      if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else if (error.response?.status === 403) {
+        alert("본인의 리뷰만 삭제할 수 있습니다.");
+      } else {
+        alert("리뷰 삭제 중 오류가 발생했습니다.");
+      }
     }
-    closeModal();
   };
 
   // 사진 첨부 핸들러

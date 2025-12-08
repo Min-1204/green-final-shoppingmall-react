@@ -21,6 +21,7 @@ const ReviewListComponent = ({ productId }) => {
   const [selectedSort, setSelectedSort] = useState(sortOptions[0]);
   const sortRef = useRef();
   const [modalImage, setModalImage] = useState(null);
+  const [commentData, setCommentData] = useState({}); // 각 리뷰의 댓글 데이터 저장
 
   const [queryParams] = useSearchParams();
 
@@ -67,6 +68,16 @@ const ReviewListComponent = ({ productId }) => {
     }));
   };
 
+  //댓글 개수 계산 함수
+  const getCommentCount = (reviewId) => {
+    return commentData[reviewId]?.length || 0;
+  };
+
+  //댓글 데이터 업데이트 핸들러
+  const commentDataUpdateHandler = (reviewId, comments) => {
+    setCommentData((prev) => ({ ...prev, [reviewId]: comments }));
+  };
+
   const openModal = (img) => setModalImage(img);
   const closeModal = () => setModalImage(null);
 
@@ -111,69 +122,92 @@ const ReviewListComponent = ({ productId }) => {
 
         {/* 리뷰 목록 */}
         {reviews && reviews.length > 0 ? (
-          reviews.map((review) => (
-            <div
-              key={review.id}
-              className="bg-white pb-4 mb-4 border-b border-gray-300"
-            >
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-gray-900 font-semibold text-base">
-                      {review.loginId}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {review.createdAt?.slice(0, 10).replace(/-/g, ".")}
-                    </span>
+          reviews.map((review) => {
+            const commentCount = getCommentCount(review.id);
+
+            return (
+              <div
+                key={review.id}
+                className="bg-white pb-4 mb-4 border-b border-gray-300"
+              >
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-gray-900 font-semibold text-base">
+                        {review.loginId}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {review.createdAt?.slice(0, 10).replace(/-/g, ".")}
+                      </span>
+                    </div>
+                    <div className="text-yellow-500 text-sm">
+                      <span>{"★".repeat(review.rating)}</span>
+                    </div>
                   </div>
-                  <div className="text-yellow-500 text-sm">
-                    <span>{"★".repeat(review.rating)}</span>
+
+                  <div className="mb-2 text-sm text-gray-500">
+                    <p>{review.option || "구매 옵션"}</p>
                   </div>
-                </div>
 
-                <div className="mb-2 text-sm text-gray-500">
-                  <p>{review.option || "구매 옵션"}</p>
-                </div>
+                  <p className="text-sm text-gray-700 leading-relaxed mb-6">
+                    {review.content}
+                  </p>
 
-                <p className="text-sm text-gray-700 leading-relaxed mb-6">
-                  {review.content}
-                </p>
-
-                {/* 이미지 */}
-                <div className="flex gap-2 mb-3">
-                  {review.imageUrls.slice(0, 5).map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img}
-                      alt="리뷰 이미지"
-                      className="w-20 h-20 object-cover rounded cursor-pointer"
-                      onClick={() => openModal(img)}
-                    />
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-end space-x-4 text-sm text-gray-500 pt-3">
-                  {/* 리뷰 좋아요 컴포넌트 */}
-                  <ReviewLike reviewId={review.id} />
-
-                  {/* 댓글 보기 버튼 */}
-                  <button
-                    onClick={() => toggleComments(review.id)}
-                    className="cursor-pointer text-gray-900"
-                  >
-                    💬 댓글 보기
-                  </button>
-                </div>
-
-                {/* 댓글 컴포넌트 */}
-                {showComments[review.id] && (
-                  <div className="mt-4 border-t border-gray-200 pt-3 space-y-3">
-                    <ReviewCommentMgr reviewId={review.id} />
+                  {/* 이미지 */}
+                  <div className="flex gap-2 mb-3">
+                    {review.imageUrls.slice(0, 5).map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt="리뷰 이미지"
+                        className="w-20 h-20 object-cover rounded cursor-pointer"
+                        onClick={() => openModal(img)}
+                      />
+                    ))}
                   </div>
-                )}
+
+                  <div className="flex items-center justify-end space-x-4 text-sm text-gray-500 pt-3">
+                    {/* 리뷰 좋아요 컴포넌트 */}
+                    <ReviewLike reviewId={review.id} />
+
+                    {/* 댓글 보기 버튼 + 개수 */}
+                    <div
+                      className="flex items-center cursor-pointer"
+                      onClick={() => toggleComments(review.id)}
+                    >
+                      <span className="mr-1">💬</span>
+                      <span>댓글 보기</span>
+                      <span className="ml-1 text-gray-600">
+                        ({commentCount})
+                      </span>
+                    </div>
+
+                    {/* 댓글 수 로딩용 */}
+                    <div className="hidden">
+                      <ReviewCommentMgr
+                        reviewId={review.id}
+                        commentUpdate={(comments) =>
+                          commentDataUpdateHandler(review.id, comments)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  {/* 댓글 컴포넌트 */}
+                  {showComments[review.id] && (
+                    <div className="mt-4 border-t border-gray-200 pt-3 space-y-3">
+                      <ReviewCommentMgr
+                        reviewId={review.id}
+                        commentUpdate={(comments) =>
+                          commentDataUpdateHandler(review.id, comments)
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <p>리뷰가 없습니다.</p>
         )}

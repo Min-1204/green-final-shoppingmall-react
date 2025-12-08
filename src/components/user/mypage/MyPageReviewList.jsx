@@ -103,96 +103,106 @@ const MyPageReviewList = () => {
         {/* 리뷰 목록 */}
         <div className="divide-y divide-zinc-200">
           {reviews.length > 0 ? (
-            reviews.map((review) => (
-              <div
-                key={review.id}
-                className="grid grid-cols-12 gap-4 py-6 items-start"
-              >
-                {/* 상품 정보 */}
-                <div className="col-span-6 flex gap-4">
-                  <div
-                    className="relative cursor-pointer"
-                    onClick={() => productDetailPageHandler(review.productId)}
-                  >
-                    <img
-                      src={review.productImage}
-                      alt="product"
-                      className="w-24 h-24 object-cover rounded"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm text-zinc-800 mb-1 font-bold">
-                      {review.brandName}
-                    </p>
-                    <p
-                      className="font-medium text-sm mb-2 cursor-pointer hover:text-zinc-900"
+            reviews.map((review) => {
+              // 본인 리뷰인지 확인 (마이페이지에서는 모두 본인 리뷰지만 명시적으로)
+              const myReview = user && review.userId === user.id;
+
+              return (
+                <div
+                  key={review.id}
+                  className="grid grid-cols-12 gap-4 py-6 items-start"
+                >
+                  {/* 상품 정보 */}
+                  <div className="col-span-6 flex gap-4">
+                    <div
+                      className="relative cursor-pointer"
                       onClick={() => productDetailPageHandler(review.productId)}
                     >
-                      {review.productName}
-                    </p>
-                    <div className="flex items-center gap-2 text-xs text-zinc-500">
-                      <span>주문일자</span>
-                      <span>
-                        {review.purchaseDate.slice(0, 10).replace(/-/g, ".")}
-                      </span>
+                      <img
+                        src={review.productImage}
+                        alt="product"
+                        className="w-24 h-24 object-cover rounded"
+                      />
                     </div>
-                  </div>
-                </div>
-
-                {/* 리뷰 정보 */}
-                <div className="col-span-3">
-                  <div className="flex items-center gap-1 mb-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        className={
-                          star <= review.rating
-                            ? "text-yellow-500"
-                            : "text-gray-300"
+                    <div className="flex-1">
+                      <p className="text-sm text-zinc-800 mb-1 font-bold">
+                        {review.brandName}
+                      </p>
+                      <p
+                        className="font-medium text-sm mb-2 cursor-pointer hover:text-zinc-900"
+                        onClick={() =>
+                          productDetailPageHandler(review.productId)
                         }
                       >
-                        ★
-                      </span>
-                    ))}
-                    {review.badge && (
-                      <span className="ml-2 px-2 py-0.5 bg-zinc-100 text-zinc-600 text-xs rounded">
-                        {review.badge}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-zinc-700 line-clamp-2">
-                    {review.content}
-                  </p>
-                </div>
-
-                {/* 작성일자 및 버튼 */}
-                <div className="col-span-3 flex flex-col items-end gap-2">
-                  <div className="text-xs text-zinc-500 text-right">
-                    <div>
-                      작성일자{" "}
-                      {review.createdAt?.slice(0, 10).replace(/-/g, ".")}
+                        {review.productName}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-zinc-500">
+                        <span>주문일자</span>
+                        <span>
+                          {review.purchaseDate.slice(0, 10).replace(/-/g, ".")}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => reviewModifyModal(review.id)}
-                      className="px-4 py-1.5 text-xs border border-zinc-300 rounded hover:bg-zinc-50 cursor-pointer"
-                    >
-                      리뷰수정
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedReviewSee(review);
-                        setReviewSeeModal(true);
-                      }}
-                      className="px-4 py-1.5 text-xs border border-zinc-300 rounded hover:bg-zinc-50 cursor-pointer"
-                    >
-                      리뷰보기
-                    </button>
+
+                  {/* 리뷰 정보 */}
+                  <div className="col-span-3">
+                    <div className="flex items-center gap-1 mb-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          className={
+                            star <= review.rating
+                              ? "text-yellow-500"
+                              : "text-gray-300"
+                          }
+                        >
+                          ★
+                        </span>
+                      ))}
+                      {review.badge && (
+                        <span className="ml-2 px-2 py-0.5 bg-zinc-100 text-zinc-600 text-xs rounded">
+                          {review.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-zinc-700 line-clamp-2">
+                      {review.content}
+                    </p>
+                  </div>
+
+                  {/* 작성일자 및 버튼 */}
+                  <div className="col-span-3 flex flex-col items-end gap-2">
+                    <div className="text-xs text-zinc-500 text-right">
+                      <div>
+                        작성일자{" "}
+                        {review.createdAt?.slice(0, 10).replace(/-/g, ".")}
+                      </div>
+                    </div>
+                    {/* 본인 리뷰만 수정/삭제 버튼 표시 */}
+                    {myReview && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => reviewModifyModal(review.id)}
+                          className="px-4 py-1.5 text-xs border border-zinc-300 rounded hover:bg-zinc-50 cursor-pointer"
+                        >
+                          리뷰수정
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedReviewSee(review);
+                            setReviewSeeModal(true);
+                          }}
+                          className="px-4 py-1.5 text-xs border border-zinc-300 rounded hover:bg-zinc-50 cursor-pointer"
+                        >
+                          리뷰보기
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="py-12 text-center text-gray-500">
               작성한 리뷰가 없습니다.
