@@ -4,43 +4,52 @@ import CheckboxGroup from "../CheckboxGroup";
 import dayjs from "dayjs";
 
 const AdminOrderMgrComponent = () => {
+  const [selectedSearchType, setSelectedSearchType] = useState("주문번호");
+  const [orderNumber, setOrderNumber] = useState(""); // 주문번호
+  const [ordererName, setOrdererName] = useState(""); // 주문자명
+  const [productName, setProductName] = useState(""); // 상품명
+  //날짜
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [selectedPreStatuses, setSelectedPreStatuses] = useState([]); //주문상태
   const [selectedPostStatuses, setSelectedPostStatuses] = useState([]); //배송상태
   const [selectedDelivery, setSelectedDelivery] = useState([]); //배송방법 state
   const [selectedPayment, setSelectedPayment] = useState([]); //주문결제 state
   const [selectedOrderType, setSelectedOrderType] = useState([]); //주문유형 state
-  const [selectedPaymentStatus, setSelectedPaymentStatus] = useState([]); //결제상태 state
-
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  // const [selectedPaymentStatus, setSelectedPaymentStatus] = useState([]); //결제상태 state
 
   const allPreStatuses = [
     "주문접수",
     "결제확인",
-    "상품준비",
-    "출고준비",
     "주문취소",
+    "취소 신청",
+    "취소 완료",
+    "교환 신청",
+    "교환 완료",
+    "반품/환불 신청",
+    "반품/환불 완료",
     "전체",
   ];
-  const allPostStatuses = [
-    "출고완료",
-    "배송중",
-    "배송완료",
-    "반품/환불신청",
-    "반품/환불완료",
+  const allPostStatuses = ["배송준비중", "배송중", "배송완료", "전체"];
+  const allDelivery = ["대한통운", "우체국", "직접입력"];
+  const allPayment = [
+    "신용/체크카드",
+    "카카오페이",
+    "네이버페이",
+    "PAYCO",
+    "휴대폰 결제",
+    "계좌이체",
     "전체",
   ];
-  const allDelivery = ["대한통운", "우체국", "직접입력", "해외국가"];
-  const allPayment = ["무통장입금", "신용카드", "휴대폰결제"];
-  const allOrderType = ["고객주문", "관리자주문"];
-  const allPaymentStatus = [
-    "무통장입금 대기",
-    "카드결제입금 대기",
-    "소액결제입금 대기",
-    "무통장입금완료",
-    "카드결제완료",
-    "소액결제완료",
-  ];
+  // const allOrderType = ["고객주문", "관리자주문"];
+  // const allPaymentStatus = [
+  //   "무통장입금 대기",
+  //   "카드결제입금 대기",
+  //   "소액결제입금 대기",
+  //   "무통장입금완료",
+  //   "카드결제완료",
+  //   "소액결제완료",
+  // ];
 
   const dateHandler = (label) => {
     let today = dayjs(); //오늘 기준
@@ -66,6 +75,54 @@ const AdminOrderMgrComponent = () => {
     setEndDate(today.format("YYYY-MM-DD"));
   };
 
+  const changeHandler = (value) => {
+    // 모든 state를 초기화 (선택이 바뀌었을 경우 이전 값 제거)
+    setOrderNumber("");
+    setProductName("");
+    setOrdererName("");
+
+    // 현재 선택된 검색 기준에 따라 해당 state에 값 저장
+    if (selectedSearchType === "주문번호") {
+      setOrderNumber(value);
+      console.log("주문번호", orderNumber);
+    } else if (selectedSearchType === "주문자명") {
+      setOrdererName(value);
+      console.log("주문자명", ordererName);
+    } else if (selectedSearchType === "상품명") {
+      setProductName(value);
+      console.log("상품명", productName);
+    }
+  };
+
+  const searchHandler = () => {
+    const request = {
+      orderNumber: orderNumber,
+      ordererName: ordererName,
+      productName: productName,
+      startDate: startDate,
+      endDate: endDate,
+      selectedPreStatuses: selectedPreStatuses,
+      selectedPostStatuses: selectedPostStatuses,
+      selectedDelivery: selectedDelivery,
+      selectedPayment: selectedPayment,
+      selectedOrderType: selectedOrderType,
+    };
+  };
+
+  const resetFiltersHandler = () => {
+    setSelectedSearchType("주문번호");
+    setOrderNumber("");
+    setOrdererName("");
+    setProductName("");
+    setStartDate("");
+    setEndDate("");
+    setSelectedPreStatuses([]);
+    setSelectedPostStatuses([]);
+    setSelectedDelivery([]);
+    setSelectedPayment([]);
+    setSelectedOrderType([]);
+  };
+
   return (
     <div className="w-full bg-white p-6 text-sm font-['Inter'] min-h-screen">
       {/* 헤더 */}
@@ -82,6 +139,7 @@ const AdminOrderMgrComponent = () => {
       </h2>
 
       {/* 필터 영역 */}
+
       <div className="border border-gray-300 mb-6 rounded-lg overflow-hidden shadow-lg">
         {/* 검색어 */}
         <div className="flex border-b border-gray-300">
@@ -89,15 +147,29 @@ const AdminOrderMgrComponent = () => {
             검색어
           </div>
           <div className="p-2 flex items-center flex-wrap flex-grow gap-x-3">
-            <select className="border border-gray-300 p-1 mr-2 bg-white cursor-pointer h-[32px] rounded-md focus:ring-blue-500 focus:border-blue-500 transition">
+            <select
+              className="border border-gray-300 p-1 mr-2 bg-white cursor-pointer h-[32px] rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
+              onChange={(e) => setSelectedSearchType(e.target.value)} // 선택된 값을 selectedSearchType에 저장
+              value={selectedSearchType} // 현재 선택된 값 표시
+            >
               <option>주문번호</option>
               <option>주문자명</option>
               <option>상품명</option>
             </select>
             <input
               type="text"
-              placeholder="주문번호, 주문자명, 상품명 등"
+              placeholder="검색어를 입력하세요"
               className="border border-gray-300 p-1 w-80 rounded-md bg-white focus:ring-blue-500 focus:border-blue-500 transition"
+              onChange={(e) => changeHandler(e.target.value)}
+              value={
+                selectedSearchType === "주문번호"
+                  ? orderNumber
+                  : selectedSearchType === "주문자명"
+                  ? ordererName
+                  : selectedSearchType === "상품명"
+                  ? productName
+                  : ""
+              }
             />
             {/* <label className="ml-2 flex items-center select-none cursor-pointer text-gray-600 hover:text-gray-800 transition">
               <input
@@ -177,26 +249,32 @@ const AdminOrderMgrComponent = () => {
           selectedOptions={selectedPayment}
           setSelectedOptions={setSelectedPayment}
         />
-        <CheckboxGroup
+        {/* <CheckboxGroup
           title="주문유형"
           options={allOrderType}
           selectedOptions={selectedOrderType}
           setSelectedOptions={setSelectedOrderType}
-        />
-        <CheckboxGroup
+        /> */}
+        {/* <CheckboxGroup
           title="결제상태"
           options={allPaymentStatus}
           selectedOptions={selectedPaymentStatus}
           setSelectedOptions={setSelectedPaymentStatus}
-        />
+        /> */}
       </div>
 
       {/* 검색 버튼 */}
       <div className="flex justify-center gap-4 mb-6">
-        <button className="bg-blue-600 text-white px-8 py-2 cursor-pointer rounded-md shadow-md hover:bg-blue-700 transition font-semibold">
+        <button
+          className="bg-blue-600 text-white px-8 py-2 cursor-pointer rounded-md shadow-md hover:bg-blue-700 transition font-semibold"
+          onClick={() => searchHandler()}
+        >
           검색
         </button>
-        <button className="border border-gray-300 bg-white px-8 py-2 text-gray-700 cursor-pointer rounded-md shadow-md hover:bg-gray-100 transition font-semibold">
+        <button
+          className="border border-gray-300 bg-white px-8 py-2 text-gray-700 cursor-pointer rounded-md shadow-md hover:bg-gray-100 transition font-semibold"
+          onClick={() => resetFiltersHandler()}
+        >
           초기화
         </button>
       </div>
