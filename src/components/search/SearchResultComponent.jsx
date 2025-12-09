@@ -17,9 +17,23 @@ const SearchResultComponent = () => {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || "";
 
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(keyword.toLowerCase())
-  );
+  const filteredProducts = products
+    .filter((p) => p.name.toLowerCase().includes(keyword.toLowerCase()))
+    .filter((p) => {
+      // 필수 데이터가 모두 있는 상품만 포함
+      return (
+        p.mainImages &&
+        p.mainImages.length > 0 &&
+        p.brand &&
+        typeof p.brand === "object" &&
+        p.brand.name &&
+        p.basicInfo &&
+        p.basicInfo.productName &&
+        p.options &&
+        p.options.length > 0
+      );
+    });
+
   console.log(keyword);
   console.log(filteredProducts);
   const itemsPerPage = 12;
