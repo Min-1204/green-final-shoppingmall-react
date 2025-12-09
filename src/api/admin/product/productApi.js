@@ -113,12 +113,23 @@ export const modifyProduct = async (id, productForm) => {
   return res.data;
 };
 
-export const fetchProductsByThirdCategoryIds = async (thirdCategoryIds) => {
-  const res = await axios.get(`${prefix}`, {
-    params: {
-      categoryId: thirdCategoryIds,
-    },
+export const fetchProductsByThirdCategoryIds = async ({
+  thirdCategoryIds,
+  page,
+  size,
+}) => {
+  const params = new URLSearchParams();
+
+  thirdCategoryIds?.forEach((id) => {
+    params.append("categoryId", id);
   });
+
+  params.append("page", page || 1);
+  params.append("size", size || 24);
+
+  const url = `${prefix}?${params.toString()}`;
+  const res = await axios.get(url);
+
   return res.data;
 };
 

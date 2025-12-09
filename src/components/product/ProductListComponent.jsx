@@ -7,21 +7,25 @@ import { ChevronRight } from "lucide-react";
 import ProductCard from "./ProductCard";
 import ProductSortBar from "./ProductSortBar";
 import ProductFilterBar from "../filter/ProductFilterBar";
-import Pagination from "./Pagination";
+
 import { fetchCategoryList } from "../../api/admin/category/categoryApi";
 import { fetchProductsByThirdCategoryIds } from "../../api/admin/product/productApi";
+import Pagination from "../pagination/Pagination";
 
 const ProductListComponent = () => {
   // 유즈서치파람 : 카테고리뎁스, 카테고리아이디 url 에서 가져오기
   const [searchParams] = useSearchParams();
   const categoryDepth = parseInt(searchParams.get("categoryDepth"));
   const categoryId = parseInt(searchParams.get("categoryId"));
-  console.log("categoryDepth : ", categoryDepth, "categoryId : ", categoryId);
+  const page = searchParams.get("page") || 1;
+  const size = searchParams.get("size") || 12;
+  console.log("categoryDepth : ", categoryDepth, ", categoryId : ", categoryId);
+  console.log("page : ", page, ", size : ", size);
 
   const [mainCategory, setMainCategory] = useState({ subCategories: [] });
   const [secondCategoryId, setSecondCategoryId] = useState();
   const [selectedCategory, setSelectedCategory] = useState({});
-  const [productList, setproductList] = useState([]);
+  const [pageResponse, setPageResponse] = useState({});
 
   useEffect(() => {
     const loadData = async () => {
@@ -102,12 +106,16 @@ const ProductListComponent = () => {
       }
 
       // 상품 목록 가져오기
-      const productsData = await fetchProductsByThirdCategoryIds(thirdIds);
-      setproductList(productsData);
-      console.log("productList", productsData);
+      const pageRes = await fetchProductsByThirdCategoryIds({
+        thirdCategoryIds: thirdIds,
+        page,
+        size,
+      });
+      setPageResponse(pageRes);
+      console.log("PageResponse : ", pageRes);
     };
     loadData();
-  }, [categoryDepth, categoryId]);
+  }, [categoryDepth, categoryId, page, size]);
 
   const { main, sub, deep } = useParams();
 
@@ -269,7 +277,7 @@ const ProductListComponent = () => {
           <p className="text-base text-gray-600">
             총{" "}
             <span className="font-extrabold text-gray-600">
-              {productList.length}
+              {pageResponse?.dtoList?.length}
             </span>
             개의 상품이 있습니다.
           </p>
@@ -291,10 +299,10 @@ const ProductListComponent = () => {
         </div>
 
         {/* ✅ 상품 그리드 (기존 반응형 유지 및 카드 디자인 강화) */}
-        {productList.length > 0 ? (
+        {pageResponse?.dtoList?.length > 0 ? (
           // ✨ 모바일(2열), 태블릿(3열), 데스크톱(4열)
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-            {productList.map((product) => (
+            {pageResponse?.dtoList?.map((product) => (
               <div
                 key={product.id}
                 className="group rounded-xl overflow-hidden bg-white border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5" // ✨ 호버 효과 강화
@@ -332,11 +340,7 @@ const ProductListComponent = () => {
 
         {/* ✅ 페이지네이션 */}
         <div className="mt-12">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            setCurrentPage={setCurrentPage}
-          />
+          <Pagination pageResponseDTO={pageResponse} />
         </div>
       </div>
     </div>
