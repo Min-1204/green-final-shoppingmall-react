@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 // FiSearch 아이콘을 사용하지 않는 대신 인라인 SVG를 사용하므로 이 import는 제거할 수 있습니다.
 // import { FiSearch } from "react-icons/fi";
 import products from "../../data/products";
 import SearchDropdown from "./SearchDropdown";
 import { useNavigate } from "react-router-dom";
 
-const ProductSearchBar = () => {
+const ProductSearchBar = memo(() => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
 
@@ -71,7 +71,7 @@ const ProductSearchBar = () => {
     // 1. 전체 컨테이너에 relative 유지
     <div
       ref={wrapperRef}
-      className="w-full max-w-3xl mx-auto relative mt-6 mb-6"
+      className="w-full max-w-lg mx-auto relative mt-6 mb-6"
     >
       <input
         placeholder="상품명을 검색하세요"
@@ -82,7 +82,7 @@ const ProductSearchBar = () => {
           py-3 pl-12 pr-12  
           text-sm tracking-wide
           placeholder-gray-400
-          focus:outline-none focus:border-black focus:ring-1 focus:ring-black
+          focus:outline-none
           transition
         "
         onFocus={() => setIsFocused(true)}
@@ -147,6 +147,6 @@ const ProductSearchBar = () => {
       )}
     </div>
   );
-};
+});
 
 export default ProductSearchBar;

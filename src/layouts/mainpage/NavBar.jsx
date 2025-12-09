@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import CategoryMegaMenu from "../../components/category/CategoryMegaMenu";
 import { useNavigate } from "react-router-dom";
 
-export default function NavBar() {
+const NavBar = memo(() => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -58,4 +58,6 @@ export default function NavBar() {
       </div>
     </nav>
   );
-}
+});
+
+export default NavBar;
