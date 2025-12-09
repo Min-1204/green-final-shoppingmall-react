@@ -12,14 +12,14 @@ const Pagination = ({ pageResponseDTO }) => {
   //URL 쿼리스트링 읽기 (?page=1&size=10)
 
   const {
-    //PageResponseDTO 정보 구조 분해 할당
+    //ReviewPageResponseDTO 정보 구조 분해 할당
     totalDataCount, // totalReviews에 해당
     pageNumList, // 페이지 버튼 목록 (1~10, 11~20 등)
     prevPageGroup, // 이전 페이지 그룹 존재 여부
     nextPageGroup, // 다음 페이지 그룹 존재 여부
     prevPage, // < 버튼 클릭 시 이동할 페이지
     nextPage, // > 버튼 클릭 시 이동할 페이지
-    pageRequestDTO, // page, size 정보 포함
+    reviewPageRequestDTO, // page, size 정보 포함
   } = pageResponseDTO;
 
   const getNum = (param, defaultValue) => {
@@ -28,8 +28,8 @@ const Pagination = ({ pageResponseDTO }) => {
     return parseInt(param, 10); //문자열 -> 10진수 숫자 변환
   };
 
-  const page = pageRequestDTO.page || 1;
-  const size = pageRequestDTO.size || 10;
+  const page = reviewPageRequestDTO.page || 1;
+  const size = reviewPageRequestDTO.size || 10;
 
   const totalPage = totalDataCount > 0 ? Math.ceil(totalDataCount / size) : 1;
   //총 페이지 수 계산 , totalDataCount가 0이어도 최소 1페이지 표시
@@ -64,7 +64,7 @@ const Pagination = ({ pageResponseDTO }) => {
       {prevPageGroup && ( // 이전 페이지 그룹이 있을 때만 버튼 표시
         <button
           className="px-3 py-1 border border-zinc-300 rounded text-sm cursor-pointer"
-          // prevPage는 PageResponseDTO에서 계산된 값
+          // prevPage는 ReviewPageResponseDTO에서 계산된 값
           onClick={() => moveToPage(prevPage)}
         >
           {"<"}
@@ -88,7 +88,7 @@ const Pagination = ({ pageResponseDTO }) => {
       {nextPageGroup && ( // 다음 페이지 그룹이 있을 때만 버튼 표시
         <button
           className="px-3 py-1 border border-zinc-300 rounded text-sm cursor-pointer"
-          // nextPage는 PageResponseDTO에서 계산된 값
+          // nextPage는 ReviewPageResponseDTO에서 계산된 값
           onClick={() => moveToPage(nextPage)}
         >
           {">"}
