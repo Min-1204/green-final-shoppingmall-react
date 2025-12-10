@@ -142,8 +142,8 @@ const AdminOrderMgrComponent = () => {
     setProductName("");
     setStartDate("");
     setEndDate("");
-    setSelectedPreStatuses([]);
-    setSelectedPostStatuses([]);
+    setSelectedOrderStatuses([]);
+    // setSelectedPostStatuses([]);
     setSelectedDelivery([]);
     setSelectedPayment([]);
     // setSelectedOrderType([]);
