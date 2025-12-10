@@ -1,50 +1,54 @@
 import React, { useState } from "react";
 
-const OrderSearchResultTable = () => {
-  const [orders] = useState([
-    {
-      id: 1,
-      date: "2025-10-30",
-      orderNo: "A001",
-      product: "상품A",
-      qty: 1,
-      customer: "홍길동1/홍길동1",
-      method: "카드",
-      amount: "10000",
-      status: "주문접수",
-      shipment: "미출고",
-      delivery: "배송준비중",
-      returnStatus: "반품/환불신청",
-    },
-    {
-      id: 2,
-      date: "2025-10-30",
-      orderNo: "A002",
-      product: "상품B",
-      qty: 2,
-      customer: "홍길동2/홍길동2",
-      method: "무통장",
-      amount: "20000",
-      status: "상품준비",
-      shipment: "출고",
-      delivery: "배송중",
-      returnStatus: "반품/환불중",
-    },
-    {
-      id: 3,
-      date: "2025-10-30",
-      orderNo: "A003",
-      product: "상품C",
-      qty: 3,
-      customer: "홍길동3/홍길동3",
-      method: "카드",
-      amount: "30000",
-      status: "주문취소",
-      shipment: "미출고",
-      delivery: "배송완료",
-      returnStatus: "반품/환불완료",
-    },
-  ]);
+const OrderSearchResultTable = ({ orders }) => {
+  // console.log("orders", orders);
+
+  const getOrderStatusName = (status) => {
+    switch (status) {
+      case "PENDING_PAYMENT":
+        return "주문접수";
+      case "PAID":
+        return "결제확인";
+      case "PREPARING":
+        return "배송준비중";
+      case "SHIPPING":
+        return "배송중";
+      case "DELIVERED":
+        return "배송완료";
+      case "CANCEL_REQUESTED":
+        return "취소 신청";
+      case "CANCELED":
+        return "취소 완료";
+      case "EXCHANGE_REQUESTED":
+        return "교환 신청";
+      case "EXCHANGED":
+        return "교환 완료";
+      case "RETURN_REQUESTED":
+        return "반품/환불 신청";
+      case "RETURNED":
+        return "반품/환불 완료";
+      default:
+        return status; // 정의되지 않은 상태는 그대로 반환
+    }
+  };
+
+  const flatOrders = orders.flatMap((order) => {
+    return order.orderProducts.map((op, index) => {
+      return {
+        ...op,
+        orderId: order.id,
+        orderDate: order.orderDate,
+        orderNumber: order.orderNumber,
+        receiverName: order.receiverName,
+        ordererName: order.ordererName,
+        paymentMethod: order.paymentMethod,
+        isFirstProduct: index === 0,
+        productCount: order.orderProducts.length,
+      };
+    });
+  });
+
+  // console.log("flatOrders", flatOrders);
 
   return (
     <div className="w-full mt-8">
@@ -92,16 +96,13 @@ const OrderSearchResultTable = () => {
               <th className="px-3 py-3">결제수단</th>
               <th className="px-3 py-3">결제금액</th>
               <th className="px-3 py-3">주문상태</th>
-              <th className="px-3 py-3">출고처리</th>
-              <th className="px-3 py-3">배송상태</th>
-              <th className="px-3 py-3">반품/환불</th>
             </tr>
           </thead>
 
           <tbody className="bg-white divide-y divide-gray-200">
-            {orders.map((item) => (
+            {flatOrders.map((item, index) => (
               <tr
-                key={item.id}
+                key={`${item.orderId}-${item.id}`} // 주문 id와 상품 id를 조합
                 className="hover:bg-gray-50 transition divide-x divide-gray-200"
               >
                 <td className="px-2 py-3">
@@ -110,65 +111,68 @@ const OrderSearchResultTable = () => {
                     className="w-3.5 h-3.5 border-gray-400 rounded text-blue-600 cursor-pointer"
                   />
                 </td>
-                <td className="px-3 py-3">{item.id}</td>
-                <td className="px-3 py-3">{item.date}</td>
-                <td className="px-3 py-3 text-blue-600 cursor-pointer hover:underline">
-                  {item.orderNo}
+                {item.isFirstProduct && (
+                  <>
+                    <td className="px-3 py-3" rowSpan={item.productCount}>
+                      {item.orderId}
+                    </td>
+                    <td className="px-3 py-3" rowSpan={item.productCount}>
+                      {item.orderDate}
+                    </td>
+                    <td
+                      className="px-3 py-3 text-blue-600 cursor-pointer hover:underline"
+                      rowSpan={item.productCount}
+                    >
+                      {item.orderNumber}
+                    </td>
+                  </>
+                )}
+                <td className="px-3 py-3">
+                  {item.productName}-{item.productOptionName}
                 </td>
-                <td className="px-3 py-3">{item.product}</td>
-                <td className="px-3 py-3">{item.qty}</td>
-                <td className="px-3 py-3">{item.customer}</td>
-                <td className="px-3 py-3">{item.method}</td>
+                <td className="px-3 py-3">{item.quantity}</td>
+                {item.isFirstProduct && (
+                  <>
+                    <td className="px-3 py-3" rowSpan={item.productCount}>
+                      {item.receiverName}/{item.ordererName}
+                    </td>
+                    <td className="px-3 py-3" rowSpan={item.productCount}>
+                      {item.paymentMethod}
+                    </td>
+                  </>
+                )}
+
                 <td className="px-3 py-3 text-blue-800 font-medium">
-                  {item.amount} 원
+                  {item.totalAmount} 원
                 </td>
 
                 <td className="px-3 py-3">
                   <select
-                    defaultValue={item.status}
+                    defaultValue={getOrderStatusName(item.orderProductStatus)}
                     className="border border-gray-300 px-2 py-[2px] text-sm bg-white cursor-pointer rounded-md"
                   >
                     <option value="주문접수">주문접수</option>
                     <option value="결제확인">결제확인</option>
-                    <option value="상품준비">상품준비</option>
-                    <option value="출고준비">출고준비</option>
-                    <option value="주문취소">주문취소</option>
-                  </select>
-                </td>
-
-                <td className="px-3 py-3">
-                  <select
-                    defaultValue={item.shipment}
-                    className="border border-gray-300 px-1 py-[2px] text-sm bg-white cursor-pointer rounded-md"
-                  >
-                    <option>미출고</option>
-                    <option>출고</option>
-                  </select>
-                </td>
-
-                <td className="px-3 py-3">
-                  <select
-                    defaultValue={item.delivery}
-                    className="border border-gray-300 px-1 py-[2px] text-sm bg-white cursor-pointer rounded-md"
-                  >
-                    <option>배송준비중</option>
-                    <option>배송중</option>
-                    <option>배송완료</option>
-                  </select>
-                </td>
-
-                <td className="px-3 py-3">
-                  <select
-                    defaultValue={item.returnStatus}
-                    className="border border-gray-300 px-1 py-[2px] text-sm bg-white cursor-pointer rounded-md"
-                  >
+                    <option value="배송준비중">배송준비중</option>
+                    <option value="배송중">배송중</option>
+                    <option value="배송완료">배송완료</option>
+                    <option value="취소신청">취소신청</option>
+                    <option value="취소완료">취소완료</option>
+                    <option value="교환신청">교환신청</option>
+                    <option value="교환완료">교환완료</option>
                     <option value="반품/환불신청">반품/환불신청</option>
-                    <option value="반품/환불중">반품/환불중</option>
                     <option value="반품/환불완료">반품/환불완료</option>
                   </select>
                 </td>
               </tr>
             ))}
+            {flatOrders.length === 0 && (
+              <tr>
+                <td colSpan="10" className="py-10 text-center text-gray-500">
+                  검색 결과가 없습니다.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

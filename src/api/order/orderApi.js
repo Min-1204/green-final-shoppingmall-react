@@ -4,27 +4,33 @@ const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/order`;
 
 export const registerOrder = async (dto, userId) => {
-  console.log("registerOrder 전달 데이터 => dto", dto);
-  console.log("registerOrder 전달 데이터 => userId", userId);
+  // console.log("registerOrder 전달 데이터 => dto", dto);
+  // console.log("registerOrder 전달 데이터 => userId", userId);
   const res = await axios.post(`${prefix}?userId=${userId}`, dto);
-  console.log("registerOrder => ", res.data);
+  // console.log("registerOrder => ", res.data);
   return res.data;
 };
 
 export const getOneOrder = async (orderId) => {
   const res = await axios.get(`${prefix}?orderId=${orderId}`);
-  console.log("getOneOrder => ", res.data);
+  // console.log("getOneOrder => ", res.data);
   return res.data;
 };
 
 export const getOrderList = async (userId) => {
   const res = await axios.get(`${prefix}/list?userId=${userId}`);
-  console.log("getOrderList => ", res.data);
+  // console.log("getOrderList => ", res.data);
   return res.data;
 };
 
 export const deleteOneOrder = async (orderId) => {
   const res = await axios.delete(`${prefix}?orderId=${orderId}`);
-  console.log("deleteOneOrder => ", res.data);
+  // console.log("deleteOneOrder => ", res.data);
+  return res.data;
+};
+
+export const getOrdersBySearch = async (condition) => {
+  const res = await axios.post(`${prefix}/search`, condition);
+  // console.log("getOrdersBySearch => ", res.data);
   return res.data;
 };
