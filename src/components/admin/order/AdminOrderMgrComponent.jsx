@@ -2,26 +2,29 @@ import React, { useState } from "react";
 import OrderSearchResultTable from "./OrderSearchResultTable";
 import CheckboxGroup from "../CheckboxGroup";
 import dayjs from "dayjs";
+import { getOrdersBySearch } from "../../../api/order/orderApi";
 
 const AdminOrderMgrComponent = () => {
+  const [orders, setOrders] = useState([]); // 검색한 주문 결과
   const [selectedSearchType, setSelectedSearchType] = useState("주문번호");
   const [orderNumber, setOrderNumber] = useState(""); // 주문번호
   const [ordererName, setOrdererName] = useState(""); // 주문자명
   const [productName, setProductName] = useState(""); // 상품명
-  //날짜
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [selectedPreStatuses, setSelectedPreStatuses] = useState([]); //주문상태
-  const [selectedPostStatuses, setSelectedPostStatuses] = useState([]); //배송상태
+  const [startDate, setStartDate] = useState(""); // 시작 시점 날짜
+  const [endDate, setEndDate] = useState(""); // 끝나는 시점 날짜
+  const [selectedOrderStatuses, setSelectedOrderStatuses] = useState([]); //주문상태
+  // const [selectedPostStatuses, setSelectedPostStatuses] = useState([]); //배송상태
   const [selectedDelivery, setSelectedDelivery] = useState([]); //배송방법 state
   const [selectedPayment, setSelectedPayment] = useState([]); //주문결제 state
-  const [selectedOrderType, setSelectedOrderType] = useState([]); //주문유형 state
+  // const [selectedOrderType, setSelectedOrderType] = useState([]); //주문유형 state
   // const [selectedPaymentStatus, setSelectedPaymentStatus] = useState([]); //결제상태 state
 
-  const allPreStatuses = [
+  const allOrderStatuses = [
     "주문접수",
     "결제확인",
-    "주문취소",
+    "배송준비중",
+    "배송중",
+    "배송완료",
     "취소 신청",
     "취소 완료",
     "교환 신청",
@@ -30,7 +33,21 @@ const AdminOrderMgrComponent = () => {
     "반품/환불 완료",
     "전체",
   ];
-  const allPostStatuses = ["배송준비중", "배송중", "배송완료", "전체"];
+
+  const orderStatusMap = {
+    주문접수: "PENDING_PAYMENT",
+    결제확인: "PAID",
+    배송준비중: "PREPARING",
+    배송중: "SHIPPING",
+    배송완료: "DELIVERED",
+    "취소 신청": "CANCEL_REQUESTED",
+    "취소 완료": "CANCELED",
+    "교환 신청": "EXCHANGE_REQUESTED",
+    "교환 완료": "EXCHANGED",
+    "반품/환불 신청": "RETURN_REQUESTED",
+    "반품/환불 완료": "RETURNED",
+  };
+  // const allPostStatuses = ["배송준비중", "배송중", "배송완료", "전체"];
   const allDelivery = ["대한통운", "우체국", "직접입력"];
   const allPayment = [
     "신용/체크카드",
@@ -41,6 +58,15 @@ const AdminOrderMgrComponent = () => {
     "계좌이체",
     "전체",
   ];
+
+  const paymentMap = {
+    "신용/체크카드": "CARD",
+    카카오페이: "KAKAO",
+    네이버페이: "NAVER",
+    PAYCO: "PAYCO",
+    "휴대폰 결제": "PHONE",
+    계좌이체: "BANK",
+  };
   // const allOrderType = ["고객주문", "관리자주문"];
   // const allPaymentStatus = [
   //   "무통장입금 대기",
@@ -84,29 +110,29 @@ const AdminOrderMgrComponent = () => {
     // 현재 선택된 검색 기준에 따라 해당 state에 값 저장
     if (selectedSearchType === "주문번호") {
       setOrderNumber(value);
-      console.log("주문번호", orderNumber);
+      // console.log("주문번호", orderNumber);
     } else if (selectedSearchType === "주문자명") {
       setOrdererName(value);
-      console.log("주문자명", ordererName);
+      // console.log("주문자명", ordererName);
     } else if (selectedSearchType === "상품명") {
       setProductName(value);
-      console.log("상품명", productName);
+      // console.log("상품명", productName);
     }
   };
 
-  const searchHandler = () => {
-    const request = {
+  const searchHandler = async () => {
+    const condition = {
       orderNumber: orderNumber,
       ordererName: ordererName,
       productName: productName,
       startDate: startDate,
       endDate: endDate,
-      selectedPreStatuses: selectedPreStatuses,
-      selectedPostStatuses: selectedPostStatuses,
+      selectedOrderStatus: selectedOrderStatuses.map((s) => orderStatusMap[s]),
       selectedDelivery: selectedDelivery,
-      selectedPayment: selectedPayment,
-      selectedOrderType: selectedOrderType,
+      selectedPayment: selectedPayment.map((p) => paymentMap[p]),
     };
+    const result = await getOrdersBySearch(condition);
+    setOrders(result);
   };
 
   const resetFiltersHandler = () => {
@@ -120,7 +146,7 @@ const AdminOrderMgrComponent = () => {
     setSelectedPostStatuses([]);
     setSelectedDelivery([]);
     setSelectedPayment([]);
-    setSelectedOrderType([]);
+    // setSelectedOrderType([]);
   };
 
   return (
@@ -225,18 +251,18 @@ const AdminOrderMgrComponent = () => {
         {/* 체크박스 그룹 */}
         <CheckboxGroup
           title="주문상태"
-          options={allPreStatuses}
-          selectedOptions={selectedPreStatuses}
-          setSelectedOptions={setSelectedPreStatuses}
+          options={allOrderStatuses}
+          selectedOptions={selectedOrderStatuses}
+          setSelectedOptions={setSelectedOrderStatuses}
           showAll={true}
         />
-        <CheckboxGroup
+        {/* <CheckboxGroup
           title="배송상태"
           options={allPostStatuses}
           selectedOptions={selectedPostStatuses}
           setSelectedOptions={setSelectedPostStatuses}
           showAll={true}
-        />
+        /> */}
         <CheckboxGroup
           title="배송방법"
           options={allDelivery}
@@ -279,7 +305,7 @@ const AdminOrderMgrComponent = () => {
         </button>
       </div>
 
-      <OrderSearchResultTable />
+      <OrderSearchResultTable orders={orders} />
     </div>
   );
 };
