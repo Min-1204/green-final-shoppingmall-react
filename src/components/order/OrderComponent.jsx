@@ -396,7 +396,11 @@ const OrderComponent = () => {
                                 [{item.brandName}]
                               </p>
                               <p className="text-[14px] text-[#111] font-medium leading-snug">
-                                {item.productName} - {item.optionName}
+                                {item.productName}{" "}
+                                {item.optionName &&
+                                item.optionName != item.productName
+                                  ? `- ${item.optionName}`
+                                  : null}
                               </p>
                             </div>
                           </div>

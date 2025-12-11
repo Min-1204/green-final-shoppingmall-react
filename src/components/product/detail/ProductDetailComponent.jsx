@@ -4,15 +4,21 @@ import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import ProductDetailInfo from "./ProductDetailInfo";
 import ProductDetailOptions from "./ProductDetailOptions";
 import ReviewListComponent from "../../review/ReviewListComponent";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "../../../redux/slices/features/cart/cartSlice";
 import ProductDetailQuantity from "./ProductDetailQuantity";
 import ProductQuestion from "../../productquestion/ProductQuestion";
 import ProductPurchaseInfo from "./ProductPurchaseInfo";
 import { fetchProductById } from "../../../api/admin/product/productApi";
+import useCustomCart from "../../../hooks/useCustomCart";
 
 export default function ProductDetailComponent() {
   const navigate = useNavigate();
+
+  // 장바구니에 담는 기능
+  const { changeCart } = useCustomCart();
+  // user의 id가 필요해서 redux에서 user 정보 가져옴
+  const { user } = useSelector((state) => state.authSlice);
   const { id } = useParams();
   const [product, setProduct] = useState({});
 
@@ -29,8 +35,8 @@ export default function ProductDetailComponent() {
     const loadData = async () => {
       const productData = await fetchProductById(parseInt(id));
       setProduct(productData);
-      console.log("id : ", id);
-      console.log("product : ", productData);
+      // console.log("id : ", id);
+      // console.log("product : ", productData);
       setThumbnailImage(productData?.mainImages[0]?.imageUrl);
     };
     loadData();
@@ -73,15 +79,21 @@ export default function ProductDetailComponent() {
     )
       return alert("옵션을 선택해주세요.");
 
+    // console.log("product", product);
+    // console.log("selectedItems", selectedItems);
     navigate("/order", {
       state: {
         items: selectedItems.map((option) => ({
-          id: option.id,
-          name: product.name + " - " + option.option_name,
-          brand: product.brand,
-          price: option.price,
-          qty: option.qty,
-          image: option.image_url,
+          id: null,
+          productOptionId: option?.id,
+          brandName: product?.brand.name,
+          productName: product?.basicInfo.productName,
+          optionName: option?.optionName,
+          sellingPrice: option?.sellingPrice,
+          quantity: option?.qty,
+          imageUrl: product?.mainImages.filter(
+            (image) => image.imageType == "THUMBNAIL"
+          )[0]?.imageUrl,
         })),
       },
     });
@@ -92,12 +104,16 @@ export default function ProductDetailComponent() {
       state: {
         items: [
           {
-            id: product.id,
-            name: product.name,
-            brand: product.brand,
-            price: product.options[0].price,
-            qty: qty,
-            image: product.options[0].image_url,
+            id: null,
+            productOptionId: product?.options[0]?.id,
+            brandName: product?.brand?.name,
+            productName: product?.basicInfo?.productName,
+            optionName: null,
+            sellingPrice: product?.options[0]?.sellingPrice,
+            quantity: qty,
+            imageUrl: product?.mainImages.filter(
+              (image) => image.imageType == "THUMBNAIL"
+            )[0]?.imageUrl,
           },
         ],
       },
@@ -112,32 +128,34 @@ export default function ProductDetailComponent() {
     )
       return alert("옵션을 선택해주세요.");
 
-    selectedItems.forEach((option) =>
-      dispatch(
-        addItem({
-          id: product.id,
-          option_id: option.id,
-          name: product.name + " - " + option.option_name,
-          brand: product.brand,
-          price: option.price,
-          qty: option.qty,
-          image: option.image_url,
-        })
-      )
-    );
+    // console.log("selectedItems", selectedItems);
+    // console.log("user", user);
+
+    selectedItems.forEach((option) => {
+      const cartProductDTO = {
+        userId: user?.id,
+        id: null,
+        productOptionId: option?.id,
+        quantity: option?.qty,
+      };
+
+      changeCart(cartProductDTO);
+    });
+    alert("장바구니에 담았습니다.");
   };
 
   const handleAddCart = (product) => {
-    dispatch(
-      addItem({
-        id: product.id,
-        name: product.name,
-        brand: product.brand,
-        price: product.options[0].price,
-        qty: qty,
-        image: product.images.thumbnail,
-      })
-    );
+    // console.log("product", product);
+    const cartProductDTO = {
+      userId: user?.id,
+      id: null,
+      productOptionId: product?.options[0]?.id,
+      quantity: qty,
+    };
+    // console.log("cartProductDTO", cartProductDTO);
+
+    changeCart(cartProductDTO);
+    alert("장바구니에 담았습니다.");
   };
 
   return (

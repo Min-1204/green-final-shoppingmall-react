@@ -9,12 +9,9 @@ const CartComponent = () => {
   // 유저 정보
   const { user } = useSelector((state) => state.authSlice);
 
-  console.log("userId", user?.id);
+  // console.log("userId", user?.id);
 
   const navigate = useNavigate();
-
-  // cartSlice에 action을 전달할 dispatch 불러오기
-  // const dispatch = useDispatch();
 
   // 장바구니 기능
   const { refreshCart, changeCart, removeItem, removeAll } = useCustomCart();
@@ -74,7 +71,7 @@ const CartComponent = () => {
     0
   );
 
-  const shipping = totalPrice >= 30000 ? 0 : 3000;
+  const shipping = totalPrice >= 50000 ? 0 : 3000;
 
   // ✅ 주문 페이지 이동 시 선택한 상품만 전달
   const handleOrderSelected = () => {
@@ -197,7 +194,10 @@ const CartComponent = () => {
                             {item.brandName}
                           </p>
                           <p className="font-medium text-gray-900 text-sm leading-snug">
-                            {item.productName} - {item.optionName}
+                            {item.productName}{" "}
+                            {item.optionName &&
+                              item.optionName != item.productName &&
+                              `- ${item.optionName}`}
                           </p>
                         </div>
                       </div>
