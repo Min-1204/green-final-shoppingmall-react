@@ -28,7 +28,7 @@ const OrderComponent = () => {
     passedItems.length > 0 ? passedItems : []
   );
 
-  // console.log("cartItems", cartItems);
+  console.log("cartItems", cartItems);
 
   // const [showAddressModal, setShowAddressModal] = useState(false);
 
@@ -111,7 +111,10 @@ const OrderComponent = () => {
     0
   );
 
-  const shippingFee = totalPrice >= 50000 ? 0 : 3000;
+  const shippingFee =
+    totalPrice >= cartItems[0]?.deliveryPolicy?.freeConditionAmount
+      ? 0
+      : cartItems[0]?.deliveryPolicy?.basicDeliveryFee;
 
   const couponDiscount = selectedCoupon
     ? (selectedCoupon.coupon.discountType = "FIXED"

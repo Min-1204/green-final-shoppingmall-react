@@ -71,7 +71,14 @@ const CartComponent = () => {
     0
   );
 
-  const shipping = totalPrice >= 50000 ? 0 : 3000;
+  console.log("selectedCartItems", selectedCartItems);
+
+  const shipping =
+    totalPrice >= selectedCartItems[0]?.deliveryPolicy?.freeConditionAmount
+      ? 0
+      : selectedCartItems[0]?.deliveryPolicy?.basicDeliveryFee;
+
+  console.log("shipping", shipping);
 
   // ✅ 주문 페이지 이동 시 선택한 상품만 전달
   const handleOrderSelected = () => {
@@ -263,7 +270,9 @@ const CartComponent = () => {
         <div className="flex justify-between py-2">
           <span>배송비</span>
           <span>
-            {shipping === 0 ? "0원" : `${shipping.toLocaleString()}원`}
+            {shipping && shipping === 0
+              ? "0원"
+              : `${shipping?.toLocaleString()}원`}
           </span>
         </div>
 

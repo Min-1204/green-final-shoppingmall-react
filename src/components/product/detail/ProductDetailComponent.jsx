@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import ProductDetailInfo from "./ProductDetailInfo";
-import ProductDetailOptions from "./ProductDetailOptions";
-import ReviewListComponent from "../../review/ReviewListComponent";
-import { useDispatch, useSelector } from "react-redux";
-import { addItem } from "../../../redux/slices/features/cart/cartSlice";
-import ProductDetailQuantity from "./ProductDetailQuantity";
-import ProductQuestion from "../../productquestion/ProductQuestion";
-import ProductPurchaseInfo from "./ProductPurchaseInfo";
+import { useEffect, useState } from "react";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetchProductById } from "../../../api/admin/product/productApi";
 import useCustomCart from "../../../hooks/useCustomCart";
+import ProductQuestion from "../../productquestion/ProductQuestion";
+import ReviewListComponent from "../../review/ReviewListComponent";
+import ProductDetailInfo from "./ProductDetailInfo";
+import ProductDetailOptions from "./ProductDetailOptions";
+import ProductDetailQuantity from "./ProductDetailQuantity";
+import ProductPurchaseInfo from "./ProductPurchaseInfo";
 
 export default function ProductDetailComponent() {
   const navigate = useNavigate();
@@ -68,8 +67,6 @@ export default function ProductDetailComponent() {
     { key: "review", label: "리뷰" },
     { key: "qna", label: "Q&A" },
   ];
-
-  const dispatch = useDispatch();
 
   const handleClickOrderOption = () => {
     if (
