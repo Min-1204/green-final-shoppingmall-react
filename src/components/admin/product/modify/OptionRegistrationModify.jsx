@@ -217,20 +217,20 @@ function OptionRegistrationModify({ existingData, onChangeForm }) {
                       <input
                         type="number"
                         value={option.currentStock}
-                        onChange={(e) =>
-                          inputChangeHandler(
-                            index,
-                            "currentStock",
-                            e.target.value
-                          )
-                        }
+                        // onChange={(e) =>
+                        //   inputChangeHandler(
+                        //     index,
+                        //     "currentStock",
+                        //     e.target.value
+                        //   )
+                        // }
                         className={`w-full border rounded-md px-2 py-1 ${
-                          option.deleted === true
+                          true
                             ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
                             : "border-gray-300"
                         }`}
                         placeholder="0"
-                        disabled={option.deleted === true}
+                        disabled={true}
                       />
                     </td>
                     <td className="px-3 py-3">
