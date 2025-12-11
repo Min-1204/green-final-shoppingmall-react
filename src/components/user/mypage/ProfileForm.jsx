@@ -23,7 +23,7 @@ export default function ProfileForm() {
     addressDetail: profileData?.addressDetail || "",
     smsAgreement: profileData?.smsAgreement || false,
     emailAgreement: profileData?.emailAgreement || false,
-    password: "",
+    password: ""
   });
 
   // prettier-ignore
@@ -40,7 +40,7 @@ export default function ProfileForm() {
     const { name, value, type, checked } = e.target;
     setModifyForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : value
     }));
   };
 
@@ -60,7 +60,7 @@ export default function ProfileForm() {
     const finalModifyData = {
       ...modifyForm,
       loginId: user.loginId,
-      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber),
+      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber)
     };
 
     try {
@@ -72,6 +72,8 @@ export default function ProfileForm() {
       console.log("여기는 result 확인용 로그 : ", result);
       if (result.success) {
         alert(result.message);
+        await dispatch(getUserProfileThunk(user.loginId)).unwrap();
+        console.log("프로필 재조회 완료");
       }
     } catch (error) {
       alert(error.message);
@@ -84,7 +86,7 @@ export default function ProfileForm() {
         ...modifyForm,
         postalCode: data.zonecode,
         address: data.address,
-        addressDetail: "",
+        addressDetail: ""
       });
     });
   };
