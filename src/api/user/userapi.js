@@ -3,6 +3,12 @@ import axios from "axios";
 export const API_SERVER = "http://localhost:8080";
 const USER_API = `${API_SERVER}/api/user`;
 
+export const axiosObj = axios.create({
+  baseURL: API_SERVER,
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true
+});
+
 export const signUpApi = async (signUpForm) => {
   try {
     const formatBirthDate = () => {
@@ -28,12 +34,12 @@ export const signUpApi = async (signUpForm) => {
       address: signUpForm.address, // 기본주소
       addressDetail: signUpForm.addressDetail, // 상세주소
       smsAgreement: signUpForm.smsAgreement, // SMS 알림 동의
-      emailAgreement: signUpForm.emailAgreement, // Email 알림 동의
+      emailAgreement: signUpForm.emailAgreement // Email 알림 동의
     };
 
     console.log("백엔드로 보내는 데이터 콘솔", requestData);
 
-    const res = await axios.post(`${USER_API}/signup`, requestData);
+    const res = await axiosObj.post(`${USER_API}/signup`, requestData);
     console.log("1) 여기는 응답 데이터 확인 콘솔", res.data);
     return res.data;
   } catch (error) {
@@ -48,7 +54,7 @@ export const signUpApi = async (signUpForm) => {
 export const loginApi = async (loginForm) => {
   try {
     console.log("1) 로그인 API 호출 + 요청 데이터", loginForm);
-    const res = await axios.post(`${USER_API}/login`, loginForm);
+    const res = await axiosObj.post(`${USER_API}/login`, loginForm);
     console.log("2) 로그인 API + 응답 데이터", res.data);
     if (!res.data) {
       throw new Error("데이터가 없습니다");
@@ -64,7 +70,7 @@ export const loginApi = async (loginForm) => {
 export const checkLoginIdApi = async (loginId) => {
   try {
     console.log("1) 아이디 중복확인 API", loginId);
-    const response = await axios.get(`${USER_API}/check-loginId`, { params: { loginId } });  // 받은 loginId를 get사용 params 방식으로 전달
+    const response = await axiosObj.get(`${USER_API}/check-loginId`, { params: { loginId } });  // 받은 loginId를 get사용 params 방식으로 전달
     // Query Parameter 형태로 변환. 즉, .../api/user/check-loginId?loginId=사용자입력값 형태로 요청이 전송됨
     console.log("2) 백엔드 응답 중복확인", response);
     return response.data;
@@ -77,7 +83,7 @@ export const checkLoginIdApi = async (loginId) => {
 //prettier-ignore
 export const getProfileApi = async (loginId) => {
   try {
-    const response = await axios.get(`${USER_API}/profile/${loginId }`);
+    const response = await axiosObj.get(`${USER_API}/profile/${loginId }`);
     console.log("1) 프로필 조회 API : ", response.data);
     return response.data;
   } catch (error) {
@@ -90,7 +96,7 @@ export const getProfileApi = async (loginId) => {
 export const modifyProfileApi = async (modifyForm) => {
   try{ 
   console.log("1) 개인정보수정 출력", modifyForm);
-  const response = await axios.put(`${USER_API}/profile-modify`, modifyForm);
+  const response = await axiosObj.put(`${USER_API}/profile-modify`, modifyForm);
   console.log("2) 개인정보수정 백엔드 응답 :", response.data);
   return response.data;
   } catch (error) {
@@ -102,7 +108,7 @@ export const modifyProfileApi = async (modifyForm) => {
 //prettier-ignore
 export const changePasswordApi = async (passwordForm) => {
   try{
-  const response = await axios.patch(`${USER_API}/password-change`, passwordForm);
+  const response = await axiosObj.patch(`${USER_API}/password-change`, passwordForm);
   console.log("1) 여기는 비밀번호변경 출력", passwordForm);
   return response.data;
   } catch (error) {
@@ -112,7 +118,10 @@ export const changePasswordApi = async (passwordForm) => {
 
 export const withdrawalUserApi = async (withdrawalData) => {
   try {
-    const response = await axios.post(`${USER_API}/withdraw`, withdrawalData);
+    const response = await axiosObj.post(
+      `${USER_API}/withdraw`,
+      withdrawalData
+    );
     console.log("회원탈퇴 API 콘솔", response);
     return response.data;
   } catch (error) {

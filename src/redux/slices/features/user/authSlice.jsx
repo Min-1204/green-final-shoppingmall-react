@@ -3,7 +3,7 @@ import {
   changePasswordApi,
   getProfileApi,
   loginApi,
-  modifyProfileApi,
+  modifyProfileApi
 } from "../../../../api/user/userApi";
 
 export const loginAsyncThunk = createAsyncThunk(
@@ -14,7 +14,7 @@ export const loginAsyncThunk = createAsyncThunk(
     try {
       const response = await loginApi(loginForm); // 로그인 api에 loginForm을 보냄
       console.log("백엔드 로그인 응답 콘솔", response); // 응답이오면 콘솔로그로 체크
-      return response; // 여기서 (응답)사용자정보를 반환
+      return response.user; // 여기서 (응답)사용자정보를 반환
     } catch (error) {
       // null 이거나 undefined 이면 catch로 넘어오고
       console.error("여기는 API 로그인 에러 createAsync: ", error); // 빨간색 error를 표시
@@ -68,7 +68,7 @@ const initialState = {
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
   profile: null,
   error: null, // 에러 상태
-  loading: false, // 로딩 상태
+  loading: false // 로딩 상태
 };
 
 // prettier-ignore
