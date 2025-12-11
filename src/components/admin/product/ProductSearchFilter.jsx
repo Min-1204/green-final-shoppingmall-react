@@ -427,7 +427,7 @@ const ProductSearchFilter = () => {
         </button>
       </div>
 
-      <ProductList products={searchResults} />
+      <ProductList products={searchResults} search={searchClick} />
     </div>
   );
 };

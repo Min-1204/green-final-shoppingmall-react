@@ -143,3 +143,11 @@ export const searchProductsByCondition = async (condition) => {
   const res = await axios.post(`${prefix}/search`, condition);
   return res.data;
 };
+
+export const restockOption = async (updatedOptions) => {
+  const res = await axios.patch(
+    `${API_SERVER_HOST}/api/product_options/restock`,
+    updatedOptions
+  );
+  return res.data;
+};

@@ -1,5 +1,8 @@
 import { Link } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import RestockModal from "./RestockModal";
+import { useEffect, useState } from "react";
+import { restockOption } from "../../../api/admin/product/productApi";
 
 const getAvailableStock = (product) => {
   const availableOptions = product?.options.filter((op) => op.currentStock > 0);
@@ -25,22 +28,39 @@ const getOutOfStock = (product) => {
   return `[${outOfStockOptionCnt}] ${outOfStock}`;
 };
 
-const ProductList = ({ products }) => {
+const ProductList = ({ products, search }) => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   const tableHeaders = [
     "번호",
     "상품명",
     "판매가",
     "재고",
     "배송비",
-    // "조회",
     "등록/수정일",
     "상태",
     "노출",
     "관리",
   ];
 
-  console.log("products : ", products);
+  useEffect(() => {
+    console.log("products : ", products);
+  }, [products]);
+
+  const restockClick = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const restockConfirm = async (updatedOptions) => {
+    console.log("재입고 데이터 : ", updatedOptions);
+    //api 호출
+    await restockOption(updatedOptions);
+    // 다시 조회
+    search();
+  };
 
   const goToModifyPage = (id) => {
     navigate(`/admin/product/modify/${id}`);
@@ -136,7 +156,7 @@ const ProductList = ({ products }) => {
 
                 <td className="px-3 py-3 text-center">
                   <div>{getAvailableStock(product)}</div>
-                  <div className="text-gray-600 text-xs">
+                  <div className="text-red-600 text-xs">
                     {getOutOfStock(product)}{" "}
                     <span className="text-red-500 ml-1">📦</span>
                   </div>
@@ -148,7 +168,7 @@ const ProductList = ({ products }) => {
                   원)
                 </td>
 
-                {/* <td className="px-3 py-3 text-center">미구현</td> */}
+                {/* <td className="px-3 py-3 text-center">조회 미구현</td> */}
 
                 <td className="px-3 py-3 text-xs text-gray-500">
                   <div>{product?.createdAt.split("T")[0]}</div>
@@ -174,13 +194,16 @@ const ProductList = ({ products }) => {
                 <td className="px-3 py-3 w-[130px]">
                   <div className="flex flex-col gap-1">
                     <button
+                      onClick={() => restockClick(product)}
+                      className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1 rounded-md border border-green-200 cursor-pointer transition shadow-sm"
+                    >
+                      상품 옵션 재입고
+                    </button>
+                    <button
                       onClick={() => goToModifyPage(product.id)}
                       className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm"
                     >
-                      수정
-                    </button>
-                    <button className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1 rounded-md border border-green-200 cursor-pointer transition shadow-sm">
-                      재입고 알림
+                      상품 수정
                     </button>
                   </div>
                 </td>
@@ -189,6 +212,12 @@ const ProductList = ({ products }) => {
           </tbody>
         </table>
       </div>
+      <RestockModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
+        onConfirm={restockConfirm}
+      />
     </div>
   );
 };
