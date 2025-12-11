@@ -7,6 +7,7 @@ import ExchangeModal from "./ExchangeModal";
 import sampleOrders from "../../data/sampleOrders";
 import { getOrderList } from "../../api/order/orderApi";
 import { useSelector } from "react-redux";
+import ConfimPurchaseModal from "./ConfimPurchaseModal";
 
 export default function OrderHistoryComponent() {
   const { user } = useSelector((state) => state.authSlice);
@@ -28,6 +29,10 @@ export default function OrderHistoryComponent() {
 
   // 배송 조회 모달
   const [deliveryModal, setDeliveryModal] = useState(false);
+  // 구매 확정 모달
+  const [confirmPurchaseModal, setConfirmPurchaseModal] = useState(false);
+  // 구매 확정 모달에 전달되는 주문 정보
+  const [selectedOrder, setSelectedOrder] = useState({});
   // 취소 신청 모달
   const [cancleModal, setCancleModal] = useState(false);
   // 반품 신청 모달
@@ -344,6 +349,19 @@ export default function OrderHistoryComponent() {
                           <div className="text-xs text-gray-400">
                             {order.orderNumber}
                           </div>
+                          {orderStatusMap[item.orderProductStatus] ===
+                            "배송완료" && (
+                            <button
+                              className="text-xs px-3 py-1 border bg-black text-white hover:bg-gray-800 transition-colors w-full"
+                              onClick={() => {
+                                setConfirmPurchaseModal(true);
+                                setSelectedOrder(order);
+                                console.log(selectedOrder);
+                              }}
+                            >
+                              구매 확정
+                            </button>
+                          )}
                         </td>
                       )}
 
@@ -424,7 +442,7 @@ export default function OrderHistoryComponent() {
                               취소신청
                             </button>
                           )}
-                          {orderStatusMap[item.orderProductStatus] !==
+                          {orderStatusMap[item.orderProductStatus] ===
                             "배송완료" && (
                             <button
                               className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full"
@@ -535,6 +553,12 @@ export default function OrderHistoryComponent() {
         <ExchangeModal
           item={selectedItem}
           closeModal={() => setExchangeModal(false)}
+        />
+      )}
+      {confirmPurchaseModal && selectedItem && (
+        <ConfimPurchaseModal
+          order={selectedOrder}
+          closeModal={() => setConfirmPurchaseModal(false)}
         />
       )}
     </div>

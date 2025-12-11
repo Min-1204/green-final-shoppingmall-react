@@ -8,6 +8,7 @@ import {
   registerOrder,
 } from "../../api/order/orderApi";
 import CouponModal from "./CouponModal";
+import { getActivePoints } from "../../api/point/pointApi";
 
 const API_SERVER_HOST = "http://localhost:8080";
 
@@ -24,6 +25,9 @@ const OrderComponent = () => {
 
   const { user, profile } = useSelector((state) => state.authSlice);
 
+  console.log("user", user);
+  console.log("profile", profile);
+
   const [cartItems, setCartItems] = useState(
     passedItems.length > 0 ? passedItems : []
   );
@@ -36,6 +40,8 @@ const OrderComponent = () => {
   const [showCouponModal, setShowCouponModal] = useState(false);
   // 선택한 쿠폰
   const [selectedCoupon, setSelectedCoupon] = useState(null);
+
+  console.log("selectedCoupon", selectedCoupon);
 
   // 배송지명
   const [addressName, setAddressName] = useState("");
@@ -57,8 +63,9 @@ const OrderComponent = () => {
   const [deliveryRequest, setDeliveryRequest] = useState("");
   const [customDeliveryRequest, setCustomDeliveryRequest] = useState("");
 
-  const [pointBalance, setPointBalance] = useState(966); // 보유 포인트
+  const [pointBalance, setPointBalance] = useState(0); // 보유 포인트
   const [usePoint, setUsePoint] = useState(0); // 사용할 포인트
+  const [earnedPoints, setEarnedPoints] = useState(0);
 
   const paymentMethods = [
     { id: "card", label: "신용/체크카드" },
@@ -106,6 +113,26 @@ const OrderComponent = () => {
     console.log("selectedCoupon", selectedCoupon);
   }, [selectedCoupon]);
 
+  useEffect(() => {
+    const fetchPoints = async (userId) => {
+      const data = await getActivePoints(userId);
+      setPointBalance(data);
+    };
+
+    fetchPoints(user.id);
+  }, []);
+
+  useEffect(() => {
+    // 포인트는 가격의 1%를 합산하여 구함
+    const sumPoints = cartItems.reduce(
+      (sum, item) =>
+        sum +
+        Math.floor(Number(item.sellingPrice) * Number(item.quantity) * 0.01),
+      0
+    );
+    setEarnedPoints(sumPoints);
+  }, [cartItems]);
+
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + Number(item.sellingPrice) * Number(item.quantity),
     0
@@ -121,10 +148,10 @@ const OrderComponent = () => {
         ? selectedCoupon.coupon.fixedDiscountAmount
         : (totalPrice * selectedCoupon.coupon.discountPercentage) / 100)
     : 0;
-  console.log("couponDiscount", couponDiscount);
+  // console.log("couponDiscount", couponDiscount);
   // 최종 결제금액 계산: (총 상품금액 + 배송비) - 쿠폰할인 - 포인트사용
   const finalPrice = totalPrice + shippingFee - couponDiscount - usePoint;
-  console.log("finalPrice", finalPrice);
+  // console.log("finalPrice", finalPrice);
   const couponName = selectedCoupon ? selectedCoupon.coupon.couponName : null;
 
   const handleOrderCompleteClick = async () => {
@@ -168,8 +195,10 @@ const OrderComponent = () => {
           deliveryRequest === "직접입력"
             ? customDeliveryRequest
             : deliveryRequest,
-        userCouponId: selectedCoupon ? selectedCoupon.coupon.id : 0,
+        userId: user?.id,
+        userCouponId: selectedCoupon ? selectedCoupon?.coupon?.id : null,
         usedPoints: usePoint,
+        earnedPoints: earnedPoints,
         orderProducts: orderProducts,
       };
 
@@ -208,7 +237,7 @@ const OrderComponent = () => {
             card: "html5_inicis.INIpayTest", // KG이니시스 테스트 (자동취소)
             kakao: "kakaopay.TC0ONETIME", // 카카오페이 테스트
             payco: "payco.PARTNERTEST", // 페이코 테스트
-            phone: "danal_tpay.9810030929", // 다날 테스트 (자동취소)
+            phone: "danal.A010002002", // 다날 테스트 (자동취소)
             bank: "html5_inicis.INIpayTest", // 계좌이체 테스트
           };
           return testPgMap[method];
@@ -257,9 +286,9 @@ const OrderComponent = () => {
         },
         async (response) => {
           console.log("결제 응답:", response);
-          if (response.error_code != null) {
+          if (response.success === false) {
             const result = await deleteOneOrder(resultOrderId);
-            console.log(result);
+            console.log("백엔드 통신 결과", result);
             return alert(
               `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
             );
@@ -416,7 +445,7 @@ const OrderComponent = () => {
                             Number(item.sellingPrice) * Number(item.quantity)
                           )}
                         </td>
-                        {/* 포인트는 가격의 1%를 임시로 가정하여 계산 */}
+
                         <td className="px-6 py-5 text-center text-[14px] font-medium text-[#ff6e18]">
                           {Math.floor(
                             Number(item.sellingPrice) *
@@ -821,7 +850,7 @@ const OrderComponent = () => {
                 <div className="pt-2 space-y-1 text-[12px] text-[#999]">
                   <p>• 결제금액 {formatPrice(finalPrice)} (VAT 포함)</p>
                   <p>• 결제수단: {paymentMethod}</p>
-                  <p>• 적립 예정 포인트: {Math.floor(totalPrice * 0.01)}P</p>
+                  <p>• 적립 예정 포인트: {earnedPoints}P</p>
                 </div>
 
                 <button
