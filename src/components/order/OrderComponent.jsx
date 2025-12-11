@@ -28,7 +28,7 @@ const OrderComponent = () => {
     passedItems.length > 0 ? passedItems : []
   );
 
-  // console.log("cartItems", cartItems);
+  console.log("cartItems", cartItems);
 
   // const [showAddressModal, setShowAddressModal] = useState(false);
 
@@ -111,7 +111,10 @@ const OrderComponent = () => {
     0
   );
 
-  const shippingFee = totalPrice >= 50000 ? 0 : 3000;
+  const shippingFee =
+    totalPrice >= cartItems[0]?.deliveryPolicy?.freeConditionAmount
+      ? 0
+      : cartItems[0]?.deliveryPolicy?.basicDeliveryFee;
 
   const couponDiscount = selectedCoupon
     ? (selectedCoupon.coupon.discountType = "FIXED"
@@ -396,7 +399,11 @@ const OrderComponent = () => {
                                 [{item.brandName}]
                               </p>
                               <p className="text-[14px] text-[#111] font-medium leading-snug">
-                                {item.productName} - {item.optionName}
+                                {item.productName}{" "}
+                                {item.optionName &&
+                                item.optionName != item.productName
+                                  ? `- ${item.optionName}`
+                                  : null}
                               </p>
                             </div>
                           </div>
