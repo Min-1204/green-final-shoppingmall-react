@@ -2,7 +2,7 @@ import React from "react";
 
 const DeliveryModal = ({ item, closeModal }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
         <h2 className="text-lg font-bold mb-4">배송 조회</h2>
         <p className="text-sm text-gray-600 mb-3">{item.pname}</p>
