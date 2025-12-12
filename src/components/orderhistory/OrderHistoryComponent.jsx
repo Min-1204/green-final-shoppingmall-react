@@ -5,9 +5,11 @@ import ReturnModal from "./ReturnModal";
 import CancleModal from "./CancleModal";
 import ExchangeModal from "./ExchangeModal";
 import sampleOrders from "../../data/sampleOrders";
-import { getOrderList } from "../../api/order/orderApi";
+import { confirmOrder, getOrderList } from "../../api/order/orderApi";
 import { useSelector } from "react-redux";
 import ConfimPurchaseModal from "./ConfimPurchaseModal";
+import ConfirmPurchaseCompleteModal from "./ConfirmPurchaseCompleteModal";
+import { earnPoint, getActivePoints } from "../../api/point/pointApi";
 
 export default function OrderHistoryComponent() {
   const { user } = useSelector((state) => state.authSlice);
@@ -33,6 +35,13 @@ export default function OrderHistoryComponent() {
   const [confirmPurchaseModal, setConfirmPurchaseModal] = useState(false);
   // 구매 확정 모달에 전달되는 주문 정보
   const [selectedOrder, setSelectedOrder] = useState({});
+  // 구매 확정 완료 모달
+  const [confirmPurchaseCompleteModal, setConfirmPurchaseCompleteModal] =
+    useState(false);
+
+  // 사용가능한 포인트(구매 확정 완료 모달에 전달, 페이지 상단에 표시하는 용도)
+  const [activePoints, setActivePoints] = useState(0);
+
   // 취소 신청 모달
   const [cancleModal, setCancleModal] = useState(false);
   // 반품 신청 모달
@@ -79,6 +88,7 @@ export default function OrderHistoryComponent() {
     PREPARING: "배송준비중",
     SHIPPING: "배송중",
     DELIVERED: "배송완료",
+    CONFIRMED: "구매확정",
     CANCEL_REQUESTED: "취소신청",
     EXCHANGE_REQUESTED: "교환신청",
     RETURN_REQUESTED: "반품신청",
@@ -123,6 +133,9 @@ export default function OrderHistoryComponent() {
           case "DELIVERED":
             newCountState["배송완료"] += 1;
             break;
+          case "CONFIRMED":
+            newCountState["배송완료"] += 1;
+            break;
         }
       });
     setCountStatus(newCountState);
@@ -154,6 +167,35 @@ export default function OrderHistoryComponent() {
 
     // 나중에는 여기에서 axios로 백엔드 호출
     // axios.get('/api/orders', {params: {startDate: start, endDate: end}})
+  };
+
+  const handlePurchaseConfirm = async (userId, order) => {
+    const pointEarnReq = {
+      userId: userId,
+      pointValue: order.earnedPoints,
+    };
+    // 포인트 적립(백엔드)
+    await earnPoint(pointEarnReq);
+    // 사용가능한 포인트 불러오기(백엔드)
+    const result = await getActivePoints(userId);
+    // 구매 확정 처리
+    await confirmOrder(order.id);
+    setActivePoints(result);
+
+    // 화면에 보여지는 주문 목록 상태(orderList) 즉시 업데이트
+    setOrderList((prevOrderList) =>
+      prevOrderList.map((prevOrder) => {
+        if (prevOrder.id === order.id) {
+          const updatedProducts = prevOrder.orderProducts.map((product) => {
+            return { ...product, orderProductStatus: "CONFIRMED" };
+          });
+          return { ...prevOrder, orderProducts: updatedProducts };
+        }
+        return prevOrder;
+      })
+    );
+
+    setConfirmPurchaseCompleteModal(true);
   };
 
   return (
@@ -410,7 +452,7 @@ export default function OrderHistoryComponent() {
                             </button>
                           )}
                           {orderStatusMap[item.orderProductStatus] ===
-                            "배송완료" && (
+                            "구매확정" && (
                             <button
                               className="text-xs px-3 py-1 bg-black text-white hover:bg-gray-800 transition-colors"
                               onClick={() => {
@@ -555,10 +597,19 @@ export default function OrderHistoryComponent() {
           closeModal={() => setExchangeModal(false)}
         />
       )}
-      {confirmPurchaseModal && selectedItem && (
+      {confirmPurchaseModal && selectedOrder && (
         <ConfimPurchaseModal
           order={selectedOrder}
+          userId={user.id}
           closeModal={() => setConfirmPurchaseModal(false)}
+          onConfirm={(userId, order) => handlePurchaseConfirm(userId, order)}
+        />
+      )}
+      {confirmPurchaseCompleteModal && selectedOrder && (
+        <ConfirmPurchaseCompleteModal
+          order={selectedOrder}
+          totalPoints={activePoints}
+          closeModal={() => setConfirmPurchaseCompleteModal(false)}
         />
       )}
     </div>
