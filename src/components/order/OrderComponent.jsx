@@ -32,7 +32,7 @@ const OrderComponent = () => {
     passedItems.length > 0 ? passedItems : []
   );
 
-  console.log("cartItems", cartItems);
+  // console.log("cartItems", cartItems);
 
   // const [showAddressModal, setShowAddressModal] = useState(false);
 
@@ -40,8 +40,6 @@ const OrderComponent = () => {
   const [showCouponModal, setShowCouponModal] = useState(false);
   // 선택한 쿠폰
   const [selectedCoupon, setSelectedCoupon] = useState(null);
-
-  console.log("selectedCoupon", selectedCoupon);
 
   // 배송지명
   const [addressName, setAddressName] = useState("");
@@ -109,9 +107,9 @@ const OrderComponent = () => {
     setOrdererInfo(newOrdererInfo);
   }, [profile]);
 
-  useEffect(() => {
-    console.log("selectedCoupon", selectedCoupon);
-  }, [selectedCoupon]);
+  // useEffect(() => {
+  //   console.log("selectedCoupon", selectedCoupon);
+  // }, [selectedCoupon]);
 
   useEffect(() => {
     const fetchPoints = async (userId) => {
@@ -138,10 +136,14 @@ const OrderComponent = () => {
     0
   );
 
+  // console.log("totalPrice", totalPrice);
+
   const shippingFee =
     totalPrice >= cartItems[0]?.deliveryPolicy?.freeConditionAmount
       ? 0
       : cartItems[0]?.deliveryPolicy?.basicDeliveryFee;
+
+  // console.log("shippingFee", shippingFee);
 
   const couponDiscount = selectedCoupon
     ? (selectedCoupon.coupon.discountType = "FIXED"

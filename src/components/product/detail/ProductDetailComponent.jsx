@@ -77,7 +77,7 @@ export default function ProductDetailComponent() {
       return alert("옵션을 선택해주세요.");
 
     // console.log("product", product);
-    // console.log("selectedItems", selectedItems);
+    console.log("selectedItems", selectedItems);
     navigate("/order", {
       state: {
         items: selectedItems.map((option) => ({
@@ -91,6 +91,7 @@ export default function ProductDetailComponent() {
           imageUrl: product?.mainImages.filter(
             (image) => image.imageType == "THUMBNAIL"
           )[0]?.imageUrl,
+          deliveryPolicy: product?.deliveryPolicy,
         })),
       },
     });
@@ -111,6 +112,7 @@ export default function ProductDetailComponent() {
             imageUrl: product?.mainImages.filter(
               (image) => image.imageType == "THUMBNAIL"
             )[0]?.imageUrl,
+            deliveryPolicy: product?.deliveryPolicy,
           },
         ],
       },
