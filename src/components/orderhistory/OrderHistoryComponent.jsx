@@ -10,11 +10,28 @@ import { useSelector } from "react-redux";
 import ConfimPurchaseModal from "./ConfimPurchaseModal";
 import ConfirmPurchaseCompleteModal from "./ConfirmPurchaseCompleteModal";
 import { earnPoint, getActivePoints } from "../../api/point/pointApi";
+import { useSearchParams } from "react-router-dom";
+import Pagination from "../pagination/Pagination";
 
 export default function OrderHistoryComponent() {
-  const { user } = useSelector((state) => state.authSlice);
+  const statusClass = (s) =>
+    s === "배송중"
+      ? "text-blue-600"
+      : s === "배송완료"
+      ? "text-green-600"
+      : "text-[#ff5c00]";
 
-  console.log("user", user);
+  const orderStatusMap = {
+    PENDING_PAYMENT: "주문접수",
+    PAID: "결제완료",
+    PREPARING: "배송준비중",
+    SHIPPING: "배송중",
+    DELIVERED: "배송완료",
+    CONFIRMED: "구매확정",
+    CANCEL_REQUESTED: "취소신청",
+    EXCHANGE_REQUESTED: "교환신청",
+    RETURN_REQUESTED: "반품신청",
+  };
 
   const [selectedPeriod, setSelectedPeriod] = useState("1개월");
   const [reviewModal, setReviewModal] = useState(false);
@@ -25,10 +42,10 @@ export default function OrderHistoryComponent() {
     배송중: 0,
     배송완료: 0,
   });
-
+  // 백엔드로부터 받아오는 주문 페이지네이션 정보 저장
+  const [pageResponseDTO, setPageResponseDTO] = useState({});
   // 주문 내역 리스트(백엔드로부터 받아오는 데이터)
   const [orderList, setOrderList] = useState([]);
-
   // 배송 조회 모달
   const [deliveryModal, setDeliveryModal] = useState(false);
   // 구매 확정 모달
@@ -53,8 +70,8 @@ export default function OrderHistoryComponent() {
   // 상품 리뷰 작성
   const [selectedProduct, setSelectedProduct] = useState({});
 
-  // 페이지네이션 상태
-  const [currentPage, setCurrentPage] = useState(1);
+  // // 페이지네이션 상태
+  // const [currentPage, setCurrentPage] = useState(1);
 
   // 오늘 날짜 가져오기
   const today = new Date();
@@ -75,34 +92,34 @@ export default function OrderHistoryComponent() {
   const [endMonth, setEndMonth] = useState(todayMonth);
   const [endDay, setEndDay] = useState(todayDay);
 
-  const statusClass = (s) =>
-    s === "배송중"
-      ? "text-blue-600"
-      : s === "배송완료"
-      ? "text-green-600"
-      : "text-[#ff5c00]";
+  const { user } = useSelector((state) => state.authSlice);
 
-  const orderStatusMap = {
-    PENDING_PAYMENT: "주문접수",
-    PAID: "결제완료",
-    PREPARING: "배송준비중",
-    SHIPPING: "배송중",
-    DELIVERED: "배송완료",
-    CONFIRMED: "구매확정",
-    CANCEL_REQUESTED: "취소신청",
-    EXCHANGE_REQUESTED: "교환신청",
-    RETURN_REQUESTED: "반품신청",
+  // console.log("user", user);
+
+  const [queryParams] = useSearchParams();
+
+  // URL 쿼리에서 숫자 값을 읽어오는 함수
+  const getNum = (param, defaultValue) => {
+    if (!param) return defaultValue;
+    return parseInt(param, 10);
   };
 
   useEffect(() => {
-    console.log("userId", user.id);
-    const fetchOrderList = async (userId) => {
-      const data = await getOrderList(userId);
-      setOrderList(data);
-    };
+    const page = getNum(queryParams.get("page"), 1);
+    const size = getNum(queryParams.get("size"), 10);
+    const sort = queryParams.get("sort");
+    //URL에서 현재 페이지와 사이즈 정보 읽어옴
 
+    const fetchOrderList = async (userId) => {
+      const data = await getOrderList(userId, sort, page, size);
+      setPageResponseDTO(data); // PageResponseDTO를 저장
+    };
     fetchOrderList(user.id);
-  }, []);
+  }, [queryParams]);
+
+  useEffect(() => {
+    setOrderList(pageResponseDTO?.dtoList);
+  }, [pageResponseDTO]);
 
   useEffect(() => {
     const newCountState = {
@@ -114,7 +131,7 @@ export default function OrderHistoryComponent() {
     };
     console.log("orderList =>", orderList);
     orderList
-      .flatMap((o) => o.orderProducts)
+      ?.flatMap((o) => o.orderProducts)
       .map((op) => op.orderProductStatus)
       .forEach((status) => {
         switch (status) {
@@ -518,52 +535,8 @@ export default function OrderHistoryComponent() {
         </table>
       </div>
 
-      {/* 페이지네이션 UI */}
-      <div className="flex justify-center items-center gap-2 mt-8">
-        <button
-          onClick={() => setCurrentPage(1)}
-          disabled={currentPage === 1}
-          className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          &lt;&lt;
-        </button>
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          &lt;
-        </button>
-
-        {[1, 2, 3, 4, 5].map((page) => (
-          <button
-            key={page}
-            onClick={() => setCurrentPage(page)}
-            className={`px-3 py-1 text-sm ${
-              currentPage === page
-                ? "bg-black text-white"
-                : "border border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-
-        <button
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-          disabled={currentPage === 5}
-          className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          &gt;
-        </button>
-        <button
-          onClick={() => setCurrentPage(5)}
-          disabled={currentPage === 5}
-          className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          &gt;&gt;
-        </button>
-      </div>
+      {/* 페이지네이션 컴포넌트 */}
+      {pageResponseDTO && <Pagination pageResponseDTO={pageResponseDTO} />}
 
       {/* 모달들 */}
       {reviewModal && (
