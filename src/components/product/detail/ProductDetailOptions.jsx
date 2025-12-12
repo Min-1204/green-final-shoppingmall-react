@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { ChevronDown, X, Bell } from "lucide-react";
+import { useSelector } from "react-redux";
+import { applyRestockAlarm } from "../../../api/admin/product/productApi";
 
 const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
+  const auth = useSelector((state) => state.authSlice);
+  console.log("auth : ", auth);
+
   if (!product) {
     return null;
   }
@@ -44,6 +49,23 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
   useEffect(() => {
     console.log("selectedItems 변경", selectedItems);
   }, [selectedItems]);
+
+  const applyRestockMessage = async (e, optionId) => {
+    e.stopPropagation();
+
+    if (!auth.isLoggedIn) {
+      alert(`로그인을 하셔야 재입고 알람 요청을 할 수 있습니다.`);
+    } else {
+      const result = await applyRestockAlarm(auth.user.id, optionId);
+      console.log("재입고 알림 신청 응답 : ", result);
+
+      if (result !== 0) {
+        alert("재입고 알림 신청이 완료되었습니다.");
+      } else {
+        alert("이미 알림 신청한 상품입니다.");
+      }
+    }
+  };
 
   return (
     <div className="w-full space-y-4">
@@ -128,11 +150,7 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
                   {option.currentStock === 0 && (
                     <button
                       className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // alert 사용 금지 규정에 따라 console.log로 대체합니다.
-                        console.log("재입고 알림 버튼 클릭");
-                      }}
+                      onClick={(e) => applyRestockMessage(e, option.id)}
                     >
                       <Bell className="w-3.5 h-3.5" />
                       재입고 알림
