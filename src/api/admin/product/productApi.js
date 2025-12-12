@@ -151,3 +151,11 @@ export const restockOption = async (updatedOptions) => {
   );
   return res.data;
 };
+
+export const applyRestockAlarm = async (userId, optionId) => {
+  const res = await axios.post(`${API_SERVER_HOST}/api/restock-notification`, {
+    userId,
+    optionId,
+  });
+  return res.data;
+};
