@@ -34,3 +34,9 @@ export const getOrdersBySearch = async (condition) => {
   // console.log("getOrdersBySearch => ", res.data);
   return res.data;
 };
+
+export const confirmOrder = async (orderId) => {
+  const res = await axios.put(`${prefix}/confirm/${orderId}`);
+  console.log("confirmOrder =>", res.data);
+  return res.data;
+};

@@ -5,6 +5,12 @@ const prefix = `${API_SERVER_HOST}/api/point`;
 
 export const getActivePoints = async (userId) => {
   const res = await axios.get(`${prefix}/${userId}`);
-  console.log("getActivePoints 백엔드로 부터 받은 데이터=> ", res.data);
+  // console.log("getActivePoints 백엔드로 부터 받은 데이터=> ", res.data);
+  return res.data;
+};
+
+export const earnPoint = async (dto) => {
+  const res = await axios.post(`${prefix}/earn`, dto);
+  console.log("earnPoint 백엔드로부터 받은 데이터 => ", res.data);
   return res.data;
 };
