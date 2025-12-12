@@ -17,9 +17,15 @@ export const getOneOrder = async (orderId) => {
   return res.data;
 };
 
-export const getOrderList = async (userId) => {
-  const res = await axios.get(`${prefix}/list?userId=${userId}`);
-  // console.log("getOrderList => ", res.data);
+export const getOrderList = async (userId, sort, page = 1, size = 10) => {
+  const res = await axios.get(`${prefix}/list/${userId}`, {
+    params: {
+      sort: sort,
+      page: page,
+      size: size,
+    },
+  });
+  console.log("getOrderList => ", res.data);
   return res.data;
 };
 
