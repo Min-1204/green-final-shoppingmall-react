@@ -3,7 +3,7 @@ import {
   changePasswordApi,
   getProfileApi,
   loginApi,
-  modifyProfileApi
+  modifyProfileApi,
 } from "../../../../api/user/userApi";
 
 export const loginAsyncThunk = createAsyncThunk(
@@ -14,6 +14,9 @@ export const loginAsyncThunk = createAsyncThunk(
     try {
       const response = await loginApi(loginForm); // 로그인 api에 loginForm을 보냄
       console.log("백엔드 로그인 응답 콘솔", response); // 응답이오면 콘솔로그로 체크
+      if (response.token) {
+        localStorage.setItem("jwtToken", response.token);
+      }
       return response.user; // 여기서 (응답)사용자정보를 반환
     } catch (error) {
       // null 이거나 undefined 이면 catch로 넘어오고
@@ -68,7 +71,7 @@ const initialState = {
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
   profile: null,
   error: null, // 에러 상태
-  loading: false // 로딩 상태
+  loading: false, // 로딩 상태
 };
 
 // prettier-ignore
@@ -83,6 +86,7 @@ export const authSlice = createSlice({// Slice 생성
       state.loading = false; // 로딩상태
       localStorage.removeItem("currentUser"); // localStorage의 currentUser 키값 삭제
       localStorage.removeItem("profileUser"); // localStorage의 profileUser 키값 삭제
+      localStorage.removeItem("jwtToken");
       console.log("여기는 AuthSlice : 로그아웃 성공"); // logout reducer 종료.
     },
 
@@ -90,7 +94,8 @@ export const authSlice = createSlice({// Slice 생성
     restoreLogin: (state) => { // 로그인유지 함수
       const user = localStorage.getItem("currentUser"); // localstorage의 currentUser 키값 불러와서 user에 저장
       const profile = localStorage.getItem("profileUser");
-      if (user) { // user가 true라면
+      const token = localStorage.getItem("jwtToken");
+      if (user && token) { // user가 true라면
         state.user = JSON.parse(user); // user를 JSON.parse적용 변환
         state.isLoggedIn = true; // 로그인상태를 true
         console.log( "여기는 AuthSlice: 로그인 상태 복구 완료", JSON.parse(user) ); // 변환된 user 로그 출력

@@ -6,7 +6,7 @@ const USER_API = `${API_SERVER}/api/user`;
 export const axiosObj = axios.create({
   baseURL: API_SERVER,
   headers: { "Content-Type": "application/json" },
-  withCredentials: true
+  // withCredentials: true
 });
 
 export const signUpApi = async (signUpForm) => {
@@ -34,7 +34,7 @@ export const signUpApi = async (signUpForm) => {
       address: signUpForm.address, // 기본주소
       addressDetail: signUpForm.addressDetail, // 상세주소
       smsAgreement: signUpForm.smsAgreement, // SMS 알림 동의
-      emailAgreement: signUpForm.emailAgreement // Email 알림 동의
+      emailAgreement: signUpForm.emailAgreement, // Email 알림 동의
     };
 
     console.log("백엔드로 보내는 데이터 콘솔", requestData);
