@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 
 const OrderSearchResultTable = ({ orders }) => {
-  // console.log("orders", orders);
+  console.log("orders", orders);
+
+  // orders가 유효한 객체인지 확인하고, 아니면 기본값(빈 객체)을 사용
+  const data = orders || {};
+
+  // 주문 목록은 dtoList를 사용하며, dtoList가 없을 경우 빈 배열을 사용 (안전한 접근)
+  const orderList = data.dtoList || [];
+
+  const totalCount =
+    data.totalDataCount !== undefined ? data.totalDataCount : orderList.length;
 
   const getOrderStatusName = (status) => {
     switch (status) {
@@ -32,7 +41,7 @@ const OrderSearchResultTable = ({ orders }) => {
     }
   };
 
-  const flatOrders = orders.flatMap((order) => {
+  const flatOrders = orderList.flatMap((order) => {
     return order.orderProducts.map((op, index) => {
       return {
         ...op,
@@ -48,13 +57,13 @@ const OrderSearchResultTable = ({ orders }) => {
     });
   });
 
-  // console.log("flatOrders", flatOrders);
+  console.log("flatOrders", flatOrders);
 
   return (
     <div className="w-full mt-8">
       <div className="flex justify-between items-center mb-3 text-gray-700 flex-wrap gap-2">
         <span className="font-semibold text-lg">
-          검색 결과 (총 {orders.length} 건)
+          검색 결과 (총 {totalCount} 건)
         </span>
         <div className="flex items-center gap-2 flex-wrap">
           <button className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm">

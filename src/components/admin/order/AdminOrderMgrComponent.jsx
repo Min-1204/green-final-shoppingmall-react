@@ -3,9 +3,11 @@ import OrderSearchResultTable from "./OrderSearchResultTable";
 import CheckboxGroup from "../CheckboxGroup";
 import dayjs from "dayjs";
 import { getOrdersBySearch } from "../../../api/order/orderApi";
+import Pagination from "../../pagination/Pagination";
+import { useSearchParams } from "react-router-dom";
 
 const AdminOrderMgrComponent = () => {
-  const [orders, setOrders] = useState([]); // 검색한 주문 결과
+  const [orders, setOrders] = useState({}); // 검색한 주문 결과
   const [selectedSearchType, setSelectedSearchType] = useState("주문번호");
   const [orderNumber, setOrderNumber] = useState(""); // 주문번호
   const [ordererName, setOrdererName] = useState(""); // 주문자명
@@ -18,6 +20,22 @@ const AdminOrderMgrComponent = () => {
   const [selectedPayment, setSelectedPayment] = useState([]); //주문결제 state
   // const [selectedOrderType, setSelectedOrderType] = useState([]); //주문유형 state
   // const [selectedPaymentStatus, setSelectedPaymentStatus] = useState([]); //결제상태 state
+
+  // URL 쿼리에서 숫자 값을 읽어오는 함수
+  const getNum = (param, defaultValue) => {
+    if (!param) return defaultValue;
+    return parseInt(param, 10);
+  };
+
+  useEffect(() => {
+    const queryParams = useSearchParams();
+    const page = getNum(queryParams.get("page"), 1);
+    const size = getNum(queryParams.get("size"), 10);
+    const sort = queryParams.get("sort");
+    const fetchOrders = async () => {
+      const data = await getOrdersBySearch();
+    };
+  }, []);
 
   const allOrderStatuses = [
     "주문접수",
@@ -306,6 +324,7 @@ const AdminOrderMgrComponent = () => {
       </div>
 
       <OrderSearchResultTable orders={orders} />
+      <Pagination pageResponseDTO={orders} />
     </div>
   );
 };
