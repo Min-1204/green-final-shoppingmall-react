@@ -28,6 +28,8 @@ export const popularSearches = async () => {
 //검색어 저장
 export const searchKeywordAdd = async (keyword, userId) => {
   await axios.post(`${prefix}/add`, null, {
-    params: { keyword: keyword, userId: userId },
+    params: userId
+      ? { keyword: keyword, userId: userId }
+      : { keyword: keyword },
   });
 };
