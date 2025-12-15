@@ -5,12 +5,16 @@ import ReturnModal from "./ReturnModal";
 import CancleModal from "./CancleModal";
 import ExchangeModal from "./ExchangeModal";
 import sampleOrders from "../../data/sampleOrders";
-import { confirmOrder, getOrderList } from "../../api/order/orderApi";
+import {
+  confirmOrder,
+  getOrderList,
+  getOrdersBySearch,
+} from "../../api/order/orderApi";
 import { useSelector } from "react-redux";
 import ConfimPurchaseModal from "./ConfimPurchaseModal";
 import ConfirmPurchaseCompleteModal from "./ConfirmPurchaseCompleteModal";
 import { earnPoint, getActivePoints } from "../../api/point/pointApi";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../pagination/Pagination";
 
 export default function OrderHistoryComponent() {
@@ -70,9 +74,6 @@ export default function OrderHistoryComponent() {
   // 상품 리뷰 작성
   const [selectedProduct, setSelectedProduct] = useState({});
 
-  // // 페이지네이션 상태
-  // const [currentPage, setCurrentPage] = useState(1);
-
   // 오늘 날짜 가져오기
   const today = new Date();
 
@@ -97,6 +98,8 @@ export default function OrderHistoryComponent() {
   // console.log("user", user);
 
   const [queryParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // URL 쿼리에서 숫자 값을 읽어오는 함수
   const getNum = (param, defaultValue) => {
@@ -110,14 +113,30 @@ export default function OrderHistoryComponent() {
     const sort = queryParams.get("sort");
     //URL에서 현재 페이지와 사이즈 정보 읽어옴
 
-    const fetchOrderList = async (userId) => {
-      const data = await getOrderList(userId, sort, page, size);
-      setPageResponseDTO(data); // PageResponseDTO를 저장
+    const start = `${startYear}-${String(startMonth).padStart(2, "0")}-${String(
+      startDay
+    ).padStart(2, "0")}`;
+
+    const end = `${endYear}-${String(endMonth).padStart(2, "0")}-${String(
+      endDay
+    ).padStart(2, "0")}`;
+
+    const condition = {
+      userId: user.id,
+      startDate: start,
+      endDate: end,
     };
-    fetchOrderList(user.id);
+
+    const fetchOrderList = async () => {
+      const data = await getOrdersBySearch(condition, sort, page, size);
+      setPageResponseDTO(data);
+    };
+
+    fetchOrderList();
   }, [queryParams]);
 
   useEffect(() => {
+    console.log("pageResponseDTO", pageResponseDTO);
     setOrderList(pageResponseDTO?.dtoList);
   }, [pageResponseDTO]);
 
@@ -171,7 +190,10 @@ export default function OrderHistoryComponent() {
     setSelectedPeriod(`${month}개월`);
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
+    const page = 1;
+    const size = getNum(queryParams.get("size"), 10);
+    const sort = queryParams.get("sort");
     const start = `${startYear}-${String(startMonth).padStart(2, "0")}-${String(
       startDay
     ).padStart(2, "0")}`;
@@ -182,8 +204,17 @@ export default function OrderHistoryComponent() {
 
     console.log("조회 요청 날짜:", start, "~", end);
 
-    // 나중에는 여기에서 axios로 백엔드 호출
-    // axios.get('/api/orders', {params: {startDate: start, endDate: end}})
+    const condition = {
+      userId: user.id,
+      startDate: start,
+      endDate: end,
+    };
+    const data = await getOrdersBySearch(condition, sort, page, size);
+    setPageResponseDTO(data);
+
+    const newParams = new URLSearchParams(queryParams.toString());
+    newParams.set("page", page);
+    navigate({ pathname: location.pathname, search: newParams.toString() });
   };
 
   const handlePurchaseConfirm = async (userId, order) => {
@@ -442,8 +473,7 @@ export default function OrderHistoryComponent() {
                         {item.quantity}
                       </td>
                       <td className="text-right pr-5 text-gray-800">
-                        {(item.purchasedPrice * item.quantity).toLocaleString()}
-                        원
+                        {item.totalAmount.toLocaleString()}원
                       </td>
                       <td className="text-center">
                         <div
