@@ -117,6 +117,7 @@ export const fetchProductsByThirdCategoryIds = async ({
   thirdCategoryIds,
   page,
   size,
+  sort,
 }) => {
   const params = new URLSearchParams();
 
@@ -126,6 +127,7 @@ export const fetchProductsByThirdCategoryIds = async ({
 
   params.append("page", page || 1);
   params.append("size", size || 24);
+  params.append("sort", sort || "latest");
 
   const url = `${prefix}?${params.toString()}`;
   const res = await axios.get(url);
