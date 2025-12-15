@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../../layouts/mainpage/NavBar";
 import ProductSearchBar from "../../components/search/ProductSearchBar";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/slices/features/user/authSlice";
+import { logoutAsyncThunk } from "../../redux/slices/features/user/authSlice";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -29,7 +29,9 @@ export default function Header() {
 
   const handleLogout = () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
-      dispatch(logout());
+      const response = dispatch(logoutAsyncThunk());
+      alert("로그아웃 되었습니다.");
+      console.log("로그아웃 핸들러 : ", response);
       navigate("/");
     }
   };

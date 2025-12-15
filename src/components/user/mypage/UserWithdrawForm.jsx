@@ -11,16 +11,17 @@ export default function UserWithdrawForm() {
 
   const [withdrawalForm, setWithdrawalForm] = useState({
     reason: "",
-    password: ""
+    password: "",
   });
 
+  console.log("현재 회원탈퇴 로그인아이디 : ", user?.loginId);
   console.log("현재 회원탈퇴 Form : ", withdrawalForm);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setWithdrawalForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -41,7 +42,7 @@ export default function UserWithdrawForm() {
       const response = await withdrawalUserApi({
         loginId: user.loginId,
         password: withdrawalForm.password,
-        userWithdrawalReason: withdrawalForm.reason
+        userWithdrawalReason: withdrawalForm.reason,
       });
       console.log("회원탈퇴 Form 요청 :", response);
 
