@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const SearchDropdown = ({ keywords, onRemove, onSelect, onClear, popular }) => {
+const SearchDropdown = ({ keywords, onSelect, popular }) => {
   const navigate = useNavigate();
 
   const handleMove = (keyword) => {
@@ -25,7 +25,7 @@ const SearchDropdown = ({ keywords, onRemove, onSelect, onClear, popular }) => {
                 >
                   <span>{word}</span>
 
-                  <button
+                  {/* <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onRemove(word);
@@ -33,7 +33,7 @@ const SearchDropdown = ({ keywords, onRemove, onSelect, onClear, popular }) => {
                     className="text-gray-400 text-xs cursor-pointer mr-4"
                   >
                     ✕
-                  </button>
+                  </button> */}
                 </li>
               ))
             ) : (
@@ -42,12 +42,12 @@ const SearchDropdown = ({ keywords, onRemove, onSelect, onClear, popular }) => {
           </ul>
 
           {/* 전체 삭제 버튼 */}
-          <button
+          {/* <button
             className="text-xs text-gray-500 mt-3 text-left ml-2.5 cursor-pointer"
             onClick={onClear}
           >
             전체 삭제
-          </button>
+          </button> */}
         </div>
 
         <div className="w-px bg-gray-300 mx-4"></div>

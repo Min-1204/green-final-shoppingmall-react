@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState, useRef } from "react";
 import SearchDropdown from "./SearchDropdown";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   popularSearches,
   recentSearches,
@@ -18,40 +18,51 @@ const ProductSearchBar = memo(() => {
   const navigate = useNavigate();
   const searchBarRef = useRef(null); // 드롭다운 영역 참조
 
-  //최근 검색어 불러오기
+  const inputRef = useRef(null);
+  const location = useLocation();
+
+  //검색어 동기화
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const keyword = params.get("keyword");
+
+    if (keyword) {
+      setSearchText(keyword);
+    }
+  }, [location.search]);
+
+  //최근 검색어 불러오기
+  const fetchrecentKeywords = async () => {
     if (!user?.id) return;
+    // //localStorage에서 전체 삭제 상태 확인
+    // const clearFlag = localStorage.getItem(
+    //   `recentSearches_cleared_${user.id}`
+    // );
 
-    const fetchrecentKeywords = async () => {
-      //localStorage에서 전체 삭제 상태 확인
-      const clearFlag = localStorage.getItem(
-        `recentSearches_cleared_${user.id}`
-      );
+    // if (clearFlag === "true") {
+    //   //전체 삭제 후 로컬에 저장된 키워드만 불러오기
+    //   const savedKeywords = localStorage.getItem(
+    //     `recentSearches_temp_${user.id}`
+    //   );
+    //   const keywords = savedKeywords ? JSON.parse(savedKeywords) : [];
+    //   setRecentKeyWords(keywords);
+    //   return;
+    // }
 
-      if (clearFlag === "true") {
-        //전체 삭제 후 로컬에 저장된 키워드만 불러오기
-        const savedKeywords = localStorage.getItem(
-          `recentSearches_temp_${user.id}`
-        );
-        const keywords = savedKeywords ? JSON.parse(savedKeywords) : [];
-        setRecentKeyWords(keywords);
-        return;
-      }
-
-      //일반 모드: API에서 불러오기
-      const keyWordList = await recentSearches(user.id);
-      const keywords = keyWordList.map((item) => item.keyword);
-      setRecentKeyWords(keywords);
-    };
+    const keyWordList = await recentSearches(user.id);
+    const keywords = keyWordList.map((item) => item.keyword);
+    setRecentKeyWords(keywords);
+  };
+  useEffect(() => {
     fetchrecentKeywords();
   }, [user?.id]);
 
   //인기 검색어
+  const fetchPopularKeyWord = async () => {
+    const popularList = await popularSearches();
+    setPopularKeywords(popularList);
+  };
   useEffect(() => {
-    const fetchPopularKeyWord = async () => {
-      const popularList = await popularSearches();
-      setPopularKeywords(popularList);
-    };
     fetchPopularKeyWord();
   }, []);
 
@@ -77,35 +88,36 @@ const ProductSearchBar = memo(() => {
 
   //검색 실행
   const handleSearch = async (keyword = searchText) => {
-    if (!keyword.trim()) return;
+    const searchTarget = String(keyword || "");
 
-    navigate(`/search?keyword=${keyword}`);
+    if (!searchTarget.trim()) return;
 
-    //검색어 저장 요청
-    await searchKeywordAdd(keyword, user?.id);
+    navigate(`/search?keyword=${searchTarget}&page=1&size=24`);
 
-    //전체 삭제 상태 확인
-    const clearFlag = localStorage.getItem(`recentSearches_cleared_${user.id}`);
-    if (clearFlag === "true") {
-      //전체 삭제 모드: 로컬에 저장하고 상태 업데이트
-      setRecentKeyWords((prev) => {
-        const filtered = prev.filter((k) => k !== keyword);
-        const newKeywords = [keyword, ...filtered];
-        //localStorage에도 저장
-        localStorage.setItem(
-          `recentSearches_temp_${user.id}`,
-          JSON.stringify(newKeywords)
-        );
-        console.log("전체삭제 모드 - 새 키워드 목록:", newKeywords);
-        return newKeywords;
-      });
-    } else {
-      //일반 모드: API에서 최신 목록 가져오기
-      const keyWordList = await recentSearches(user?.id);
-      const newKeywords = keyWordList.map((item) => item.keyword);
-      console.log("일반 모드 - API 응답:", keyWordList);
-      setRecentKeyWords(newKeywords);
-    }
+    await searchKeywordAdd(searchTarget, user?.id);
+
+    // //전체 삭제 상태 확인
+    // const clearFlag = localStorage.getItem(`recentSearches_cleared_${user.id}`);
+    // if (clearFlag === "true") {
+    //   //전체 삭제 모드: 로컬에 저장하고 상태 업데이트
+    //   setRecentKeyWords((prev) => {
+    //     const filtered = prev.filter((k) => k !== keyword);
+    //     const newKeywords = [keyword, ...filtered];
+    //     //localStorage에도 저장
+    //     localStorage.setItem(
+    //       `recentSearches_temp_${user.id}`,
+    //       JSON.stringify(newKeywords)
+    //     );
+    //     console.log("전체삭제 모드 - 새 키워드 목록:", newKeywords);
+    //     return newKeywords;
+    //   });
+    // } else {
+    // }
+    const keyWordList = await recentSearches(user?.id);
+    const newKeywords = keyWordList.map((item) => item.keyword);
+    setRecentKeyWords(newKeywords);
+
+    await fetchPopularKeyWord();
 
     setDropdown(false);
   };
@@ -118,37 +130,43 @@ const ProductSearchBar = memo(() => {
     }
   };
 
-  //최근 검색어 UI 삭제
-  const recentKeyWordRemove = (keyword) => {
-    setRecentKeyWords((prev) => {
-      const newKeywords = prev.filter((k) => k !== keyword);
-
-      //전체 삭제 모드일 때는 로컬 스토리지도 업데이트
-      const clearedFlag = localStorage.getItem(
-        `recentSearches_cleared_${user.id}`
-      );
-      if (clearedFlag === "true") {
-        localStorage.setItem(
-          `recentSearches_temp_${user.id}`,
-          JSON.stringify(newKeywords)
-        );
-      }
-
-      return newKeywords;
-    });
+  const clearSearch = () => {
+    setSearchText("");
+    setDropdown(true);
+    inputRef.current?.focus();
   };
 
-  //최근 검색어 전체 삭제
-  const allClearHandler = () => {
-    if (window.confirm("최근 검색어를 모두 삭제 하시겠습니까?")) {
-      setRecentKeyWords([]);
-      localStorage.setItem(`recentSearches_cleared_${user.id}`, "true");
-      localStorage.setItem(
-        `recentSearches_temp_${user.id}`,
-        JSON.stringify([])
-      );
-    }
-  };
+  // //최근 검색어 UI 삭제
+  // const recentKeyWordRemove = (keyword) => {
+  //   setRecentKeyWords((prev) => {
+  //     const newKeywords = prev.filter((k) => k !== keyword);
+
+  //     //전체 삭제 모드일 때는 로컬 스토리지도 업데이트
+  //     const clearedFlag = localStorage.getItem(
+  //       `recentSearches_cleared_${user.id}`
+  //     );
+  //     if (clearedFlag === "true") {
+  //       localStorage.setItem(
+  //         `recentSearches_temp_${user.id}`,
+  //         JSON.stringify(newKeywords)
+  //       );
+  //     }
+
+  //     return newKeywords;
+  //   });
+  // };
+
+  // //최근 검색어 전체 삭제
+  // const allClearHandler = () => {
+  //   if (window.confirm("최근 검색어를 모두 삭제 하시겠습니까?")) {
+  //     setRecentKeyWords([]);
+  //     localStorage.setItem(`recentSearches_cleared_${user.id}`, "true");
+  //     localStorage.setItem(
+  //       `recentSearches_temp_${user.id}`,
+  //       JSON.stringify([])
+  //     );
+  //   }
+  // };
 
   return (
     <div
@@ -157,6 +175,7 @@ const ProductSearchBar = memo(() => {
     >
       {/* 검색 입력창 */}
       <input
+        ref={inputRef}
         placeholder="상품명을 검색하세요"
         className="
           w-full border border-gray-300 rounded-full 
@@ -168,6 +187,20 @@ const ProductSearchBar = memo(() => {
         onFocus={() => setDropdown(true)}
         onKeyDown={onEnterKey}
       />
+      {/* X 버튼 */}
+      {searchText && (
+        <button
+          type="button"
+          className="
+            absolute right-12 top-1/2 transform -translate-y-1/2
+            w-8 h-8 flex items-center justify-center
+            text-gray-400 hover:text-black cursor-pointer
+          "
+          onClick={clearSearch}
+        >
+          ✕
+        </button>
+      )}
 
       {/* 검색 아이콘 버튼 */}
       <button
@@ -198,11 +231,11 @@ const ProductSearchBar = memo(() => {
         <SearchDropdown
           keywords={recentKeyWords}
           popular={popularKeywords}
-          onRemove={recentKeyWordRemove}
-          onClear={allClearHandler}
+          // onRemove={recentKeyWordRemove}
+          // onClear={allClearHandler}
           onSelect={(word) => {
             setSearchText(word);
-            handleSearch(word); //선택한 키워드를 직접 전달
+            handleSearch(word);
           }}
         />
       )}
