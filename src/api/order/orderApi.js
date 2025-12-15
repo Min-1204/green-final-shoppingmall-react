@@ -35,8 +35,14 @@ export const deleteOneOrder = async (orderId) => {
   return res.data;
 };
 
-export const getOrdersBySearch = async (condition) => {
-  const res = await axios.post(`${prefix}/search`, condition);
+export const getOrdersBySearch = async (condition, sort, page, size) => {
+  const res = await axios.post(`${prefix}/search`, condition, {
+    params: {
+      sort: sort,
+      page: page,
+      size: size,
+    },
+  });
   // console.log("getOrdersBySearch => ", res.data);
   return res.data;
 };
