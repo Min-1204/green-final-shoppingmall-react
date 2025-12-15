@@ -1,8 +1,32 @@
 import React from "react";
 import { SlidersHorizontal } from "lucide-react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-const ProductSortBar = ({ sort, setSort }) => {
-  const options = ["최근등록순", "판매순", "낮은 가격순", "높은 가격순"];
+const ProductSortBar = ({ sort }) => {
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const options = [
+    { eng: "latest", hangul: "최신순" },
+    { eng: "sale", hangul: "판매순" },
+    { eng: "price_asc", hangul: "낮은 가격순" },
+    { eng: "price_desc", hangul: "높은 가격순" },
+  ];
+
+  const updateSortParam = (sortBy) => {
+    const newParam = new URLSearchParams(searchParams.toString());
+    newParam.set("page", "1");
+    newParam.set("size", "12");
+    newParam.set("sort", sortBy);
+    console.log("newParam : ", newParam.toString());
+    const queryStr = newParam.toString();
+
+    navigate({
+      pathname: location.pathname,
+      search: queryStr,
+    });
+  };
 
   return (
     // ✨ 상단 경계선 추가 (ProductFilterBar와 시각적으로 분리)
@@ -17,19 +41,19 @@ const ProductSortBar = ({ sort, setSort }) => {
       <div className="hidden md:flex gap-3 flex-1 overflow-x-auto pb-1">
         {options.map((opt) => (
           <button
-            key={opt}
-            onClick={() => setSort(opt)}
+            key={opt.eng}
+            onClick={() => updateSortParam(opt.eng)}
             className={`
               px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap 
               transform hover:scale-[1.02]
               ${
-                sort === opt
+                sort === opt.eng
                   ? "bg-gray-600 text-white shadow-md shadow-gray-300/50"
                   : "bg-white text-gray-700 border border-gray-300 hover:border-gray-400 hover:bg-gray-50"
               }
             `}
           >
-            {opt}
+            {opt.hangul}
           </button>
         ))}
       </div>
@@ -40,11 +64,11 @@ const ProductSortBar = ({ sort, setSort }) => {
           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-base bg-white font-medium text-gray-700 
                      appearance-none focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all cursor-pointer shadow-sm"
           value={sort}
-          onChange={(e) => setSort(e.target.value)}
+          onChange={(e) => updateSortParam(e.target.value)}
         >
           {options.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
+            <option key={opt.eng} value={opt.eng}>
+              {opt.hangul}
             </option>
           ))}
         </select>

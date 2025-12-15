@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
-import products from "../../data/products";
-// import { CATEGORY_DATA } from "../../data/categories";
 import { ChevronRight } from "lucide-react";
-
 import ProductCard from "./ProductCard";
 import ProductSortBar from "./ProductSortBar";
 import ProductFilterBar from "../filter/ProductFilterBar";
-
 import { fetchCategoryList } from "../../api/admin/category/categoryApi";
 import { fetchProductsByThirdCategoryIds } from "../../api/admin/product/productApi";
 import Pagination from "../pagination/Pagination";
@@ -19,13 +15,17 @@ const ProductListComponent = () => {
   const categoryId = parseInt(searchParams.get("categoryId"));
   const page = searchParams.get("page") || 1;
   const size = searchParams.get("size") || 12;
+  const sort = searchParams.get("sort") || "latest";
+
   console.log("categoryDepth : ", categoryDepth, ", categoryId : ", categoryId);
   console.log("page : ", page, ", size : ", size);
 
   const [mainCategory, setMainCategory] = useState({ subCategories: [] });
-  const [secondCategoryId, setSecondCategoryId] = useState();
+  const [secondCategory, setSecondCategory] = useState({ name: "", id: 0 });
   const [selectedCategory, setSelectedCategory] = useState({});
   const [pageResponse, setPageResponse] = useState({});
+
+  console.log("selectedCategory : ", selectedCategory);
 
   useEffect(() => {
     const loadData = async () => {
@@ -64,7 +64,7 @@ const ProductListComponent = () => {
           (secondCategory) => secondCategory.id === categoryId
         );
         console.log("selectedSecondCategory : ", secondCategory);
-        setSecondCategoryId(secondCategory.id);
+        setSecondCategory({ id: secondCategory.id, name: secondCategory.name });
         setSelectedCategory(secondCategory);
         // 선택된 2차 카테고리의 하위 3차 카테고리 배열 thirdIds 만들기
         thirdIds = secondCategory.subCategories.map(
@@ -93,7 +93,7 @@ const ProductListComponent = () => {
               .includes(categoryId)
         );
         console.log("selectedSecondCategory : ", secondCategory);
-        setSecondCategoryId(secondCategory.id);
+        setSecondCategory({ id: secondCategory.id, name: secondCategory.name });
 
         // 선택된 카테고리 정보 찾기
         const selectedCate = secondCategory.subCategories.find(
@@ -110,115 +110,103 @@ const ProductListComponent = () => {
         thirdCategoryIds: thirdIds,
         page,
         size,
+        sort,
       });
       setPageResponse(pageRes);
       console.log("PageResponse : ", pageRes);
     };
     loadData();
-  }, [categoryDepth, categoryId, page, size]);
+  }, [categoryDepth, categoryId, page, size, sort]);
 
-  const { main, sub, deep } = useParams();
-
-  const decodedMain = decodeURIComponent(main).replace(/-/g, "/");
-  const decodedSub = sub ? decodeURIComponent(sub).replace(/-/g, "/") : null;
-  const decodedDeep = deep ? decodeURIComponent(deep).replace(/-/g, "/") : null;
+  // const { main, sub, deep } = useParams();
+  // const decodedMain = decodeURIComponent(main).replace(/-/g, "/");
+  // const decodedSub = sub ? decodeURIComponent(sub).replace(/-/g, "/") : null;
+  // const decodedDeep = deep ? decodeURIComponent(deep).replace(/-/g, "/") : null;
 
   // ✅ 제품 필터링 (기존 로직 유지)
-  let categoryProducts = products.filter((p) => p.categoryMain === decodedMain);
+  // let categoryProducts = products.filter((p) => p.categoryMain === decodedMain);
 
-  if (decodedSub) {
-    categoryProducts = categoryProducts.filter(
-      (p) => p.categorySub === decodedSub
-    );
-  }
+  // if (decodedSub) {
+  //   categoryProducts = categoryProducts.filter(
+  //     (p) => p.categorySub === decodedSub
+  //   );
+  // }
 
-  if (decodedDeep) {
-    categoryProducts = categoryProducts.filter(
-      (p) => p.categoryDeep === decodedDeep
-    );
-  }
-
-  // 콘솔 로그 유지 (디버깅용)
-  // console.log("decodedMain:", decodedMain);
-  // console.log("decodedSub:", decodedSub);
-  // console.log("decodedDeep:", decodedDeep);
-  // console.log(
-  //   "products:",
-  //   products.map((p) => ({
-  //     main: p.categoryMain,
-  //     sub: p.categorySub,
-  //     deep: p.categoryDeep,
-  //   }))
-  // );
-  // console.log("결과:", categoryProducts);
+  // if (decodedDeep) {
+  //   categoryProducts = categoryProducts.filter(
+  //     (p) => p.categoryDeep === decodedDeep
+  //   );
+  // }
 
   // 브랜드 필터(브랜드별로 상품 조회 가능하게 하는 필터) (기존 로직 유지)
   const [filters, setFilters] = useState({});
 
-  // 정렬 필터에 사용할 state (기존 로직 유지)
-  const [sort, setSort] = useState("판매순");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
   // 제품 브랜드들을 brandOptions에 담아서 ProductFilterBar에 전달 (기존 로직 유지)
-  const brandOptions = [...new Set(categoryProducts.map((p) => p.brand))];
+  // const brandOptions = [...new Set(categoryProducts.map((p) => p.brand))];
+
+  const brandOptions = [
+    ...new Set(pageResponse?.dtoList?.map((p) => p.brand.name)),
+  ];
+
   // console.log("brandOptions:", brandOptions);
 
   // ✅ 정렬 (원하면 나중에 확장 가능) (기존 로직 유지)
-  const sortedProducts = [...categoryProducts];
+  // const sortedProducts = [...categoryProducts];
 
   // 예시: 정렬 기능은 필요 시 확장 가능
 
-  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
-  const pagedProducts = sortedProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+  // const pagedProducts = sortedProducts.slice(
+  //   (currentPage - 1) * itemsPerPage,
+  //   currentPage * itemsPerPage
+  // );
 
   // const sideCategory = CATEGORY_DATA.find((c) => c.main === decodedMain);
-  const sideCategory = { subs: [] };
+  // const sideCategory = { subs: [] };
 
   // URL 파라미터(카테고리)가 변경될 때마다 currentPage를 1로 리셋 (기존 로직 유지)
-  useEffect(() => {
-    // main, sub, deep 중 하나라도 변경되면 실행됩니다.
-    setCurrentPage(1);
-  }, [main, sub, deep]);
+  // useEffect(() => {
+  //   // main, sub, deep 중 하나라도 변경되면 실행됩니다.
+  //   setCurrentPage(1);
+  // }, [main, sub, deep]);
 
   return (
-    // ✨ 최대 너비 조정 및 반응형 패딩 강화
     <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col lg:flex-row gap-8 lg:gap-12">
-      {/* ✅ 사이드바 */}
+      {/*  사이드바 */}
       <aside className="w-full lg:w-64 shrink-0">
-        {/* ✨ 사이드바 컨테이너 디자인 개선 */}
+        {/*  사이드바 컨테이너  */}
         <div className="sticky top-6 bg-white rounded-xl border border-gray-200 p-6 shadow-md">
-          {/* ✨ 1차 카테고리 제목 디자인 */}
+          {/*  1차 카테고리 제목  */}
           <h2 className="text-2xl font-extrabold text-gray-900 pb-4 border-b border-gray-200">
             {mainCategory.name}
           </h2>
 
-          {/* ✨ 2차/3차 카테고리 목록 디자인 개선 */}
+          {/*  2차/3차 카테고리 목록 */}
           <ul className="mt-5 space-y-1.5">
-            {mainCategory?.subCategories.map((secondCategory) => {
-              const isActiveSub = secondCategoryId === secondCategory.id;
+            {mainCategory?.subCategories?.map((secondCat) => {
+              const isActiveSub = secondCategory.id === secondCat.id;
               return (
-                <li key={secondCategory.id}>
-                  {/* ✨ 2차 카테고리 링크 디자인: 활성화 시 블루 배경/텍스트 */}
+                <li key={secondCat.id}>
+                  {/*  2차 카테고리 링크 디자인: 활성화 시 블루 배경/텍스트 */}
                   <Link
-                    to={`/products?categoryDepth=${secondCategory.depth}&categoryId=${secondCategory.id}`}
+                    to={`/products?categoryDepth=${secondCat.depth}&categoryId=${secondCat.id}`}
                     className={`block px-4 py-2 rounded-lg transition-all text-base ${
                       isActiveSub
                         ? "bg-gray-600 text-white font-bold shadow-sm" // 활성화 상태
                         : "text-gray-700 hover:bg-gray-100 font-medium" // 기본 상태
                     }`}
                   >
-                    {secondCategory.name}
+                    {secondCat.name}
                   </Link>
 
                   {/* 3차 카테고리 목록 */}
                   {isActiveSub && (
-                    // ✨ 3차 목록 디자인: 왼쪽 경계선 색상 변경 및 간격 조정
+                    // 3차 목록 디자인
                     <ul className="mt-2 space-y-1 ml-4 pl-4 border-l-2 border-gray-200">
-                      {secondCategory.subCategories.map((thirdCategory) => (
+                      {secondCat.subCategories.map((thirdCategory) => (
                         <li key={thirdCategory.id}>
                           <Link
                             to={`/products?categoryDepth=${thirdCategory.depth}&categoryId=${thirdCategory.id}`}
@@ -241,9 +229,9 @@ const ProductListComponent = () => {
         </div>
       </aside>
 
-      {/* ✅ 오른쪽 상품 목록 영역 */}
+      {/* 오른쪽 상품 목록 영역 */}
       <div className="flex-1 min-w-0">
-        {/* ✨ 브레드크럼 디자인 개선 */}
+        {/* 브레드크럼  */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6 border-b border-gray-100 pb-4">
           <Link to="/" className="hover:text-gray-700 transition-colors">
             홈
@@ -255,21 +243,25 @@ const ProductListComponent = () => {
           >
             {mainCategory.name}
           </Link>
-          {decodedSub && (
+          {Boolean(secondCategory.name) && (
             <>
               <ChevronRight className="w-4 h-4 text-gray-300" />
-              <span className="font-bold text-gray-900">{decodedSub}</span>
+              <span className="font-bold text-gray-700">
+                {secondCategory.name}
+              </span>
             </>
           )}
-          {decodedDeep && (
+          {selectedCategory.depth === 3 && (
             <>
               <ChevronRight className="w-4 h-4 text-gray-300" />
-              <span className="font-bold text-gray-600">{decodedDeep}</span>
+              <span className="font-bold text-gray-800">
+                {selectedCategory.name}
+              </span>
             </>
           )}
         </nav>
 
-        {/* ✨ 카테고리 제목 영역 디자인 개선 */}
+        {/* 카테고리 제목 영역  */}
         <div className="mb-8">
           <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
             {selectedCategory.name}
@@ -283,7 +275,7 @@ const ProductListComponent = () => {
           </p>
         </div>
 
-        {/* ✨ 필터 / 정렬 컨테이너 디자인 개선 */}
+        {/*  필터  */}
         <div className="mb-8 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
           <div className="flex flex-col gap-4">
             {/* 브랜드 필터 */}
@@ -294,13 +286,13 @@ const ProductListComponent = () => {
             />
 
             {/* 정렬 바 */}
-            <ProductSortBar sort={sort} setSort={setSort} />
+            <ProductSortBar sort={sort} />
           </div>
         </div>
 
-        {/* ✅ 상품 그리드 (기존 반응형 유지 및 카드 디자인 강화) */}
+        {/* 상품 그리드 */}
         {pageResponse?.dtoList?.length > 0 ? (
-          // ✨ 모바일(2열), 태블릿(3열), 데스크톱(4열)
+          // 모바일(2열), 태블릿(3열), 데스크톱(4열)
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
             {pageResponse?.dtoList?.map((product) => (
               <div
@@ -312,7 +304,7 @@ const ProductListComponent = () => {
             ))}
           </div>
         ) : (
-          /* ✨ 상품 없음 메시지 디자인 개선 */
+          /* 상품 없음 메시지 */
           <div className="flex flex-col items-center justify-center py-24 bg-gray-50 rounded-xl border border-gray-200">
             <div className="w-20 h-20 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
               <svg
@@ -338,7 +330,7 @@ const ProductListComponent = () => {
           </div>
         )}
 
-        {/* ✅ 페이지네이션 */}
+        {/* 페이지네이션 */}
         <div className="mt-12">
           <Pagination pageResponseDTO={pageResponse} />
         </div>
