@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OrderSearchResultTable from "./OrderSearchResultTable";
 import CheckboxGroup from "../CheckboxGroup";
 import dayjs from "dayjs";
 import { getOrdersBySearch } from "../../../api/order/orderApi";
+import Pagination from "../../pagination/Pagination";
+import { useSearchParams } from "react-router-dom";
 
 const AdminOrderMgrComponent = () => {
-  const [orders, setOrders] = useState([]); // 검색한 주문 결과
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [orders, setOrders] = useState({}); // 검색한 주문 결과
   const [selectedSearchType, setSelectedSearchType] = useState("주문번호");
   const [orderNumber, setOrderNumber] = useState(""); // 주문번호
   const [ordererName, setOrdererName] = useState(""); // 주문자명
@@ -18,6 +22,34 @@ const AdminOrderMgrComponent = () => {
   const [selectedPayment, setSelectedPayment] = useState([]); //주문결제 state
   // const [selectedOrderType, setSelectedOrderType] = useState([]); //주문유형 state
   // const [selectedPaymentStatus, setSelectedPaymentStatus] = useState([]); //결제상태 state
+
+  // URL 쿼리에서 숫자 값을 읽어오는 함수
+  const getNum = (param, defaultValue) => {
+    if (!param) return defaultValue;
+    return parseInt(param, 10);
+  };
+
+  useEffect(() => {
+    const page = getNum(searchParams.get("page"), 1);
+    const size = getNum(searchParams.get("size"), 10);
+    const sort = searchParams.get("sort");
+    const condition = {
+      orderNumber: orderNumber,
+      ordererName: ordererName,
+      productName: productName,
+      startDate: startDate,
+      endDate: endDate,
+      selectedOrderStatus: selectedOrderStatuses.map((s) => orderStatusMap[s]),
+      selectedDelivery: selectedDelivery,
+      selectedPayment: selectedPayment.map((p) => paymentMap[p]),
+    };
+    const fetchOrdersBySearch = async () => {
+      const result = await getOrdersBySearch(condition, sort, page, size);
+      setOrders(result);
+      // console.log("new result received from backend", result); // ⭐ 변경된 result 객체를 바로 로깅
+    };
+    fetchOrdersBySearch();
+  }, [searchParams]);
 
   const allOrderStatuses = [
     "주문접수",
@@ -121,6 +153,13 @@ const AdminOrderMgrComponent = () => {
   };
 
   const searchHandler = async () => {
+    const page = 1;
+    setSearchParams((prev) => {
+      prev.set("page", "1");
+      return prev;
+    });
+    const size = getNum(searchParams.get("size"), 10);
+    const sort = searchParams.get("sort");
     const condition = {
       orderNumber: orderNumber,
       ordererName: ordererName,
@@ -131,7 +170,7 @@ const AdminOrderMgrComponent = () => {
       selectedDelivery: selectedDelivery,
       selectedPayment: selectedPayment.map((p) => paymentMap[p]),
     };
-    const result = await getOrdersBySearch(condition);
+    const result = await getOrdersBySearch(condition, sort, page, size);
     setOrders(result);
   };
 
@@ -306,6 +345,7 @@ const AdminOrderMgrComponent = () => {
       </div>
 
       <OrderSearchResultTable orders={orders} />
+      <Pagination pageResponseDTO={orders} />
     </div>
   );
 };
