@@ -4,10 +4,9 @@ export const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/search`;
 
 //상품 검색
-export const searchProductList = async (keyword, page, size) => {
-  console.log("keyword, page, size : ", keyword, page, size);
+export const searchProductList = async (keyword) => {
   const { data } = await axios.get(`${prefix}/product`, {
-    params: { keyword: keyword, page: page, size: size },
+    params: { keyword: keyword },
   });
   return data;
 };
