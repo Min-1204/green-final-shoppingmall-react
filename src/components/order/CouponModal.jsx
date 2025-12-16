@@ -14,10 +14,13 @@ const CouponModal = ({ onClose, onSelect, userId, totalPrice }) => {
     fetchCoupons();
   }, []);
 
+  // console.log("coupons", coupons);
+
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center">
       <div className="bg-white rounded-lg p-6 w-80 shadow">
         <h3 className="font-semibold text-lg mb-4">보유 쿠폰</h3>
+        {coupons.length == 0 && <h2>보유한 쿠폰이 없습니다.</h2>}
 
         {coupons &&
           coupons.map((coupon) => {

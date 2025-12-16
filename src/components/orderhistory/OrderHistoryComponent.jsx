@@ -55,7 +55,7 @@ export default function OrderHistoryComponent() {
   const [deliveryModal, setDeliveryModal] = useState(false);
   // 구매 확정 모달
   const [confirmPurchaseModal, setConfirmPurchaseModal] = useState(false);
-  // 구매 확정 모달에 전달되는 주문 정보
+  // 구매 확정 모달, 취소 신청 모달에 전달되는 주문 정보
   const [selectedOrder, setSelectedOrder] = useState({});
   // 구매 확정 완료 모달
   const [confirmPurchaseCompleteModal, setConfirmPurchaseCompleteModal] =
@@ -66,8 +66,7 @@ export default function OrderHistoryComponent() {
 
   // 취소 신청 모달
   const [cancleModal, setCancleModal] = useState(false);
-  // 취소 신청 모달에 쓰이는 주문 상품 그룹
-  const [orderProductGroup, setOrderProductGroup] = useState([]);
+
   // 반품 신청 모달
   const [returnModal, setReturnModal] = useState(false);
   // 교환 신청 모달
@@ -253,6 +252,17 @@ export default function OrderHistoryComponent() {
   const handleConfirmCancel = async (orderId) => {
     const result = await deleteOneOrder(orderId);
     console.log("deleteOneOrder result", result);
+
+    // 서버 요청이 성공적이라면 (보통 result가 존재하거나 성공 코드를 반환할 때)
+    // 화면의 orderList 상태에서 방금 취소한 orderId를 가진 주문만 제외시킵니다.
+    setOrderList((prevList) =>
+      prevList.filter((order) => order.id !== orderId)
+    );
+
+    setCancleModal(false);
+
+    // (선택사항) 사용자 피드백
+    alert("주문이 성공적으로 취소되었습니다.");
   };
 
   return (
@@ -535,7 +545,7 @@ export default function OrderHistoryComponent() {
                               onClick={() => {
                                 setCancleModal(!cancleModal);
                                 setSelectedItem(item);
-                                setOrderProductGroup(order.orderProducts);
+                                setSelectedOrder(order);
                               }}
                             >
                               취소신청
@@ -598,11 +608,11 @@ export default function OrderHistoryComponent() {
           closeModal={() => setReturnModal(false)}
         />
       )}
-      {cancleModal && selectedItem && (
+      {cancleModal && selectedOrder && selectedItem && (
         <CancleModal
+          selectedOrder={selectedOrder}
           item={selectedItem}
           closeModal={() => setCancleModal(false)}
-          orderProductGroup={orderProductGroup}
           onConfirm={handleConfirmCancel}
         />
       )}
