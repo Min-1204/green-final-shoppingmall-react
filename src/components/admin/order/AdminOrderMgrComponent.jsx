@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OrderSearchResultTable from "./OrderSearchResultTable";
 import CheckboxGroup from "../CheckboxGroup";
 import dayjs from "dayjs";
@@ -7,6 +7,8 @@ import Pagination from "../../pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
 
 const AdminOrderMgrComponent = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [orders, setOrders] = useState({}); // 검색한 주문 결과
   const [selectedSearchType, setSelectedSearchType] = useState("주문번호");
   const [orderNumber, setOrderNumber] = useState(""); // 주문번호
@@ -28,14 +30,26 @@ const AdminOrderMgrComponent = () => {
   };
 
   useEffect(() => {
-    const queryParams = useSearchParams();
-    const page = getNum(queryParams.get("page"), 1);
-    const size = getNum(queryParams.get("size"), 10);
-    const sort = queryParams.get("sort");
-    const fetchOrders = async () => {
-      const data = await getOrdersBySearch();
+    const page = getNum(searchParams.get("page"), 1);
+    const size = getNum(searchParams.get("size"), 10);
+    const sort = searchParams.get("sort");
+    const condition = {
+      orderNumber: orderNumber,
+      ordererName: ordererName,
+      productName: productName,
+      startDate: startDate,
+      endDate: endDate,
+      selectedOrderStatus: selectedOrderStatuses.map((s) => orderStatusMap[s]),
+      selectedDelivery: selectedDelivery,
+      selectedPayment: selectedPayment.map((p) => paymentMap[p]),
     };
-  }, []);
+    const fetchOrdersBySearch = async () => {
+      const result = await getOrdersBySearch(condition, sort, page, size);
+      setOrders(result);
+      // console.log("new result received from backend", result); // ⭐ 변경된 result 객체를 바로 로깅
+    };
+    fetchOrdersBySearch();
+  }, [searchParams]);
 
   const allOrderStatuses = [
     "주문접수",
@@ -139,6 +153,13 @@ const AdminOrderMgrComponent = () => {
   };
 
   const searchHandler = async () => {
+    const page = 1;
+    setSearchParams((prev) => {
+      prev.set("page", "1");
+      return prev;
+    });
+    const size = getNum(searchParams.get("size"), 10);
+    const sort = searchParams.get("sort");
     const condition = {
       orderNumber: orderNumber,
       ordererName: ordererName,
@@ -149,7 +170,7 @@ const AdminOrderMgrComponent = () => {
       selectedDelivery: selectedDelivery,
       selectedPayment: selectedPayment.map((p) => paymentMap[p]),
     };
-    const result = await getOrdersBySearch(condition);
+    const result = await getOrdersBySearch(condition, sort, page, size);
     setOrders(result);
   };
 

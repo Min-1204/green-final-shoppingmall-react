@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const OrderSearchResultTable = ({ orders }) => {
-  console.log("orders", orders);
+  // console.log("orders", orders);
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // orders가 유효한 객체인지 확인하고, 아니면 기본값(빈 객체)을 사용
   const data = orders || {};
@@ -57,7 +60,14 @@ const OrderSearchResultTable = ({ orders }) => {
     });
   });
 
-  console.log("flatOrders", flatOrders);
+  // console.log("flatOrders", flatOrders);
+
+  const selectSortHandler = (value) => {
+    setSearchParams((prev) => {
+      prev.set("sort", "" + value);
+      return prev;
+    });
+  };
 
   return (
     <div className="w-full mt-8">
@@ -74,11 +84,12 @@ const OrderSearchResultTable = ({ orders }) => {
           </button>
 
           <select
-            defaultValue="recent"
+            defaultValue="latest"
             className="border border-gray-300 bg-white text-gray-700 px-2 py-1 rounded-md text-sm cursor-pointer"
+            onChange={(e) => selectSortHandler(e.target.value)}
           >
-            <option value="recent">최근 주문 순</option>
-            <option value="old">오래된 주문 순</option>
+            <option value="latest">최근 주문 순</option>
+            <option value="earliest">오래된 주문 순</option>
           </select>
 
           <select
