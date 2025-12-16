@@ -7,6 +7,7 @@ import ExchangeModal from "./ExchangeModal";
 import sampleOrders from "../../data/sampleOrders";
 import {
   confirmOrder,
+  deleteOneOrder,
   getOrderList,
   getOrdersBySearch,
 } from "../../api/order/orderApi";
@@ -65,6 +66,8 @@ export default function OrderHistoryComponent() {
 
   // 취소 신청 모달
   const [cancleModal, setCancleModal] = useState(false);
+  // 취소 신청 모달에 쓰이는 주문 상품 그룹
+  const [orderProductGroup, setOrderProductGroup] = useState([]);
   // 반품 신청 모달
   const [returnModal, setReturnModal] = useState(false);
   // 교환 신청 모달
@@ -220,6 +223,7 @@ export default function OrderHistoryComponent() {
   const handlePurchaseConfirm = async (userId, order) => {
     const pointEarnReq = {
       userId: userId,
+      orderId: order.id,
       pointValue: order.earnedPoints,
     };
     // 포인트 적립(백엔드)
@@ -244,6 +248,11 @@ export default function OrderHistoryComponent() {
     );
 
     setConfirmPurchaseCompleteModal(true);
+  };
+
+  const handleConfirmCancel = async (orderId) => {
+    const result = await deleteOneOrder(orderId);
+    console.log("deleteOneOrder result", result);
   };
 
   return (
@@ -526,6 +535,7 @@ export default function OrderHistoryComponent() {
                               onClick={() => {
                                 setCancleModal(!cancleModal);
                                 setSelectedItem(item);
+                                setOrderProductGroup(order.orderProducts);
                               }}
                             >
                               취소신청
@@ -592,6 +602,8 @@ export default function OrderHistoryComponent() {
         <CancleModal
           item={selectedItem}
           closeModal={() => setCancleModal(false)}
+          orderProductGroup={orderProductGroup}
+          onConfirm={handleConfirmCancel}
         />
       )}
       {exchangeModal && selectedItem && (

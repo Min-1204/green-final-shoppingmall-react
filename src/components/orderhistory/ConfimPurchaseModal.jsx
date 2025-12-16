@@ -1,6 +1,7 @@
 import React from "react";
 
 const ConfimPurchaseModal = ({ order, userId, closeModal, onConfirm }) => {
+  // console.log("order", order);
   // order.earnedPoints를 사용하여 적립 포인트를 표시합니다.
   const earnedPoints = order?.earnedPoints || "0원"; // order나 earnedPoints가 없을 경우 '0원'으로 기본값 설정
 
