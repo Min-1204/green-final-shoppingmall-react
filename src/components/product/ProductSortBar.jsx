@@ -8,8 +8,9 @@ const ProductSortBar = ({ sort }) => {
   const navigate = useNavigate();
 
   const options = [
+    { eng: "sales", hangul: "판매순" },
+    { eng: "popular", hangul: "인기순" },
     { eng: "latest", hangul: "최신순" },
-    { eng: "sale", hangul: "판매순" },
     { eng: "price_asc", hangul: "낮은 가격순" },
     { eng: "price_desc", hangul: "높은 가격순" },
   ];
