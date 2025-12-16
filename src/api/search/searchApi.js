@@ -12,9 +12,12 @@ export const searchProductList = async (keyword) => {
 };
 
 //최근 검색어
-export const recentSearches = async (userId) => {
+export const recentSearches = async (userId, guestId) => {
   const { data } = await axios.get(`${prefix}/recent`, {
-    params: { userId: userId },
+    params: {
+      userId: userId ?? null,
+      guestId: guestId ?? null,
+    },
   });
   return data;
 };
@@ -26,10 +29,29 @@ export const popularSearches = async () => {
 };
 
 //검색어 저장
-export const searchKeywordAdd = async (keyword, userId) => {
+export const searchKeywordAdd = async (keyword, userId, guestId) => {
   await axios.post(`${prefix}/add`, null, {
-    params: userId
-      ? { keyword: keyword, userId: userId }
-      : { keyword: keyword },
+    params: { keyword, userId: userId ?? null, guestId: guestId ?? null },
+  });
+};
+
+//최근 검색어 개별 삭제
+export const deleteOneRecentKeyword = async (keyword, userId, guestId) => {
+  await axios.delete(`${prefix}/recent/one`, {
+    params: {
+      keyword,
+      userId: userId ?? null,
+      guestId: guestId ?? null,
+    },
+  });
+};
+
+//최근 검색어 전체 삭제
+export const deleteAllRecentKeywords = async (userId, guestId) => {
+  await axios.delete(`${prefix}/recent/all`, {
+    params: {
+      userId: userId ?? null,
+      guestId: guestId ?? null,
+    },
   });
 };
