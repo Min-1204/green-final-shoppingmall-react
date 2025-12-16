@@ -227,33 +227,16 @@ const OrderComponent = () => {
       // SDK 초기화
       IMP.init("imp62835818");
 
-      // 테스트 모드 플래그 추가
-      const IS_TEST_MODE = true; // 프로덕션 배포시 false로 변경
-
       // 결제 수단에 따른 PG 및 pay_method 매핑
       const getPgCode = (method) => {
-        //테스트 모드일 때
-        if (IS_TEST_MODE) {
-          // ⭐ 테스트 모드 - 자정에 자동 취소되는 PG사 사용
-          const testPgMap = {
-            card: "html5_inicis.INIpayTest", // KG이니시스 테스트 (자동취소)
-            kakao: "kakaopay.TC0ONETIME", // 카카오페이 테스트
-            payco: "payco.PARTNERTEST", // 페이코 테스트
-            phone: "danal.A010002002", // 다날 테스트 (자동취소)
-            bank: "html5_inicis.INIpayTest", // 계좌이체 테스트
-          };
-          return testPgMap[method];
-        } else {
-          // 실제 운영 모드일 때
-          const pgMap = {
-            card: "nice.iamport00m",
-            kakao: "kakaopay.TC0ONETIME",
-            payco: "payco.PARTNERTEST",
-            phone: "nice.iamport00m",
-            bank: "nice.iamport00m",
-          };
-          return pgMap[method];
-        }
+        const pgMap = {
+          card: "html5_inicis.INIpayTest", // KG이니시스 테스트 (자동취소)
+          kakao: "kakaopay.TC0ONETIME", // 카카오페이 테스트
+          payco: "payco.PARTNERTEST", // 페이코 테스트
+          phone: "danal.A010002002", // 다날 테스트 (자동취소)
+          bank: "html5_inicis.INIpayTest", // 계좌이체 테스트
+        };
+        return pgMap[method];
       };
 
       const getPayMethod = (method) => {
@@ -278,7 +261,6 @@ const OrderComponent = () => {
               ? `${cartItems[0].productName} 외 ${cartItems.length - 1}건`
               : cartItems[0].productName,
 
-          // 테스트 모드일 때는 안전한 금액 사용
           amount: serverFinalAmount, // 최종 결제 금액
           buyer_email: "user@example.com", //실제 사용자 이메일로 변경 필요
           buyer_name: receiverName,
@@ -289,8 +271,7 @@ const OrderComponent = () => {
         async (response) => {
           console.log("결제 응답:", response);
           if (response.success === false) {
-            const result = await deleteOneOrder(resultOrderId);
-            console.log("백엔드 통신 결과", result);
+            setSelectedCoupon(null);
             return alert(
               `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
             );
@@ -635,7 +616,7 @@ const OrderComponent = () => {
                         적용된 쿠폰: {couponName}
                       </span>
                     ) : (
-                      "사용 가능한 쿠폰 1개"
+                      "사용 가능한 쿠폰 "
                     )}
                   </span>
                   <button
