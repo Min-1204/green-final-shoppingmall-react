@@ -11,30 +11,39 @@ const SearchResultComponent = () => {
   const [sort, setSort] = useState(""); //정렬
 
   const [searchParams] = useSearchParams(); //URL 쿼리스트링 읽기
+  const [queryParams] = useSearchParams(); //URL 쿼리스트링 읽기
   const keyword = searchParams.get("keyword") || ""; //URL에서 keyword 값 추출, 값이 없으면 빈 문자열
 
+  const getNum = (param, defaultValue) => {
+    if (!param) return defaultValue;
+    return parseInt(param, 10);
+  };
   //검색어 상품 목록 조회
   useEffect(() => {
+    const page = getNum(queryParams.get("page"), 1);
+    const size = getNum(queryParams.get("size"), 24);
+
     //공백 이거나 빈 검색어면 API 호출하지 않음
     if (!keyword.trim()) return;
-
+    console.log("검색 결과 페이지 keyword, page, size : ", keyword, page, size);
     const fetchProducts = async () => {
-      const products = await searchProductList(keyword);
-      setProducts(products);
+      const products = await searchProductList(keyword, page, size);
+      setProducts(products.dtoList);
+      console.log("검색 결과 페이지 products => ", products.dtoList);
     };
     fetchProducts();
-  }, [keyword]);
+  }, [keyword, queryParams]);
 
   const brandOptions = [];
-  products.forEach((product) => {
-    //브랜드 이름이 있는 경우
-    if (product.brand && product.brand.name) {
-      //이미 들어있는 브랜드가 아니면
-      if (!brandOptions.includes(product.brand.name)) {
-        brandOptions.push(product.brand.name);
-      }
-    }
-  });
+  // products?.forEach((product) => {
+  //   //브랜드 이름이 있는 경우
+  //   if (product.brand && product.brand.name) {
+  //     //이미 들어있는 브랜드가 아니면
+  //     if (!brandOptions.includes(product.brand.name)) {
+  //       brandOptions.push(product.brand.name);
+  //     }
+  //   }
+  // });
   // const brandOptions = [
   //   //각 상품에서 브랜드 이름만 뽑기
   //   //?. -> 브랜드가 없는 상품 대비
