@@ -6,14 +6,16 @@ import ProductFilterBar from "../filter/ProductFilterBar";
 import { searchProductList } from "../../api/search/searchApi";
 
 const SearchResultComponent = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); //상품 목록
   const [filter, setFilter] = useState({});
-  const [sort, setSort] = useState("");
+  const [sort, setSort] = useState(""); //정렬
 
-  const [searchParams] = useSearchParams();
-  const keyword = searchParams.get("keyword") || "";
+  const [searchParams] = useSearchParams(); //URL 쿼리스트링 읽기
+  const keyword = searchParams.get("keyword") || ""; //URL에서 keyword 값 추출, 값이 없으면 빈 문자열
 
+  //검색어 상품 목록 조회
   useEffect(() => {
+    //공백 이거나 빈 검색어면 API 호출하지 않음
     if (!keyword.trim()) return;
 
     const fetchProducts = async () => {
@@ -23,9 +25,23 @@ const SearchResultComponent = () => {
     fetchProducts();
   }, [keyword]);
 
-  const brandOptions = [
-    ...new Set(products.map((p) => p.brand?.name).filter(Boolean)),
-  ];
+  const brandOptions = [];
+  products.forEach((product) => {
+    //브랜드 이름이 있는 경우
+    if (product.brand && product.brand.name) {
+      //이미 들어있는 브랜드가 아니면
+      if (!brandOptions.includes(product.brand.name)) {
+        brandOptions.push(product.brand.name);
+      }
+    }
+  });
+  // const brandOptions = [
+  //   //각 상품에서 브랜드 이름만 뽑기
+  //   //?. -> 브랜드가 없는 상품 대비
+  //   //.filter(boolean) : null, undefined, "" 제거
+  //   //new Set([...]) : 동일 브랜드 여러개일 경우 하나만 유지
+  //   ...new Set(products.map((p) => p.brand?.name).filter(Boolean)),
+  // ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">

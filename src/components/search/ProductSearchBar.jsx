@@ -2,6 +2,8 @@ import React, { memo, useEffect, useState, useRef } from "react";
 import SearchDropdown from "./SearchDropdown";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  deleteAllRecentKeywords,
+  deleteOneRecentKeyword,
   popularSearches,
   recentSearches,
   searchKeywordAdd,
@@ -9,19 +11,19 @@ import {
 import { useSelector } from "react-redux";
 
 const ProductSearchBar = memo(() => {
-  const [searchText, setSearchText] = useState(""); // 검색 입력값
-  const [recentKeyWords, setRecentKeyWords] = useState([]); // 최근 검색어 목록
-  const [popularKeywords, setPopularKeywords] = useState([]); // 인기 검색어 목록
-  const [dropdown, setDropdown] = useState(false); // 드롭다운 표시
+  const [searchText, setSearchText] = useState(""); //검색 입력값
+  const [recentKeywords, setRecentKeywords] = useState([]); //최근 검색어 목록
+  const [popularKeywords, setPopularKeywords] = useState([]); //인기 검색어 목록
+  const [dropdown, setDropdown] = useState(false); //드롭다운 표시
 
   const { user } = useSelector((state) => state.authSlice);
   const navigate = useNavigate();
-  const searchBarRef = useRef(null); // 드롭다운 영역 참조
+  const searchBarRef = useRef(null); //드롭다운 영역 참조
 
-  const inputRef = useRef(null);
-  const location = useLocation();
+  const inputRef = useRef(null); //검색어 x버튼 클릭후 focus() 주기 위해 사용
+  const location = useLocation(); //현재 URL정보 접근, 쿼리스트링 동기화에 사용
 
-  //검색어 동기화
+  //검색어 동기화, 검색어가 input에 유지
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const keyword = params.get("keyword");
@@ -31,42 +33,47 @@ const ProductSearchBar = memo(() => {
     }
   }, [location.search]);
 
+  //검색 주체 결정 함수 (로그인/비로그인)
+  const getSearchOwner = () => {
+    //로그인 유저 -> 서버에 userId 전달
+    if (user?.id) {
+      return { userId: user.id, guestId: null };
+    }
+
+    //비로그인 유저, 세션 기준으로 임시 ID 유지
+    let guestId = sessionStorage.getItem("guestId");
+    if (!guestId) {
+      //guestId가 없으면 새로 생성
+      guestId = crypto.randomUUID();
+      sessionStorage.setItem("guestId", guestId);
+    }
+
+    return { userId: null, guestId };
+  };
+
   //최근 검색어 불러오기
   const fetchrecentKeywords = async () => {
-    if (!user?.id) return;
-    // //localStorage에서 전체 삭제 상태 확인
-    // const clearFlag = localStorage.getItem(
-    //   `recentSearches_cleared_${user.id}`
-    // );
+    const { userId, guestId } = getSearchOwner();
 
-    // if (clearFlag === "true") {
-    //   //전체 삭제 후 로컬에 저장된 키워드만 불러오기
-    //   const savedKeywords = localStorage.getItem(
-    //     `recentSearches_temp_${user.id}`
-    //   );
-    //   const keywords = savedKeywords ? JSON.parse(savedKeywords) : [];
-    //   setRecentKeyWords(keywords);
-    //   return;
-    // }
-
-    const keyWordList = await recentSearches(user.id);
-    const keywords = keyWordList.map((item) => item.keyword);
-    setRecentKeyWords(keywords);
+    const keywordList = await recentSearches(userId, guestId);
+    console.log("keywordList", keywordList);
+    setRecentKeywords(keywordList.map((w) => w.keyword));
   };
-  useEffect(() => {
-    fetchrecentKeywords();
-  }, [user?.id]);
 
   //인기 검색어
-  const fetchPopularKeyWord = async () => {
+  const fetchPopularKeyword = async () => {
     const popularList = await popularSearches();
+    console.log("popularList", popularList);
     setPopularKeywords(popularList);
   };
+
+  //드롭다운에 보여줄 데이터 초기 세팅
   useEffect(() => {
-    fetchPopularKeyWord();
+    fetchrecentKeywords();
+    fetchPopularKeyword();
   }, []);
 
-  // 외부 클릭 감지
+  //외부 클릭 감지, 드롭다운이 열렸을 때 검색 영역 밖 클릭하면 닫기
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -88,36 +95,25 @@ const ProductSearchBar = memo(() => {
 
   //검색 실행
   const handleSearch = async (keyword = searchText) => {
-    const searchTarget = String(keyword || "");
+    //공벡 제거, 빈 문자열 방지
+    const searchTarget = String(keyword || "").trim();
+    if (!searchTarget) return;
 
-    if (!searchTarget.trim()) return;
+    const { userId, guestId } = getSearchOwner();
 
+    //검색어 저장
+    await searchKeywordAdd(searchTarget, userId, guestId);
+
+    //검색 결과 페이지 이동
     navigate(`/search?keyword=${searchTarget}&page=1&size=24`);
 
-    await searchKeywordAdd(searchTarget, user?.id);
+    //검색어 목록 다시 가져오기
+    const keywordList = await recentSearches(userId, guestId);
+    setRecentKeywords(keywordList.map((w) => w.keyword));
 
-    // //전체 삭제 상태 확인
-    // const clearFlag = localStorage.getItem(`recentSearches_cleared_${user.id}`);
-    // if (clearFlag === "true") {
-    //   //전체 삭제 모드: 로컬에 저장하고 상태 업데이트
-    //   setRecentKeyWords((prev) => {
-    //     const filtered = prev.filter((k) => k !== keyword);
-    //     const newKeywords = [keyword, ...filtered];
-    //     //localStorage에도 저장
-    //     localStorage.setItem(
-    //       `recentSearches_temp_${user.id}`,
-    //       JSON.stringify(newKeywords)
-    //     );
-    //     console.log("전체삭제 모드 - 새 키워드 목록:", newKeywords);
-    //     return newKeywords;
-    //   });
-    // } else {
-    // }
-    const keyWordList = await recentSearches(user?.id);
-    const newKeywords = keyWordList.map((item) => item.keyword);
-    setRecentKeyWords(newKeywords);
-
-    await fetchPopularKeyWord();
+    //최근 검색어, 인기 검색어 갱신
+    await fetchrecentKeywords();
+    await fetchPopularKeyword();
 
     setDropdown(false);
   };
@@ -130,43 +126,40 @@ const ProductSearchBar = memo(() => {
     }
   };
 
-  const clearSearch = () => {
+  //검색어 초기화
+  //입력값 촉화, 드롭다운 다시 열기, input포커스 유지, 최신 검색어 다시 불러오기
+  const clearSearch = async () => {
     setSearchText("");
     setDropdown(true);
     inputRef.current?.focus();
+
+    //X 버튼 클릭 시에도 최신 데이터 불러오기
+    await fetchrecentKeywords();
+    await fetchPopularKeyword();
   };
 
-  // //최근 검색어 UI 삭제
-  // const recentKeyWordRemove = (keyword) => {
-  //   setRecentKeyWords((prev) => {
-  //     const newKeywords = prev.filter((k) => k !== keyword);
+  //최근 검색어 개별 삭제
+  const recentKeywordRemove = async (keyword) => {
+    //UI에서 먼저 제거
+    setRecentKeywords((prev) => prev.filter((w) => w !== keyword));
 
-  //     //전체 삭제 모드일 때는 로컬 스토리지도 업데이트
-  //     const clearedFlag = localStorage.getItem(
-  //       `recentSearches_cleared_${user.id}`
-  //     );
-  //     if (clearedFlag === "true") {
-  //       localStorage.setItem(
-  //         `recentSearches_temp_${user.id}`,
-  //         JSON.stringify(newKeywords)
-  //       );
-  //     }
+    const { userId, guestId } = getSearchOwner();
+    //검색어 삭제(숨김)
+    await deleteOneRecentKeyword(keyword, userId, guestId);
 
-  //     return newKeywords;
-  //   });
-  // };
+    //삭제 후 최신 데이터 다시 불러오기
+    await fetchrecentKeywords();
+  };
 
-  // //최근 검색어 전체 삭제
-  // const allClearHandler = () => {
-  //   if (window.confirm("최근 검색어를 모두 삭제 하시겠습니까?")) {
-  //     setRecentKeyWords([]);
-  //     localStorage.setItem(`recentSearches_cleared_${user.id}`, "true");
-  //     localStorage.setItem(
-  //       `recentSearches_temp_${user.id}`,
-  //       JSON.stringify([])
-  //     );
-  //   }
-  // };
+  //최근 검색어 전체 삭제
+  const recentKeywordAllRemove = async () => {
+    setRecentKeywords([]);
+
+    const { userId, guestId } = getSearchOwner();
+    await deleteAllRecentKeywords(userId, guestId);
+
+    await fetchrecentKeywords();
+  };
 
   return (
     <div
@@ -229,10 +222,10 @@ const ProductSearchBar = memo(() => {
       {/* 최근 검색어 드롭다운 */}
       {dropdown && (
         <SearchDropdown
-          keywords={recentKeyWords}
+          keywords={recentKeywords}
           popular={popularKeywords}
-          // onRemove={recentKeyWordRemove}
-          // onClear={allClearHandler}
+          onRemove={recentKeywordRemove}
+          onClear={recentKeywordAllRemove}
           onSelect={(word) => {
             setSearchText(word);
             handleSearch(word);
