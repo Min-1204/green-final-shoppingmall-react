@@ -10,7 +10,7 @@ const UserInfoResultTable = () => {
     "권한",
     "등급",
     "가입일",
-    "관리",
+    "회원 상태",
   ];
 
   const dummyData = [
@@ -28,23 +28,23 @@ const UserInfoResultTable = () => {
       username: "user2",
       email: "user2@test.com",
       phone: "010-0000-0002",
-      grade: "매니저",
+      grade: "일반",
       joinDate: "2025-10-29",
-      status: "휴면",
+      status: "정상",
     },
     {
       id: 3,
       username: "user3",
       email: "user3@test.com",
       phone: "010-0000-0003",
-      grade: "관리자",
+      grade: "일반",
       joinDate: "2025-10-28",
       status: "탈퇴",
     },
   ];
 
   const gradeOptions = ["일반", "매니저", "관리자"];
-  const levelLabels = ["브론즈", "실버", "골드", "플래티넘", "다이아몬드"];
+  const levelLabels = ["BRONZE", "SILVER", "GOLD", "DIAMOND", "VIP"];
 
   return (
     <div className="w-full mt-6">
@@ -60,9 +60,9 @@ const UserInfoResultTable = () => {
           <button className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1 rounded-md border border-green-200 cursor-pointer transition shadow-sm">
             SMS 발송
           </button>
-          <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md border border-gray-300 cursor-pointer hover:bg-gray-300 transition shadow-sm">
+          {/* <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md border border-gray-300 cursor-pointer hover:bg-gray-300 transition shadow-sm">
             다운로드
-          </button>
+          </button> */}
 
           <select
             defaultValue="recent"
@@ -70,13 +70,6 @@ const UserInfoResultTable = () => {
           >
             <option value="recent">최근 가입 순</option>
             <option value="old">오래된 가입 순</option>
-          </select>
-
-          <select
-            defaultValue="10"
-            className="border border-gray-300 text-gray-700 px-3 py-1 rounded-md cursor-pointer bg-white shadow-sm hover:bg-gray-50 transition"
-          >
-            <option value="10">10개</option>
           </select>
         </div>
       </div>
@@ -99,7 +92,7 @@ const UserInfoResultTable = () => {
                       : header === "등급"
                       ? "w-[100px]"
                       : header === "가입일"
-                      ? "w-[100px]"
+                      ? "w-[130px]"
                       : header === "관리"
                       ? "w-[130px]"
                       : ""
@@ -159,18 +152,11 @@ const UserInfoResultTable = () => {
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         user.status === "정상"
                           ? "bg-green-100 text-green-800"
-                          : user.status === "휴면"
-                          ? "bg-yellow-100 text-yellow-800"
                           : "bg-red-100 text-red-800"
                       }`}
                     >
                       {user.status}
                     </span>
-                    {user.status === "탈퇴" && (
-                      <button className="text-blue-600 text-xs px-1 py-[2px] cursor-pointer">
-                        복구
-                      </button>
-                    )}
                   </div>
                 </td>
               </tr>
