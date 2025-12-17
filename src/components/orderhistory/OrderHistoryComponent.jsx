@@ -1,21 +1,19 @@
-import React, { useState, Fragment, useEffect } from "react";
-import ReviewAddComponent from "../review/ReviewAddComponent";
-import DeliveryModal from "./DeliveryModal";
-import ReturnModal from "./ReturnModal";
-import CancleModal from "./CancleModal";
-import ExchangeModal from "./ExchangeModal";
-import sampleOrders from "../../data/sampleOrders";
+import { Fragment, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   confirmOrder,
   deleteOneOrder,
   getOrdersBySearch,
 } from "../../api/order/orderApi";
-import { useSelector } from "react-redux";
+import { earnPoint, getActivePoints } from "../../api/point/pointApi";
+import Pagination from "../pagination/Pagination";
+import ReviewAddComponent from "../review/ReviewAddComponent";
+import CancleModal from "./CancleModal";
 import ConfimPurchaseModal from "./ConfimPurchaseModal";
 import ConfirmPurchaseCompleteModal from "./ConfirmPurchaseCompleteModal";
-import { earnPoint, getActivePoints } from "../../api/point/pointApi";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import Pagination from "../pagination/Pagination";
+import DeliveryModal from "./DeliveryModal";
+import ReturnModal from "./ReturnModal";
 
 export default function OrderHistoryComponent() {
   const statusClass = (s) =>
@@ -68,8 +66,7 @@ export default function OrderHistoryComponent() {
 
   // 반품 신청 모달
   const [returnModal, setReturnModal] = useState(false);
-  // 교환 신청 모달
-  const [exchangeModal, setExchangeModal] = useState(false);
+
   const [selectedItem, setSelectedItem] = useState({});
 
   // 상품 리뷰 작성
@@ -550,18 +547,7 @@ export default function OrderHistoryComponent() {
                               취소신청
                             </button>
                           )}
-                          {orderStatusMap[item.orderProductStatus] ===
-                            "배송완료" && (
-                            <button
-                              className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full"
-                              onClick={() => {
-                                setExchangeModal(!exchangeModal);
-                                setSelectedItem(item);
-                              }}
-                            >
-                              교환신청
-                            </button>
-                          )}
+
                           {orderStatusMap[item.orderProductStatus] ===
                             "배송완료" && (
                             <button
@@ -571,7 +557,7 @@ export default function OrderHistoryComponent() {
                                 setSelectedItem(item);
                               }}
                             >
-                              반품신청
+                              반품/환불신청
                             </button>
                           )}
                         </div>
@@ -613,12 +599,6 @@ export default function OrderHistoryComponent() {
           item={selectedItem}
           closeModal={() => setCancleModal(false)}
           onConfirm={handleConfirmCancel}
-        />
-      )}
-      {exchangeModal && selectedItem && (
-        <ExchangeModal
-          item={selectedItem}
-          closeModal={() => setExchangeModal(false)}
         />
       )}
       {confirmPurchaseModal && selectedOrder && (

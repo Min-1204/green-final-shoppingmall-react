@@ -23,11 +23,19 @@ const CheckboxGroup = ({
       : [...selectedOptions, option];
 
     // 전체 체크 여부 업데이트
-    const allSelected =
-      options.every((opt) => newSelected.includes(opt)) &&
-      newSelected.includes("전체");
+    const allSelected = options
+      .filter((opt) => opt !== "전체")
+      .every((opt) => newSelected.includes(opt));
     if (allSelected) {
       newSelected = [...options];
+    }
+
+    // 전체 체크 상태에서 하나를 체크 해제하면 전체 체크도 해제되도록 함
+    if (
+      selectedOptions.includes("전체") &&
+      !options.every((opt) => newSelected.includes(opt))
+    ) {
+      newSelected = newSelected.filter((opt) => opt !== "전체");
     }
 
     setSelectedOptions(newSelected);

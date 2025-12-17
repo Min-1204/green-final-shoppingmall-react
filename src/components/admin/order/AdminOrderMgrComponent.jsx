@@ -16,12 +16,30 @@ const AdminOrderMgrComponent = () => {
   const [productName, setProductName] = useState(""); // 상품명
   const [startDate, setStartDate] = useState(""); // 시작 시점 날짜
   const [endDate, setEndDate] = useState(""); // 끝나는 시점 날짜
-  const [selectedOrderStatuses, setSelectedOrderStatuses] = useState([]); //주문상태
-  // const [selectedPostStatuses, setSelectedPostStatuses] = useState([]); //배송상태
+  const [selectedOrderStatuses, setSelectedOrderStatuses] = useState([
+    "전체",
+    "주문접수",
+    "결제완료",
+    "배송준비중",
+    "배송중",
+    "배송완료",
+    "구매확정",
+    "반품/환불 신청",
+    "반품/환불 완료",
+  ]); //주문상태
   const [selectedDelivery, setSelectedDelivery] = useState([]); //배송방법 state
-  const [selectedPayment, setSelectedPayment] = useState([]); //주문결제 state
-  // const [selectedOrderType, setSelectedOrderType] = useState([]); //주문유형 state
-  // const [selectedPaymentStatus, setSelectedPaymentStatus] = useState([]); //결제상태 state
+  const [selectedPayment, setSelectedPayment] = useState([
+    "전체",
+    "신용/체크카드",
+    "카카오페이",
+    "네이버페이",
+    "PAYCO",
+    "휴대폰 결제",
+    "계좌이체",
+  ]); //주문결제 state
+
+  console.log("selectedOrderStatuses", selectedOrderStatuses);
+  console.log("selectedPayment", selectedPayment);
 
   // URL 쿼리에서 숫자 값을 읽어오는 함수
   const getNum = (param, defaultValue) => {
@@ -53,6 +71,7 @@ const AdminOrderMgrComponent = () => {
   }, [searchParams]);
 
   const allOrderStatuses = [
+    "전체",
     "주문접수",
     "결제완료",
     "배송준비중",
@@ -61,12 +80,11 @@ const AdminOrderMgrComponent = () => {
     "구매확정",
     "반품/환불 신청",
     "반품/환불 완료",
-    "전체",
   ];
 
   const orderStatusMap = {
     주문접수: "PENDING_PAYMENT",
-    결제확인: "PAID",
+    결제완료: "PAID",
     배송준비중: "PREPARING",
     배송중: "SHIPPING",
     배송완료: "DELIVERED",
@@ -74,16 +92,16 @@ const AdminOrderMgrComponent = () => {
     "반품/환불 신청": "RETURN_REQUESTED",
     "반품/환불 완료": "RETURNED",
   };
-  // const allPostStatuses = ["배송준비중", "배송중", "배송완료", "전체"];
+
   const allDelivery = ["대한통운", "우체국", "직접입력"];
   const allPayment = [
+    "전체",
     "신용/체크카드",
     "카카오페이",
     "네이버페이",
     "PAYCO",
     "휴대폰 결제",
     "계좌이체",
-    "전체",
   ];
 
   const paymentMap = {
@@ -94,15 +112,6 @@ const AdminOrderMgrComponent = () => {
     "휴대폰 결제": "PHONE",
     계좌이체: "BANK",
   };
-  // const allOrderType = ["고객주문", "관리자주문"];
-  // const allPaymentStatus = [
-  //   "무통장입금 대기",
-  //   "카드결제입금 대기",
-  //   "소액결제입금 대기",
-  //   "무통장입금완료",
-  //   "카드결제완료",
-  //   "소액결제완료",
-  // ];
 
   const dateHandler = (label) => {
     let today = dayjs(); //오늘 기준
@@ -165,10 +174,8 @@ const AdminOrderMgrComponent = () => {
     setStartDate("");
     setEndDate("");
     setSelectedOrderStatuses([]);
-    // setSelectedPostStatuses([]);
     setSelectedDelivery([]);
     setSelectedPayment([]);
-    // setSelectedOrderType([]);
   };
 
   return (
@@ -219,13 +226,6 @@ const AdminOrderMgrComponent = () => {
                   : ""
               }
             />
-            {/* <label className="ml-2 flex items-center select-none cursor-pointer text-gray-600 hover:text-gray-800 transition">
-              <input
-                type="checkbox"
-                className="w-3.5 h-3.5 mr-1 border border-gray-400 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-              />{" "}
-              부분검색
-            </label> */}
           </div>
         </div>
 
@@ -278,13 +278,6 @@ const AdminOrderMgrComponent = () => {
           setSelectedOptions={setSelectedOrderStatuses}
           showAll={true}
         />
-        {/* <CheckboxGroup
-          title="배송상태"
-          options={allPostStatuses}
-          selectedOptions={selectedPostStatuses}
-          setSelectedOptions={setSelectedPostStatuses}
-          showAll={true}
-        /> */}
         <CheckboxGroup
           title="배송방법"
           options={allDelivery}
@@ -297,18 +290,6 @@ const AdminOrderMgrComponent = () => {
           selectedOptions={selectedPayment}
           setSelectedOptions={setSelectedPayment}
         />
-        {/* <CheckboxGroup
-          title="주문유형"
-          options={allOrderType}
-          selectedOptions={selectedOrderType}
-          setSelectedOptions={setSelectedOrderType}
-        /> */}
-        {/* <CheckboxGroup
-          title="결제상태"
-          options={allPaymentStatus}
-          selectedOptions={selectedPaymentStatus}
-          setSelectedOptions={setSelectedPaymentStatus}
-        /> */}
       </div>
 
       {/* 검색 버튼 */}
