@@ -269,7 +269,7 @@ const ProductListComponent = () => {
           <p className="text-base text-gray-600">
             총{" "}
             <span className="font-extrabold text-gray-600">
-              {pageResponse?.dtoList?.length}
+              {pageResponse?.totalDataCount}
             </span>
             개의 상품이 있습니다.
           </p>

@@ -48,7 +48,7 @@ const ProductSearchFilter = () => {
     ...initialCondition,
   });
   const [searchResults, setSearchResults] = useState([]);
-  const [pageResponse, setPageResponse] = useState({});
+  const [pageResponse, setPageResponse] = useState({ dtoList: [] });
 
   // 로그 찍는 용도
   useEffect(() => {
@@ -449,11 +449,9 @@ const ProductSearchFilter = () => {
         </button>
       </div>
 
-      <ProductList products={searchResults} search={searchClick} />
+      <ProductList pageResponse={pageResponse} search={searchClick} />
       {/* 페이지네이션 */}
-      <div className="mt-12">
-        <Pagination pageResponseDTO={pageResponse} />
-      </div>
+      <Pagination pageResponseDTO={pageResponse} />
     </div>
   );
 };

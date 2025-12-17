@@ -1,8 +1,7 @@
-import { Link } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import RestockModal from "./RestockModal";
-import { useEffect, useState } from "react";
 import { restockOption } from "../../../api/admin/product/productApi";
+import RestockModal from "./RestockModal";
 
 const getAvailableStock = (product) => {
   const availableOptions = product?.options.filter((op) => op.currentStock > 0);
@@ -28,7 +27,7 @@ const getOutOfStock = (product) => {
   return `[${outOfStockOptionCnt}] ${outOfStock}`;
 };
 
-const ProductList = ({ products, search }) => {
+const ProductList = ({ pageResponse, search }) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -44,10 +43,6 @@ const ProductList = ({ products, search }) => {
     "노출",
     "관리",
   ];
-
-  useEffect(() => {
-    console.log("products : ", products);
-  }, [products]);
 
   const restockClick = (product) => {
     setSelectedProduct(product);
@@ -71,7 +66,7 @@ const ProductList = ({ products, search }) => {
       {/* 상단 영역 */}
       <div className="flex justify-between items-center mb-3 text-gray-700 flex-wrap gap-2 px-2">
         <span className="font-semibold text-lg">
-          검색 결과 (총 {products.length}개)
+          검색 결과 (총 {pageResponse?.totalDataCount}개)
         </span>
 
         <div className="flex items-center gap-2 flex-wrap">
@@ -130,7 +125,7 @@ const ProductList = ({ products, search }) => {
           </thead>
 
           <tbody className="bg-white divide-y divide-gray-200">
-            {products.map((product) => (
+            {pageResponse?.dtoList.map((product) => (
               <tr
                 key={product?.id}
                 className="hover:bg-gray-50 transition divide-x divide-gray-200"
