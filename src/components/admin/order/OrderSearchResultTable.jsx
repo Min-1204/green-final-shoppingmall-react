@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { changeOrderProductStatus } from "../../../api/order/orderApi";
 
-const OrderSearchResultTable = ({ orders }) => {
+const OrderSearchResultTable = ({ orders, searchHandler }) => {
   // console.log("orders", orders);
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,34 +16,34 @@ const OrderSearchResultTable = ({ orders }) => {
   const totalCount =
     data.totalDataCount !== undefined ? data.totalDataCount : orderList.length;
 
-  const getOrderStatusName = (status) => {
-    switch (status) {
-      case "PENDING_PAYMENT":
-        return "주문접수";
-      case "PAID":
-        return "결제확인";
-      case "PREPARING":
-        return "배송준비중";
-      case "SHIPPING":
-        return "배송중";
-      case "DELIVERED":
-        return "배송완료";
-      case "CANCEL_REQUESTED":
-        return "취소 신청";
-      case "CANCELED":
-        return "취소 완료";
-      case "EXCHANGE_REQUESTED":
-        return "교환 신청";
-      case "EXCHANGED":
-        return "교환 완료";
-      case "RETURN_REQUESTED":
-        return "반품/환불 신청";
-      case "RETURNED":
-        return "반품/환불 완료";
-      default:
-        return status; // 정의되지 않은 상태는 그대로 반환
-    }
-  };
+  // const getOrderStatusName = (status) => {
+  //   switch (status) {
+  //     case "PENDING_PAYMENT":
+  //       return "주문접수";
+  //     case "PAID":
+  //       return "결제확인";
+  //     case "PREPARING":
+  //       return "배송준비중";
+  //     case "SHIPPING":
+  //       return "배송중";
+  //     case "DELIVERED":
+  //       return "배송완료";
+  //     case "CANCEL_REQUESTED":
+  //       return "취소 신청";
+  //     case "CANCELED":
+  //       return "취소 완료";
+  //     case "EXCHANGE_REQUESTED":
+  //       return "교환 신청";
+  //     case "EXCHANGED":
+  //       return "교환 완료";
+  //     case "RETURN_REQUESTED":
+  //       return "반품/환불 신청";
+  //     case "RETURNED":
+  //       return "반품/환불 완료";
+  //     default:
+  //       return status; // 정의되지 않은 상태는 그대로 반환
+  //   }
+  // };
 
   const flatOrders = orderList.flatMap((order) => {
     return order.orderProducts.map((op, index) => {
@@ -67,6 +68,13 @@ const OrderSearchResultTable = ({ orders }) => {
       prev.set("sort", "" + value);
       return prev;
     });
+  };
+
+  const handleChangeStatus = async (item, value) => {
+    if (value == "CONFIRMED")
+      return alert("구매확정은 사용자가 할 수 있습니다.");
+    await changeOrderProductStatus(item.orderId, value);
+    await searchHandler();
   };
 
   return (
@@ -168,20 +176,18 @@ const OrderSearchResultTable = ({ orders }) => {
 
                 <td className="px-3 py-3">
                   <select
-                    defaultValue={getOrderStatusName(item.orderProductStatus)}
+                    value={item.orderProductStatus}
                     className="border border-gray-300 px-2 py-[2px] text-sm bg-white cursor-pointer rounded-md"
+                    onChange={(e) => handleChangeStatus(item, e.target.value)}
                   >
-                    <option value="주문접수">주문접수</option>
-                    <option value="결제확인">결제확인</option>
-                    <option value="배송준비중">배송준비중</option>
-                    <option value="배송중">배송중</option>
-                    <option value="배송완료">배송완료</option>
-                    <option value="취소신청">취소신청</option>
-                    <option value="취소완료">취소완료</option>
-                    <option value="교환신청">교환신청</option>
-                    <option value="교환완료">교환완료</option>
-                    <option value="반품/환불신청">반품/환불신청</option>
-                    <option value="반품/환불완료">반품/환불완료</option>
+                    <option value="PENDING_PAYMENT">주문접수</option>
+                    <option value="PAID">결제완료</option>
+                    <option value="PREPARING">배송준비중</option>
+                    <option value="SHIPPING">배송중</option>
+                    <option value="DELIVERED">배송완료</option>
+                    <option value="CONFIRMED">구매확정</option>
+                    <option value="RETURN_REQUESTED">반품/환불신청</option>
+                    <option value="RETURNED">반품/환불완료</option>
                   </select>
                 </td>
               </tr>
