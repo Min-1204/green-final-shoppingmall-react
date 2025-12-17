@@ -17,17 +17,17 @@ export const getOneOrder = async (orderId) => {
   return res.data;
 };
 
-export const getOrderList = async (userId, sort, page = 1, size = 10) => {
-  const res = await axios.get(`${prefix}/list/${userId}`, {
-    params: {
-      sort: sort,
-      page: page,
-      size: size,
-    },
-  });
-  console.log("getOrderList => ", res.data);
-  return res.data;
-};
+// export const getOrderList = async (userId, sort, page = 1, size = 10) => {
+//   const res = await axios.get(`${prefix}/list/${userId}`, {
+//     params: {
+//       sort: sort,
+//       page: page,
+//       size: size,
+//     },
+//   });
+//   console.log("getOrderList => ", res.data);
+//   return res.data;
+// };
 
 export const deleteOneOrder = async (orderId) => {
   const res = await axios.delete(`${prefix}?orderId=${orderId}`);
@@ -50,5 +50,11 @@ export const getOrdersBySearch = async (condition, sort, page, size) => {
 export const confirmOrder = async (orderId) => {
   const res = await axios.put(`${prefix}/confirm/${orderId}`);
   console.log("confirmOrder =>", res.data);
+  return res.data;
+};
+
+export const changeOrderProductStatus = async (orderId, newStatus) => {
+  const res = await axios.put(`${prefix}/${orderId}`, { status: newStatus });
+  console.log("changeOrderProductStatus => ", res.data);
   return res.data;
 };

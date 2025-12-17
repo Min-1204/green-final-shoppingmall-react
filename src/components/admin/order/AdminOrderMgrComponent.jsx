@@ -29,38 +29,36 @@ const AdminOrderMgrComponent = () => {
     return parseInt(param, 10);
   };
 
-  useEffect(() => {
+  const fetchOrdersBySearch = async () => {
     const page = getNum(searchParams.get("page"), 1);
     const size = getNum(searchParams.get("size"), 10);
     const sort = searchParams.get("sort");
     const condition = {
-      orderNumber: orderNumber,
-      ordererName: ordererName,
-      productName: productName,
-      startDate: startDate,
-      endDate: endDate,
+      orderNumber,
+      ordererName,
+      productName,
+      startDate,
+      endDate,
       selectedOrderStatus: selectedOrderStatuses.map((s) => orderStatusMap[s]),
-      selectedDelivery: selectedDelivery,
+      selectedDelivery,
       selectedPayment: selectedPayment.map((p) => paymentMap[p]),
     };
-    const fetchOrdersBySearch = async () => {
-      const result = await getOrdersBySearch(condition, sort, page, size);
-      setOrders(result);
-      // console.log("new result received from backend", result); // ⭐ 변경된 result 객체를 바로 로깅
-    };
+    const result = await getOrdersBySearch(condition, sort, page, size);
+    setOrders(result);
+  };
+
+  useEffect(() => {
+    console.log("useEffect 실행(searchParams 의존성 배열이 변경됨)");
     fetchOrdersBySearch();
   }, [searchParams]);
 
   const allOrderStatuses = [
     "주문접수",
-    "결제확인",
+    "결제완료",
     "배송준비중",
     "배송중",
     "배송완료",
-    "취소 신청",
-    "취소 완료",
-    "교환 신청",
-    "교환 완료",
+    "구매확정",
     "반품/환불 신청",
     "반품/환불 완료",
     "전체",
@@ -72,10 +70,7 @@ const AdminOrderMgrComponent = () => {
     배송준비중: "PREPARING",
     배송중: "SHIPPING",
     배송완료: "DELIVERED",
-    "취소 신청": "CANCEL_REQUESTED",
-    "취소 완료": "CANCELED",
-    "교환 신청": "EXCHANGE_REQUESTED",
-    "교환 완료": "EXCHANGED",
+    구매확정: "CONFIRMED",
     "반품/환불 신청": "RETURN_REQUESTED",
     "반품/환불 완료": "RETURNED",
   };
@@ -153,25 +148,13 @@ const AdminOrderMgrComponent = () => {
   };
 
   const searchHandler = async () => {
-    const page = 1;
+    console.log("searchHandler 발생");
     setSearchParams((prev) => {
       prev.set("page", "1");
+      // t(timeStamp)를 넣어서 searchParams가 무조건 바뀌게 하여 useEffect를 트리거함
+      prev.set("t", Date.now().toString());
       return prev;
     });
-    const size = getNum(searchParams.get("size"), 10);
-    const sort = searchParams.get("sort");
-    const condition = {
-      orderNumber: orderNumber,
-      ordererName: ordererName,
-      productName: productName,
-      startDate: startDate,
-      endDate: endDate,
-      selectedOrderStatus: selectedOrderStatuses.map((s) => orderStatusMap[s]),
-      selectedDelivery: selectedDelivery,
-      selectedPayment: selectedPayment.map((p) => paymentMap[p]),
-    };
-    const result = await getOrdersBySearch(condition, sort, page, size);
-    setOrders(result);
   };
 
   const resetFiltersHandler = () => {
@@ -344,7 +327,7 @@ const AdminOrderMgrComponent = () => {
         </button>
       </div>
 
-      <OrderSearchResultTable orders={orders} />
+      <OrderSearchResultTable orders={orders} searchHandler={searchHandler} />
       <Pagination pageResponseDTO={orders} />
     </div>
   );
