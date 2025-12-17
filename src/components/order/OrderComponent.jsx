@@ -107,16 +107,12 @@ const OrderComponent = () => {
     setOrdererInfo(newOrdererInfo);
   }, [profile]);
 
-  // useEffect(() => {
-  //   console.log("selectedCoupon", selectedCoupon);
-  // }, [selectedCoupon]);
+  const fetchPoints = async (userId) => {
+    const data = await getActivePoints(userId);
+    setPointBalance(data);
+  };
 
   useEffect(() => {
-    const fetchPoints = async (userId) => {
-      const data = await getActivePoints(userId);
-      setPointBalance(data);
-    };
-
     fetchPoints(user.id);
   }, []);
 
@@ -272,6 +268,10 @@ const OrderComponent = () => {
           console.log("결제 응답:", response);
           if (response.success === false) {
             setSelectedCoupon(null);
+            setUsePoint(0);
+
+            await fetchPoints(user.id);
+
             return alert(
               `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
             );
