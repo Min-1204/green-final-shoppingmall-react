@@ -202,7 +202,7 @@ const ProductSearchBar = memo(() => {
           w-12 h-12 flex items-center justify-center 
           text-gray-400 hover:text-black cursor-pointer
         "
-        onClick={handleSearch}
+        onClick={() => handleSearch(searchText)}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
