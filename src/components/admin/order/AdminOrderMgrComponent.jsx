@@ -16,9 +16,30 @@ const AdminOrderMgrComponent = () => {
   const [productName, setProductName] = useState(""); // 상품명
   const [startDate, setStartDate] = useState(""); // 시작 시점 날짜
   const [endDate, setEndDate] = useState(""); // 끝나는 시점 날짜
-  const [selectedOrderStatuses, setSelectedOrderStatuses] = useState([]); //주문상태
+  const [selectedOrderStatuses, setSelectedOrderStatuses] = useState([
+    "전체",
+    "주문접수",
+    "결제완료",
+    "배송준비중",
+    "배송중",
+    "배송완료",
+    "구매확정",
+    "반품/환불 신청",
+    "반품/환불 완료",
+  ]); //주문상태
   const [selectedDelivery, setSelectedDelivery] = useState([]); //배송방법 state
-  const [selectedPayment, setSelectedPayment] = useState([]); //주문결제 state
+  const [selectedPayment, setSelectedPayment] = useState([
+    "전체",
+    "신용/체크카드",
+    "카카오페이",
+    "네이버페이",
+    "PAYCO",
+    "휴대폰 결제",
+    "계좌이체",
+  ]); //주문결제 state
+
+  console.log("selectedOrderStatuses", selectedOrderStatuses);
+  console.log("selectedPayment", selectedPayment);
 
   // URL 쿼리에서 숫자 값을 읽어오는 함수
   const getNum = (param, defaultValue) => {
@@ -50,6 +71,7 @@ const AdminOrderMgrComponent = () => {
   }, [searchParams]);
 
   const allOrderStatuses = [
+    "전체",
     "주문접수",
     "결제완료",
     "배송준비중",
@@ -58,12 +80,11 @@ const AdminOrderMgrComponent = () => {
     "구매확정",
     "반품/환불 신청",
     "반품/환불 완료",
-    "전체",
   ];
 
   const orderStatusMap = {
     주문접수: "PENDING_PAYMENT",
-    결제확인: "PAID",
+    결제완료: "PAID",
     배송준비중: "PREPARING",
     배송중: "SHIPPING",
     배송완료: "DELIVERED",
@@ -74,13 +95,13 @@ const AdminOrderMgrComponent = () => {
 
   const allDelivery = ["대한통운", "우체국", "직접입력"];
   const allPayment = [
+    "전체",
     "신용/체크카드",
     "카카오페이",
     "네이버페이",
     "PAYCO",
     "휴대폰 결제",
     "계좌이체",
-    "전체",
   ];
 
   const paymentMap = {
@@ -153,10 +174,8 @@ const AdminOrderMgrComponent = () => {
     setStartDate("");
     setEndDate("");
     setSelectedOrderStatuses([]);
-    // setSelectedPostStatuses([]);
     setSelectedDelivery([]);
     setSelectedPayment([]);
-    // setSelectedOrderType([]);
   };
 
   return (
