@@ -8,7 +8,6 @@ import sampleOrders from "../../data/sampleOrders";
 import {
   confirmOrder,
   deleteOneOrder,
-  getOrderList,
   getOrdersBySearch,
 } from "../../api/order/orderApi";
 import { useSelector } from "react-redux";
