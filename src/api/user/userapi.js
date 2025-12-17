@@ -28,7 +28,7 @@ export const signUpApi = async (signUpForm) => {
       address: signUpForm.address, // 기본주소
       addressDetail: signUpForm.addressDetail, // 상세주소
       smsAgreement: signUpForm.smsAgreement, // SMS 알림 동의
-      emailAgreement: signUpForm.emailAgreement, // Email 알림 동의
+      emailAgreement: signUpForm.emailAgreement // Email 알림 동의
     };
 
     console.log("백엔드로 보내는 데이터 콘솔", requestData);
@@ -87,14 +87,16 @@ export const checkLoginIdApi = async (loginId) => {
 };
 
 export const getCurrentUserApi = async () => {
-  console.log("getCurrentUser API 호출 시작");
   try {
+    console.log("getCurrentUser API 호출 시작");
     const response = await axiosInstance.get(`${USER_API}/currentUser`);
-    console.log("CurrentUser 응답결과 : ", response);
-    console.log("CurrentUser 응답의 Data 결과 : ", response.data);
+    console.log("getCurrentUser API 성공 : ", response.data);
     return response.data;
   } catch (error) {
-    console.log("getCurrentUser API 실패 : ", error);
+    if (error.response?.status !== 401 && error.response?.status !== 403) {
+      console.error("getCurrentUser API 실패 : ", error);
+    }
+    throw error;
   }
 };
 

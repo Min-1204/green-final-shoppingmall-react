@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { withdrawalUserApi } from "../../../api/user/userapi";
-import { logout } from "../../../redux/slices/features/user/authSlice";
+import { logoutAsyncThunk } from "../../../redux/slices/features/user/authSlice";
 
 export default function UserWithdrawForm() {
   const dispatch = useDispatch();
@@ -11,7 +11,7 @@ export default function UserWithdrawForm() {
 
   const [withdrawalForm, setWithdrawalForm] = useState({
     reason: "",
-    password: "",
+    password: ""
   });
 
   console.log("현재 회원탈퇴 로그인아이디 : ", user?.loginId);
@@ -21,7 +21,7 @@ export default function UserWithdrawForm() {
     const { name, value } = e.target;
     setWithdrawalForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -42,19 +42,19 @@ export default function UserWithdrawForm() {
       const response = await withdrawalUserApi({
         loginId: user.loginId,
         password: withdrawalForm.password,
-        userWithdrawalReason: withdrawalForm.reason,
+        userWithdrawalReason: withdrawalForm.reason
       });
       console.log("회원탈퇴 Form 요청 :", response);
 
       if (response.success) {
         if (window.confirm("정말 탈퇴 하시겠습니까?")) {
           alert(response.message);
-          dispatch(logout());
+          dispatch(logoutAsyncThunk());
           navigate("/");
         }
       }
     } catch (error) {
-      alert(error.response.data.message);
+      alert(error.response.data?.message);
     }
   };
 

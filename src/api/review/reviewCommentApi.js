@@ -1,21 +1,20 @@
 import axios from "axios";
-import { API_SERVER_HOST } from "./reviewApi";
+import { axiosInstance } from "../user/axiosIntance";
 
-const host = API_SERVER_HOST;
-const prefix = `${host}/api/comment`;
+const prefix = "/api/comment";
 
 export const reviewCommentGetList = async (reviewId) => {
-  const { data } = await axios.get(`${prefix}/${reviewId}`);
+  const { data } = await axiosInstance.get(`${prefix}/${reviewId}`);
   console.log("리뷰 댓글 목록 => ", data);
   return data;
 };
 
 export const reviewCommentAdd = async (userId, reviewId, content) => {
   console.log("reviewId => ", reviewId, "content => ", content);
-  const { data } = await axios.post(`${prefix}/add`, {
+  const { data } = await axiosInstance.post(`${prefix}/add`, {
     userId,
     reviewId,
-    content,
+    content
   });
   console.log("리뷰 댓글 => ", data);
   return data;
@@ -23,10 +22,10 @@ export const reviewCommentAdd = async (userId, reviewId, content) => {
 
 export const reviewCommentModify = async (commentId, content, userId) => {
   console.log("수정하려는 댓글 id => ", commentId, "수정 내용 => ", content);
-  const { data } = await axios.put(
+  const { data } = await axiosInstance.put(
     `${prefix}/modify/${commentId}`,
     {
-      content,
+      content
     },
     { params: { userId } }
   );
@@ -36,8 +35,8 @@ export const reviewCommentModify = async (commentId, content, userId) => {
 
 export const reviewCommentDelete = async (commentId, userId) => {
   console.log("삭제하려는 댓글 id => ", commentId);
-  const { data } = await axios.delete(`${prefix}/delete/${commentId}`, {
-    params: { userId: userId },
+  const { data } = await axiosInstance.delete(`${prefix}/delete/${commentId}`, {
+    params: { userId: userId }
   });
   console.log("삭제한 댓글 => ", data);
   return data;

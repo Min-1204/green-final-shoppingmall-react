@@ -1,9 +1,9 @@
 import axios from "axios";
-import { API_SERVER_HOST } from "../product/productApi";
+import { axiosInstance } from "../../user/axiosIntance";
 
-const prefix = `${API_SERVER_HOST}/api/categories`;
+const prefix = "/api/categories";
 
 export const fetchCategoryList = async () => {
-  const res = await axios.get(`${prefix}`);
+  const res = await axiosInstance.get(`${prefix}`);
   return res.data;
 };

@@ -5,7 +5,7 @@ import {
   getProfileApi,
   loginApi,
   logoutApi,
-  modifyProfileApi,
+  modifyProfileApi
 } from "../../../../api/user/userApi";
 
 export const loginAsyncThunk = createAsyncThunk(
@@ -53,13 +53,14 @@ export const getCurrentUserThunk = createAsyncThunk(
     try {
       const response = await getCurrentUserApi();
       console.log("CurrentThunk 응답결과 : ", response);
-      console.log("CurrentThunk user객체 결과 : ", response.user);
       return response.user;
     } catch (error) {
-      if (error.response?.status === 401) {
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        console.log("로그인되지 않은 상태 입니다.");
         return rejectWithValue(null);
       }
-      return rejectWithValue(error.response?.data || "로그인 정보가 없습니다.");
+      console.error(" API 에러 : ", error);
+      return rejectWithValue(error.response?.data);
     }
   }
 );
@@ -69,8 +70,13 @@ export const getUserProfileThunk = createAsyncThunk(
   async (loginId, { rejectWithValue }) => {
     try {
       const response = await getProfileApi(loginId);
+      console.log("CurrentThunk 응답결과 : ", response);
+      console.log("CurrentThunk user객체 결과 : ", response.user);
       return response;
     } catch (error) {
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        return rejectWithValue(null);
+      }
       return rejectWithValue(error.response?.data || "프로필 조회 실패");
     }
   }
@@ -107,7 +113,7 @@ const initialState = {
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
   profile: null,
   error: null, // 에러 상태
-  loading: false, // 로딩 상태
+  loading: false // 로딩 상태
 };
 
 // prettier-ignore
@@ -212,15 +218,15 @@ export const authSlice = createSlice({// Slice 생성
         state.user = action.payload;
       })
       .addCase(getCurrentUserThunk.rejected, (state, action) => {
-        if(action.payload == null) {
+        if(action.payload === null) {
           state.isLoggedIn = false;
           state.user = null;
           state.loading = false;
           state.error = null;
         return;
         }
-        console.log("getCurrentUser Thunk 실패 : ", action.payload)
-        /// state.error = action.payload;
+        console.error("getCurrentUser Thunk 실패 : ", action.payload)
+        state.error = action.payload;
         state.isLoggedIn = false;
         state.user = null;
         state.loading = false;
@@ -273,5 +279,5 @@ export const authSlice = createSlice({// Slice 생성
   },
 });
 
-export const { logout, updateUserRole, clearError } = authSlice.actions;
+export const { updateUserRole, clearError } = authSlice.actions;
 export default authSlice.reducer;

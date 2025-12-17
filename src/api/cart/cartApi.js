@@ -1,11 +1,11 @@
 import axios from "axios";
+import { axiosInstance } from "../user/axiosIntance";
 
-const API_SERVER_HOST = "http://localhost:8080";
-const prefix = `${API_SERVER_HOST}/api/cart`;
+const prefix = "/api/cart";
 
 export const getCartItems = async (userId) => {
   try {
-    const res = await axios.get(`${prefix}/items/${userId}`);
+    const res = await axiosInstance.get(`${prefix}/items/${userId}`);
     // console.log("Success getCartItems", res.data);
     return res.data;
   } catch (err) {
@@ -15,7 +15,7 @@ export const getCartItems = async (userId) => {
 };
 export const postChangeCartItem = async (dto) => {
   try {
-    const res = await axios.post(`${prefix}/change`, dto);
+    const res = await axiosInstance.post(`${prefix}/change`, dto);
     // console.log("Success change", res.data);
     return res.data;
   } catch (err) {
@@ -26,7 +26,7 @@ export const postChangeCartItem = async (dto) => {
 
 export const deleteCartItem = async (id) => {
   try {
-    const res = await axios.delete(`${prefix}/${id}`);
+    const res = await axiosInstance.delete(`${prefix}/${id}`);
     // console.log("Success delete", res.data);
     return res.data;
   } catch (err) {
@@ -37,7 +37,7 @@ export const deleteCartItem = async (id) => {
 
 export const deleteAllByUserId = async (userId) => {
   try {
-    const res = await axios.delete(`${prefix}/delete/${userId}`);
+    const res = await axiosInstance.delete(`${prefix}/delete/${userId}`);
     console.log(res.data);
     return res.data;
   } catch (err) {
