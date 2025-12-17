@@ -5,7 +5,10 @@ import ProductCard from "./ProductCard";
 import ProductSortBar from "./ProductSortBar";
 import ProductFilterBar from "../filter/ProductFilterBar";
 import { fetchCategoryList } from "../../api/admin/category/categoryApi";
-import { fetchProductsByThirdCategoryIds } from "../../api/admin/product/productApi";
+import {
+  fetchBrandsByThirdCategoryIds,
+  fetchProductsByThirdCategoryIds,
+} from "../../api/admin/product/productApi";
 import Pagination from "../pagination/Pagination";
 
 const ProductListComponent = () => {
@@ -16,6 +19,7 @@ const ProductListComponent = () => {
   const page = searchParams.get("page") || 1;
   const size = searchParams.get("size") || 12;
   const sort = searchParams.get("sort") || "sales";
+  const brandId = searchParams.get("brand") || 0;
 
   console.log("categoryDepth : ", categoryDepth, ", categoryId : ", categoryId);
   console.log("page : ", page, ", size : ", size);
@@ -26,6 +30,13 @@ const ProductListComponent = () => {
   const [pageResponse, setPageResponse] = useState({});
 
   console.log("selectedCategory : ", selectedCategory);
+
+  const [brandList, setBrandList] = useState([]);
+
+  const selectedBrand = brandList.find((b) => b.id.toString() === brandId) || {
+    id: 0,
+    name: undefined,
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -105,9 +116,16 @@ const ProductListComponent = () => {
         console.log("thirdIds : ", thirdIds);
       }
 
+      // 브랜드 목록 가져오기
+      const brandRes = await fetchBrandsByThirdCategoryIds({
+        thirdCategoryIds: thirdIds,
+      });
+      setBrandList(brandRes);
+
       // 상품 목록 가져오기
       const pageRes = await fetchProductsByThirdCategoryIds({
         thirdCategoryIds: thirdIds,
+        brandId: selectedBrand.id,
         page,
         size,
         sort,
@@ -116,7 +134,7 @@ const ProductListComponent = () => {
       console.log("PageResponse : ", pageRes);
     };
     loadData();
-  }, [categoryDepth, categoryId, page, size, sort]);
+  }, [categoryDepth, categoryId, page, size, sort, brandId]);
 
   // const { main, sub, deep } = useParams();
   // const decodedMain = decodeURIComponent(main).replace(/-/g, "/");
@@ -139,17 +157,16 @@ const ProductListComponent = () => {
   // }
 
   // 브랜드 필터(브랜드별로 상품 조회 가능하게 하는 필터) (기존 로직 유지)
-  const [filters, setFilters] = useState({});
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 12;
 
   // 제품 브랜드들을 brandOptions에 담아서 ProductFilterBar에 전달 (기존 로직 유지)
   // const brandOptions = [...new Set(categoryProducts.map((p) => p.brand))];
 
-  const brandOptions = [
-    ...new Set(pageResponse?.dtoList?.map((p) => p.brand.name)),
-  ];
+  // const brandOptions = [
+  //   ...new Set(pageResponse?.dtoList?.map((p) => p.brand.name)),
+  // ];
 
   // console.log("brandOptions:", brandOptions);
 
@@ -280,9 +297,10 @@ const ProductListComponent = () => {
           <div className="flex flex-col gap-4">
             {/* 브랜드 필터 */}
             <ProductFilterBar
-              filters={filters}
-              setFilters={setFilters}
-              brandOptions={brandOptions}
+              selectedBrand={selectedBrand}
+              // handleSelectBrand={handleSelectBrand}
+              // setSelectedBrand={setSelectedBrand}
+              brandList={brandList}
             />
 
             {/* 정렬 바 */}

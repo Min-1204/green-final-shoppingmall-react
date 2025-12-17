@@ -115,6 +115,7 @@ export const modifyProduct = async (id, productForm) => {
 
 export const fetchProductsByThirdCategoryIds = async ({
   thirdCategoryIds,
+  brandId,
   page,
   size,
   sort,
@@ -124,12 +125,24 @@ export const fetchProductsByThirdCategoryIds = async ({
   thirdCategoryIds?.forEach((id) => {
     params.append("categoryId", id);
   });
-
+  params.append("brandId", brandId || 0);
   params.append("page", page || 1);
   params.append("size", size || 24);
   params.append("sort", sort || "latest");
 
   const url = `${prefix}?${params.toString()}`;
+  const res = await axios.get(url);
+
+  return res.data;
+};
+
+export const fetchBrandsByThirdCategoryIds = async ({ thirdCategoryIds }) => {
+  const params = new URLSearchParams();
+  thirdCategoryIds?.forEach((id) => {
+    params.append("categoryId", id);
+  });
+
+  const url = `${prefix}/brands?${params.toString()}`;
   const res = await axios.get(url);
 
   return res.data;
