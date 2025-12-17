@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import ProductList from "./ProductList";
 import { fetchCategoryList } from "../../../api/admin/category/categoryApi";
 import { searchProductsByCondition } from "../../../api/admin/product/productApi";
+import { useSearchParams } from "react-router-dom";
+import Pagination from "../../pagination/Pagination";
 
 const initialCondition = {
   searchType: "productName",
@@ -34,6 +36,10 @@ const exposureStatusList = [
 ];
 
 const ProductSearchFilter = () => {
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const size = searchParams.get("size") || 10;
+
   const [categories1, setCategories1] = useState([]);
   const [categories2, setCategories2] = useState([]);
   const [categories3, setCategories3] = useState([]);
@@ -42,6 +48,7 @@ const ProductSearchFilter = () => {
     ...initialCondition,
   });
   const [searchResults, setSearchResults] = useState([]);
+  const [pageResponse, setPageResponse] = useState({});
 
   // 로그 찍는 용도
   useEffect(() => {
@@ -228,12 +235,27 @@ const ProductSearchFilter = () => {
     console.log("searchResult");
 
     const loadProductsData = async () => {
-      const data = await searchProductsByCondition(searchConditions);
+      const data = await searchProductsByCondition(searchConditions, 1, 10);
       console.log(data);
-      setSearchResults(data);
+      setPageResponse(data);
+      setSearchResults(data.dtoList);
     };
     loadProductsData();
   };
+
+  useEffect(() => {
+    const loadProductsData = async () => {
+      const data = await searchProductsByCondition(
+        searchConditions,
+        page,
+        size
+      );
+      console.log(data);
+      setPageResponse(data);
+      setSearchResults(data.dtoList);
+    };
+    loadProductsData();
+  }, [page, size]);
 
   const reSetCondition = () => {
     setSearchConditions(initialCondition);
@@ -428,6 +450,10 @@ const ProductSearchFilter = () => {
       </div>
 
       <ProductList products={searchResults} search={searchClick} />
+      {/* 페이지네이션 */}
+      <div className="mt-12">
+        <Pagination pageResponseDTO={pageResponse} />
+      </div>
     </div>
   );
 };
