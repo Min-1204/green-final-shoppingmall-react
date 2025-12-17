@@ -4,15 +4,17 @@ import CheckboxGroup from "../CheckboxGroup";
 import dayjs from "dayjs";
 
 const UserInfoMgr = () => {
-  const [signupMethods, setSignupMethods] = useState([]); //회원가입 방법 state
-  const [smsOptions, setSmsOptions] = useState([]); //SMS 수신 state
-  const [emailOptions, setEmailOptions] = useState([]); //email 수신 state
-  const [memberStatus, setMemberStatus] = useState([]); //회원 상태 state
-
-  const signupOptions = ["쇼핑몰", "네이버", "카카오", "기타", "전체"];
+  // const signupOptions = ["쇼핑몰", "네이버", "카카오", "구글", "전체"];
+  const memberGradeOptions = ["BRONZE", "SILVER", "GOLD", "DIAMOND", "VIP"];
   const smsOptionList = ["동의", "거부", "전체"];
   const emailOptionList = ["동의", "거부", "전체"];
-  const memberStatusOptions = ["정상", "탈퇴", "휴면", "전체"];
+  const memberStatusOptions = ["정상", "탈퇴", "전체"];
+
+  // const [signupMethods, setSignupMethods] = useState([]); //회원가입 방법 state
+  const [memberGrades, setMemberGrades] = useState(memberGradeOptions); //회원 등급
+  const [smsOptions, setSmsOptions] = useState(smsOptionList); //SMS 수신 state
+  const [emailOptions, setEmailOptions] = useState(emailOptionList); //email 수신 state
+  const [memberStatus, setMemberStatus] = useState(memberStatusOptions); //회원 상태 state
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -46,11 +48,7 @@ const UserInfoMgr = () => {
       {/* 헤더 */}
       <h2 className="text-2xl font-bold text-gray-800 border-b border-gray-300 pb-4 mb-6 flex justify-between items-center px-2">
         회원 조회
-        <div className="space-x-2 text-sm">
-          <button className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 cursor-pointer hover:bg-gray-100 transition shadow-sm">
-            엑셀 다운로드
-          </button>
-        </div>
+        <div className="space-x-2 text-sm"></div>
       </h2>
 
       {/* 필터 전체 영역 */}
@@ -64,10 +62,7 @@ const UserInfoMgr = () => {
             <select className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md">
               <option>이름</option>
               <option>아이디</option>
-              <option>닉네임</option>
-              <option>이메일</option>
               <option>핸드폰(네자리)</option>
-              <option>주소</option>
             </select>
             <input
               type="text"
@@ -113,44 +108,19 @@ const UserInfoMgr = () => {
           </div>
         </div>
 
-        <div className="flex border-b border-gray-300 items-stretch">
-          <div className="w-40 bg-gray-50 border-r border-gray-300 text-gray-700 font-semibold flex items-center justify-center p-2">
-            권한
-          </div>
-          <div className="flex items-center flex-grow p-2 gap-2">
-            <select className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md">
-              <option>관리자</option>
-              <option>매니저</option>
-              <option>일반</option>
-            </select>
-          </div>
-        </div>
-
-        {/* 결제 금액 */}
-        <div className="flex border-b border-gray-300 items-stretch">
-          <div className="w-40 bg-gray-50 border-r border-gray-300 text-gray-700 font-semibold flex items-center justify-center p-2">
-            결제 금액
-          </div>
-          <div className="flex items-center flex-grow p-2 gap-2">
-            <input
-              type="number"
-              className="border border-gray-300 p-1 w-24 rounded-md"
-            />
-            <span>~</span>
-            <input
-              type="number"
-              className="border border-gray-300 p-1 w-24 rounded-md"
-            />
-            <span>₩</span>
-          </div>
-        </div>
-
         {/* 회원가입 방법 */}
-        <CheckboxGroup
+        {/* <CheckboxGroup
           title="회원가입 방법"
           options={signupOptions}
           selectedOptions={signupMethods}
           setSelectedOptions={setSignupMethods}
+        /> */}
+
+        <CheckboxGroup
+          title="등급"
+          options={memberGradeOptions}
+          selectedOptions={memberGrades}
+          setSelectedOptions={setMemberGrades}
         />
 
         {/* SMS 수신 */}
