@@ -298,8 +298,6 @@ const ProductListComponent = () => {
             {/* 브랜드 필터 */}
             <ProductFilterBar
               selectedBrand={selectedBrand}
-              // handleSelectBrand={handleSelectBrand}
-              // setSelectedBrand={setSelectedBrand}
               brandList={brandList}
             />
 

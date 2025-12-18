@@ -49,9 +49,10 @@ const Pagination = ({ pageResponseDTO }) => {
     // 기존의 서치파라미터를 가져온 뒤 추가할것이 있다면 추가하는 로직
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("page", pageNum.toString());
-    if (!newParams.get("sort")) {
-      newParams.set("sort", "latest");
-    }
+    // 페이지번호를 눌렀을 때, sort 는 건드리지 않기로함 : (다른 사람들도 같이 쓰는 컴포넌트이기 때문에)
+    // if (!newParams.get("sort")) {
+    //   newParams.set("sort", "sales");
+    // }
     const queryStr = newParams.toString();
 
     //현재 페이지경로에 서치 파라미터를 붙여서 이동
