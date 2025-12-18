@@ -9,7 +9,7 @@ export default function Header() {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-  const { isLoggedIn } = useSelector((state) => state.authSlice);
+  const { user } = useSelector((state) => state.authSlice);
 
   const notices = [
     "[WELCOME] 공지/이벤트(미정)",
@@ -50,10 +50,8 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 2) 브랜드 헤더 */}
       <div className="w-full">
         <div className="max-w-7xl mx-auto px-6 py-5 lg:py-6 relative flex items-center justify-center">
-          {/* 가운데 로고 */}
           <div className="text-center leading-tight">
             <h1 className="text-black text-[30px] tracking-[0.32em] font-semibold">
               <Link to="/" className="cursor-pointer">
@@ -65,11 +63,9 @@ export default function Header() {
             </p>
           </div>
 
-          {/* 오른쪽 유틸 + 2차 메뉴 */}
           <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-end gap-1">
-            {/* 위쪽: 로그인/회원가입/장바구니/... */}
             <div className="flex items-center gap-2.5 text-[12px] text-black">
-              {isLoggedIn ? (
+              {user?.loginId ? (
                 <>
                   <button
                     onClick={handleLogout}
@@ -78,17 +74,24 @@ export default function Header() {
                     로그아웃
                   </button>
                   <span className="text-white/30">|</span>
-                  {/* 회원가입 버튼 숨김 - 대신 마이페이지로 이동 */}
-                  <button
-                    onClick={() => navigate("/mypage")}
-                    className="hover:text-gray-400 cursor-pointer transition-colors"
-                  >
-                    마이페이지
-                  </button>
+                  {user?.userRole === "ADMIN" ? (
+                    <button
+                      onClick={() => navigate("/admin/products")}
+                      className="hover:text-gray-400 cursor-pointer transition-colors"
+                    >
+                      관리자페이지
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => navigate("/mypage")}
+                      className="hover:text-gray-400 cursor-pointer transition-colors"
+                    >
+                      마이페이지
+                    </button>
+                  )}
                 </>
               ) : (
                 <>
-                  {/* 로그아웃 상태: 로그인/회원가입 버튼 */}
                   <button
                     onClick={() => navigate("/login")}
                     className="hover:text-gray-400 cursor-pointer transition-colors"
@@ -118,9 +121,6 @@ export default function Header() {
                 className="hover:text-gray-400 cursor-pointer transition-colors"
               >
                 고객센터
-              </button>
-              <button onClick={() => navigate("/mypage")}>
-                마이페이지(임시)
               </button>
             </div>
 

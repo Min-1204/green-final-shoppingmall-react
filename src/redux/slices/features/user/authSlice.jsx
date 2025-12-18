@@ -5,7 +5,7 @@ import {
   getProfileApi,
   loginApi,
   logoutApi,
-  modifyProfileApi
+  modifyProfileApi,
 } from "../../../../api/user/userApi";
 
 export const loginAsyncThunk = createAsyncThunk(
@@ -70,8 +70,8 @@ export const getUserProfileThunk = createAsyncThunk(
   async (loginId, { rejectWithValue }) => {
     try {
       const response = await getProfileApi(loginId);
-      console.log("CurrentThunk 응답결과 : ", response);
-      console.log("CurrentThunk user객체 결과 : ", response.user);
+      console.log("UserProfile 응답결과 : ", response);
+      console.log("UserProfile user객체 결과 : ", response.user);
       return response;
     } catch (error) {
       if (error.response?.status === 401 || error.response?.status === 403) {
@@ -113,7 +113,7 @@ const initialState = {
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
   profile: null,
   error: null, // 에러 상태
-  loading: false // 로딩 상태
+  loading: false, // 로딩 상태
 };
 
 // prettier-ignore
