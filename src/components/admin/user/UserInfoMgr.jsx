@@ -1,16 +1,24 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import UserInfoResultTable from "./UserInfoResultTable";
 import CheckboxGroup from "../CheckboxGroup";
 import dayjs from "dayjs";
+import { userFilterSearch } from "../../../api/admin/user/adminUserSearchApi";
 
 const UserInfoMgr = () => {
-  // const signupOptions = ["쇼핑몰", "네이버", "카카오", "구글", "전체"];
-  const memberGradeOptions = ["BRONZE", "SILVER", "GOLD", "DIAMOND", "VIP"];
+  const memberGradeOptions = [
+    "BRONZE",
+    "SILVER",
+    "GOLD",
+    "DIAMOND",
+    "VIP",
+    "전체",
+  ];
   const smsOptionList = ["동의", "거부", "전체"];
   const emailOptionList = ["동의", "거부", "전체"];
   const memberStatusOptions = ["정상", "탈퇴", "전체"];
 
-  // const [signupMethods, setSignupMethods] = useState([]); //회원가입 방법 state
+  const [searchType, setSearchType] = useState("이름");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [memberGrades, setMemberGrades] = useState(memberGradeOptions); //회원 등급
   const [smsOptions, setSmsOptions] = useState(smsOptionList); //SMS 수신 state
   const [emailOptions, setEmailOptions] = useState(emailOptionList); //email 수신 state
@@ -19,10 +27,42 @@ const UserInfoMgr = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  const [users, setUsers] = useState([]);
+
+  const agreementStateuses = (option) => {
+    if (option.includes("전체")) return null;
+    if (option.includes("동의")) return true;
+    if (option.includes("거부")) return false;
+  };
+
+  const convertUserStatuses = (statusOption) => {
+    if (statusOption.includes("전체")) return null;
+    const userStateList = [];
+    if (statusOption.includes("정상")) userStateList.push(false);
+    if (statusOption.includes("탈퇴")) userStateList.push(true);
+
+    return userStateList;
+  };
+
+  const userSearchHandler = async () => {
+    const condition = {
+      searchType,
+      searchKeyword,
+      startDate: startDate || null,
+      endDate: endDate || null,
+      userGrade: memberGrades,
+      smsAgreement: agreementStateuses(smsOptions),
+      emailAgreement: agreementStateuses(emailOptions),
+      userStatuses: convertUserStatuses(memberStatus),
+    };
+
+    const userList = await userFilterSearch(condition);
+    setUsers(userList);
+  };
+
   const dateHandler = (label) => {
     let today = dayjs(); //오늘 기준
     let start;
-
     if (label === "오늘") {
       start = today;
     } else if (label === "1주일") {
@@ -43,6 +83,25 @@ const UserInfoMgr = () => {
     setEndDate(today.format("YYYY-MM-DD"));
   };
 
+  const resetHandler = () => {
+    //검색어 초기화
+    setSearchType("이름");
+    setSearchKeyword("");
+
+    //체크박스 초기화
+    setMemberGrades([]);
+    setSmsOptions([]);
+    setEmailOptions([]);
+    setMemberStatus([]);
+
+    //날짜 초기화
+    setStartDate("");
+    setEndDate("");
+
+    //검색 결과 초기화
+    setUsers([]);
+  };
+
   return (
     <div className="w-full bg-white p-6 text-sm font-['Inter'] min-h-screen">
       {/* 헤더 */}
@@ -59,15 +118,21 @@ const UserInfoMgr = () => {
             검색어
           </div>
           <div className="flex items-center flex-grow p-2 gap-2">
-            <select className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md">
+            <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              className="border border-gray-300 bg-white p-1 rounded-md cursor-pointer"
+            >
               <option>이름</option>
               <option>아이디</option>
               <option>핸드폰(네자리)</option>
             </select>
+
             <input
               type="text"
-              className="border border-gray-300 p-1 w-80 rounded-md"
-              placeholder="검색어를 입력하세요"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              className="border border-gray-300 p-1 w-80 rounded-md bg-white"
             />
           </div>
         </div>
@@ -108,14 +173,6 @@ const UserInfoMgr = () => {
           </div>
         </div>
 
-        {/* 회원가입 방법 */}
-        {/* <CheckboxGroup
-          title="회원가입 방법"
-          options={signupOptions}
-          selectedOptions={signupMethods}
-          setSelectedOptions={setSignupMethods}
-        /> */}
-
         <CheckboxGroup
           title="등급"
           options={memberGradeOptions}
@@ -150,16 +207,22 @@ const UserInfoMgr = () => {
 
       {/* 검색 버튼 */}
       <div className="flex justify-center gap-4 mb-6">
-        <button className="bg-blue-600 text-white px-8 py-2 cursor-pointer rounded-md shadow-md hover:bg-blue-700 transition font-semibold">
+        <button
+          className="bg-blue-600 text-white px-8 py-2 cursor-pointer rounded-md shadow-md hover:bg-blue-700 transition font-semibold"
+          onClick={userSearchHandler}
+        >
           검색
         </button>
-        <button className="border border-gray-300 bg-white px-8 py-2 text-gray-700 cursor-pointer rounded-md shadow-md hover:bg-gray-100 transition font-semibold">
+        <button
+          className="border border-gray-300 bg-white px-8 py-2 text-gray-700 cursor-pointer rounded-md shadow-md hover:bg-gray-100 transition font-semibold"
+          onClick={resetHandler}
+        >
           초기화
         </button>
       </div>
 
       {/* 결과 테이블 */}
-      <UserInfoResultTable />
+      <UserInfoResultTable users={users} />
     </div>
   );
 };

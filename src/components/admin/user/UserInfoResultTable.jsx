@@ -1,6 +1,6 @@
 import React from "react";
 
-const UserInfoResultTable = () => {
+const UserInfoResultTable = ({ users }) => {
   const headers = [
     "선택",
     "번호",
@@ -13,44 +13,13 @@ const UserInfoResultTable = () => {
     "회원 상태",
   ];
 
-  const dummyData = [
-    {
-      id: 1,
-      username: "user1",
-      email: "user1@test.com",
-      phone: "010-0000-0001",
-      grade: "일반",
-      joinDate: "2025-10-30",
-      status: "정상",
-    },
-    {
-      id: 2,
-      username: "user2",
-      email: "user2@test.com",
-      phone: "010-0000-0002",
-      grade: "일반",
-      joinDate: "2025-10-29",
-      status: "정상",
-    },
-    {
-      id: 3,
-      username: "user3",
-      email: "user3@test.com",
-      phone: "010-0000-0003",
-      grade: "일반",
-      joinDate: "2025-10-28",
-      status: "탈퇴",
-    },
-  ];
-
   const gradeOptions = ["일반", "매니저", "관리자"];
-  const levelLabels = ["BRONZE", "SILVER", "GOLD", "DIAMOND", "VIP"];
 
   return (
     <div className="w-full mt-6">
       <div className="flex justify-between items-center mb-3 text-gray-700 flex-wrap gap-2 px-2">
         <span className="font-semibold text-lg">
-          검색 결과 (총 {dummyData.length} 명)
+          검색 결과 (총 {users.length} 명)
         </span>
 
         <div className="flex items-center gap-2 flex-wrap">
@@ -60,9 +29,6 @@ const UserInfoResultTable = () => {
           <button className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1 rounded-md border border-green-200 cursor-pointer transition shadow-sm">
             SMS 발송
           </button>
-          {/* <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md border border-gray-300 cursor-pointer hover:bg-gray-300 transition shadow-sm">
-            다운로드
-          </button> */}
 
           <select
             defaultValue="recent"
@@ -74,30 +40,26 @@ const UserInfoResultTable = () => {
         </div>
       </div>
 
-      {/* 테이블 영역 */}
+      {/* 테이블 */}
       <div className="overflow-x-auto border border-gray-300 rounded-lg shadow-md">
-        <table className="min-w-full border-collapse text-sm text-center">
+        <table className="min-w-full table-fixed border-collapse text-sm text-center">
+          {/* 컬럼 폭 고정 */}
+          <colgroup>
+            <col style={{ width: "20px" }} /> {/* 선택 */}
+            <col style={{ width: "20px" }} /> {/* 번호 */}
+            <col style={{ width: "100px" }} /> {/* 아이디 */}
+            <col style={{ width: "150px" }} /> {/* 이메일 */}
+            <col style={{ width: "150px" }} /> {/* 핸드폰 */}
+            <col style={{ width: "70px" }} /> {/* 권한 */}
+            <col style={{ width: "70px" }} /> {/* 등급 */}
+            <col style={{ width: "100px" }} /> {/* 가입일 */}
+            <col style={{ width: "50px" }} /> {/* 회원 상태 */}
+          </colgroup>
+
           <thead className="bg-gray-100 border-b border-gray-300">
-            <tr className="text-gray-700 font-semibold text-sm divide-x divide-gray-300">
+            <tr className="text-gray-700 font-semibold divide-x divide-gray-300">
               {headers.map((header) => (
-                <th
-                  key={header}
-                  className={`px-3 py-3 whitespace-nowrap ${
-                    header === "선택"
-                      ? "w-[50px]"
-                      : header === "번호"
-                      ? "w-[50px]"
-                      : header === "권한"
-                      ? "w-[100px]"
-                      : header === "등급"
-                      ? "w-[100px]"
-                      : header === "가입일"
-                      ? "w-[130px]"
-                      : header === "관리"
-                      ? "w-[130px]"
-                      : ""
-                  }`}
-                >
+                <th key={header} className="px-2 py-3 whitespace-nowrap">
                   {header}
                 </th>
               ))}
@@ -105,62 +67,75 @@ const UserInfoResultTable = () => {
           </thead>
 
           <tbody className="bg-white divide-y divide-gray-200">
-            {dummyData.map((user, idx) => (
-              <tr
-                key={user.id}
-                className="hover:bg-gray-50 transition divide-x divide-gray-200"
-              >
-                <td className="px-2 py-3 w-[50px]">
-                  <input
-                    type="checkbox"
-                    className="w-3.5 h-3.5 accent-blue-600 cursor-pointer"
-                  />
+            {users.length === 0 ? (
+              <tr>
+                <td colSpan={headers.length} className="py-10 text-gray-500">
+                  검색 결과가 없습니다.
                 </td>
-                <td className="px-3 py-3 w-[50px]">{user.id}</td>
-                <td className="px-3 py-3 text-blue-600 cursor-pointer hover:underline">
-                  {user.username}
-                </td>
-                <td className="px-3 py-3">{user.email}</td>
-                <td className="px-3 py-3">{user.phone}</td>
+              </tr>
+            ) : (
+              users.map((user) => (
+                <tr
+                  key={user.id}
+                  className="h-[55px] hover:bg-gray-50 transition divide-x divide-gray-200"
+                >
+                  {/* 선택 */}
+                  <td>
+                    <input
+                      type="checkbox"
+                      className="w-3.5 h-3.5 accent-blue-600 cursor-pointer"
+                    />
+                  </td>
 
-                {/* 권한 */}
-                <td className="px-2 py-3 w-[90px]">
-                  <select
-                    defaultValue={user.grade}
-                    className="border border-gray-300 px-1 py-[2px] text-sm text-gray-700 outline-none rounded-md w-full"
-                  >
-                    {gradeOptions.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                </td>
+                  {/* 번호 */}
+                  <td>{user.id}</td>
 
-                {/* 등급 */}
-                <td className="px-3 py-3 w-[80px] text-sm font-medium text-gray-800">
-                  {levelLabels[idx % levelLabels.length]}
-                </td>
+                  {/* 아이디 */}
+                  <td className="truncate text-blue-600 cursor-pointer hover:underline">
+                    {user.loginId}
+                  </td>
 
-                {/* 가입일 */}
-                <td className="px-3 py-3 w-[100px]">{user.joinDate}</td>
+                  {/* 이메일 */}
+                  <td>{user.email}</td>
 
-                {/* 관리 */}
-                <td className="px-3 py-3 w-[100px]">
-                  <div className="flex items-center justify-center gap-1 whitespace-nowrap">
+                  {/* 핸드폰 */}
+                  <td>{user.phoneNumber}</td>
+
+                  {/* 권한 */}
+                  <td>
+                    <select
+                      defaultValue={user.userRole}
+                      className="border border-gray-300 text-sm text-gray-700 outline-none rounded-md w-[70px]"
+                    >
+                      {gradeOptions.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+
+                  {/* 등급 */}
+                  <td>{user.userGrade}</td>
+
+                  {/* 가입일 */}
+                  <td>{user.createdAt?.substring(0, 10)}</td>
+
+                  {/* 회원 상태 */}
+                  <td>
                     <span
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        user.status === "정상"
+                        user.deleted === false
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
                       }`}
                     >
-                      {user.status}
+                      {user.deleted === false ? "정상" : "탈퇴"}
                     </span>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
