@@ -1,11 +1,19 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { changeOrderProductStatus } from "../../../api/order/orderApi";
+import ConfirmModal from "./ConfirmModal";
 
 const OrderSearchResultTable = ({ orders, searchHandler }) => {
   // console.log("orders", orders);
 
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // 상태 변경 모달창
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  // 상태 변경 모달창에 전달하는 주문 상품 item
+  const [confirmModalData, setConfirmModalData] = useState({});
+  // 상태 변경 요청할 상태
+  const [requestStatus, setRequestStatus] = useState();
 
   // orders가 유효한 객체인지 확인하고, 아니면 기본값(빈 객체)을 사용
   const data = orders || {};
@@ -15,35 +23,6 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
 
   const totalCount =
     data.totalDataCount !== undefined ? data.totalDataCount : orderList.length;
-
-  // const getOrderStatusName = (status) => {
-  //   switch (status) {
-  //     case "PENDING_PAYMENT":
-  //       return "주문접수";
-  //     case "PAID":
-  //       return "결제확인";
-  //     case "PREPARING":
-  //       return "배송준비중";
-  //     case "SHIPPING":
-  //       return "배송중";
-  //     case "DELIVERED":
-  //       return "배송완료";
-  //     case "CANCEL_REQUESTED":
-  //       return "취소 신청";
-  //     case "CANCELED":
-  //       return "취소 완료";
-  //     case "EXCHANGE_REQUESTED":
-  //       return "교환 신청";
-  //     case "EXCHANGED":
-  //       return "교환 완료";
-  //     case "RETURN_REQUESTED":
-  //       return "반품/환불 신청";
-  //     case "RETURNED":
-  //       return "반품/환불 완료";
-  //     default:
-  //       return status; // 정의되지 않은 상태는 그대로 반환
-  //   }
-  // };
 
   const flatOrders = orderList.flatMap((order) => {
     return order.orderProducts.map((op, index) => {
@@ -73,6 +52,15 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
   const handleChangeStatus = async (item, value) => {
     if (value == "CONFIRMED")
       return alert("구매확정은 사용자가 할 수 있습니다.");
+    if (value == "RETURN_REQUESTED")
+      return alert("반품/환불 신청은 사용자가 할 수 있습니다.");
+    setConfirmModalData(item);
+    setRequestStatus(value);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmChangeStatus = async (item, value) => {
+    // console.log("handleConfirmChangeStatus => ", item, value);
     await changeOrderProductStatus(item.orderId, value);
     await searchHandler();
   };
@@ -202,6 +190,17 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
           </tbody>
         </table>
       </div>
+      {isConfirmModalOpen && (
+        <ConfirmModal
+          confirmModalData={confirmModalData}
+          requestStatus={requestStatus}
+          onConfirm={(item, value) => {
+            handleConfirmChangeStatus(item, value);
+            setIsConfirmModalOpen(false);
+          }}
+          onClose={() => setIsConfirmModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
