@@ -173,9 +173,27 @@ const AdminOrderMgrComponent = () => {
     setProductName("");
     setStartDate("");
     setEndDate("");
-    setSelectedOrderStatuses([]);
+    setSelectedOrderStatuses([
+      "전체",
+      "주문접수",
+      "결제완료",
+      "배송준비중",
+      "배송중",
+      "배송완료",
+      "구매확정",
+      "반품/환불 신청",
+      "반품/환불 완료",
+    ]);
     setSelectedDelivery([]);
-    setSelectedPayment([]);
+    setSelectedPayment([
+      "전체",
+      "신용/체크카드",
+      "카카오페이",
+      "네이버페이",
+      "PAYCO",
+      "휴대폰 결제",
+      "계좌이체",
+    ]);
   };
 
   return (
@@ -237,7 +255,7 @@ const AdminOrderMgrComponent = () => {
           <div className="p-2 flex items-center flex-wrap flex-grow gap-x-3">
             <select className="border border-gray-300 p-1 mr-2 bg-white cursor-pointer h-[32px] rounded-md focus:ring-blue-500 focus:border-blue-500 transition">
               <option>주문일</option>
-              <option>결제일</option>
+              {/* <option>결제일</option> */}
             </select>
             <div className="flex items-center gap-1">
               <input
