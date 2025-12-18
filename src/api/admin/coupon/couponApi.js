@@ -22,3 +22,8 @@ export const fetchCouponById = async (couponId) => {
   const res = await axiosInstance.get(`${prefix}/${couponId}`);
   return res.data;
 };
+
+export const deleteCoupon = async (couponId) => {
+  const res = await axiosInstance.delete(`${prefix}/delete/${couponId}`);
+  return res.data;
+};
