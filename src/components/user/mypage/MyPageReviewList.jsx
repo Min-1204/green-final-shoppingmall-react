@@ -221,6 +221,13 @@ const MyPageReviewList = () => {
               setSelectedReviewEdit(null);
             }}
             review={selectedReviewEdit}
+            product={{
+              productId: selectedReviewEdit.productId,
+              productName: selectedReviewEdit.productName,
+              brandName: selectedReviewEdit.brandName,
+              imageUrl: selectedReviewEdit.productImage,
+              purchaseDate: selectedReviewEdit.purchaseDate,
+            }}
             update={reviewUpdatedHandler}
           />
         )}

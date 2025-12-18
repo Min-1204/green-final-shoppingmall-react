@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { reviewDelete, reviewModify } from "../../api/review/reviewApi";
 import { useSelector } from "react-redux";
 
-const ReviewModifyDelete = ({ closeModal, review, update }) => {
+const ReviewModifyDelete = ({ closeModal, review, update, product }) => {
   const [currentRating, setCurrentRating] = useState(0);
   const [reviewContent, setReviewContent] = useState("");
   const [images, setImages] = useState([]); // 이미지 미리보기+원본RUL
@@ -157,35 +157,43 @@ const ReviewModifyDelete = ({ closeModal, review, update }) => {
           </button>
         </h2>
 
-        {/* 상품 + 별점 */}
-        <div className="flex items-center space-x-4 border-b pb-4">
-          <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center text-xs text-gray-500">
-            이미지
-          </div>
+        {/* 상품 정보 + 별점 */}
+        <div className="flex items-center gap-4 border-b pb-4">
+          <img
+            src={product?.imageUrl}
+            alt={product?.productName}
+            className="w-16 h-16 object-cover rounded-md border"
+          />
+
           <div>
-            <div className="flex items-center space-x-2 mt-1">
-              <span className="text-gray-600 text-sm">별점:</span>
-              <div className="flex space-x-1 text-2xl">
-                {[1, 2, 3, 4, 5].map((star) => {
-                  let starClass = "cursor-pointer transition text-gray-300";
-                  if (currentRating >= star)
-                    starClass = "cursor-pointer transition text-yellow-500";
-                  return (
-                    <span
-                      key={star}
-                      className={starClass}
-                      onClick={() => setCurrentRating(star)}
-                    >
-                      {currentRating >= star ? "★" : "☆"}
-                    </span>
-                  );
-                })}
-              </div>
+            <p className="text-sm font-semibold text-zinc-700">
+              {product?.brandName}
+            </p>
+
+            <p className="text-sm font-medium">{product?.productName}</p>
+
+            <p className="text-xs text-zinc-500 mt-0.5">
+              주문일자 {product?.purchaseDate?.slice(0, 10).replace(/-/g, ".")}
+            </p>
+
+            {/* 별점 */}
+            <div className="flex gap-1 mt-1 text-2xl">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`cursor-pointer ${
+                    currentRating >= star ? "text-yellow-500" : "text-gray-300"
+                  }`}
+                  onClick={() => setCurrentRating(star)}
+                >
+                  ★
+                </span>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* 리뷰 작성란 */}
+        {/* 리뷰 작성란(수정) */}
         <textarea
           className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:border-green-500 focus:ring-green-500 resize-none placeholder:text-gray-400 mt-4"
           rows={8}
