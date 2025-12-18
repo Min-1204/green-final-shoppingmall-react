@@ -14,14 +14,14 @@ const AdminLayout = ({ children }) => {
   const { user, profile } = useSelector((state) => state.authSlice);
 
   const location = useLocation();
-  console.log(location.pathname);
-  console.log("어드민 유저 확인 : ", user);
+  // console.log(location.pathname);
+  // console.log("어드민 유저 확인 : ", user);
 
   useEffect(() => {
     if (user?.loginId && !profile) {
-      console.log(
-        "여기는 AdminLayOut 로그인한 유저는 있지만 Profile이 없음으로 API 호출 실행"
-      );
+      // console.log(
+      //   "여기는 AdminLayOut 로그인한 유저는 있지만 Profile이 없음으로 API 호출 실행"
+      // );
       dispatch(getUserProfileThunk(user.loginId));
     }
   }, [user, profile, dispatch]);

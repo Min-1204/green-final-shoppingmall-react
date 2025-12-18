@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import CouponSearchList from "./CouponSearchList";
-import { searchCoupons } from "../../../api/admin/coupon/couponApi";
+import {
+  deleteCoupon,
+  searchCoupons,
+} from "../../../api/admin/coupon/couponApi";
+import { CouponConfirmModal } from "./CouponConfirmModal";
 
 const initCondition = {
   searchType: "name",
@@ -16,6 +20,7 @@ const initCondition = {
 export default function CouponSearchFilter() {
   const [filters, setFilters] = useState({ ...initCondition });
   const [searchResults, setSearchResults] = useState([]);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   useEffect(() => {
     console.log("filters : ", filters);
@@ -109,6 +114,18 @@ export default function CouponSearchFilter() {
     loadCoupons();
   };
 
+  const handleDeleteCoupon = (coupon) => {
+    const delCoupon = async () => {
+      const res = await deleteCoupon(coupon.id);
+      console.log("쿠폰 삭제 요청 결과 : ", res);
+      const coupons = await searchCoupons(filters);
+      console.log("coupons : ", coupons);
+      setSearchResults([...coupons]);
+    };
+    delCoupon();
+    setOpenDeleteModal(false);
+  };
+
   const isAllDiscountChecked = filters.discountType.length === 2;
   const isAllIssuranceChecked = filters.issueType.length === 3;
   const isAllAvailabilityChecked = filters.availability.length === 3;
@@ -117,9 +134,9 @@ export default function CouponSearchFilter() {
     <div className="w-full bg-white p-6 text-sm">
       <h2 className="text-2xl font-bold text-gray-800 border-b border-gray-300 pb-4 mb-6 flex justify-between items-center px-2">
         쿠폰 조회
-        <button className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm text-gray-700 cursor-pointer hover:bg-gray-100 transition shadow-sm">
+        {/* <button className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm text-gray-700 cursor-pointer hover:bg-gray-100 transition shadow-sm">
           엑셀 다운로드
-        </button>
+        </button> */}
       </h2>
 
       <div className="border border-gray-300 mb-6 rounded-lg overflow-hidden shadow-lg">
@@ -343,7 +360,12 @@ export default function CouponSearchFilter() {
           초기화
         </button>
       </div>
-      <CouponSearchList coupons={searchResults} />
+      <CouponSearchList
+        coupons={searchResults}
+        handleDeleteCoupon={handleDeleteCoupon}
+        openDeleteModal={openDeleteModal}
+        setOpenDeleteModal={setOpenDeleteModal}
+      />
     </div>
   );
 }

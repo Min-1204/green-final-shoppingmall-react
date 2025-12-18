@@ -6,8 +6,14 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CouponConfirmModal } from "./CouponConfirmModal";
 
-export default function CouponSearchList({ coupons }) {
+export default function CouponSearchList({
+  coupons,
+  handleDeleteCoupon,
+  openDeleteModal,
+  setOpenDeleteModal,
+}) {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
@@ -33,7 +39,7 @@ export default function CouponSearchList({ coupons }) {
         <div className="text-sm font-semibold text-gray-700">
           목록 <span className="text-blue-600">(총 {coupons.length}개)</span>
         </div>
-        <select
+        {/* <select
           className="border border-gray-300 px-3 py-1 rounded-md text-sm bg-white cursor-pointer"
           value={itemsPerPage}
           onChange={(e) => setItemsPerPage(Number(e.target.value))}
@@ -41,7 +47,7 @@ export default function CouponSearchList({ coupons }) {
           <option value={25}>25개씩 보기</option>
           <option value={50}>50개씩 보기</option>
           <option value={100}>100개씩 보기</option>
-        </select>
+        </select> */}
       </div>
 
       <div className="overflow-x-auto">
@@ -115,6 +121,19 @@ export default function CouponSearchList({ coupons }) {
                     >
                       수정
                     </button>
+                    <button
+                      className="bg-red-50 text-red-700 hover:bg-red-100 px-2 py-1 rounded-md border border-red-200 cursor-pointer transition shadow-sm"
+                      onClick={() => setOpenDeleteModal(true)}
+                    >
+                      삭제
+                    </button>
+                    {openDeleteModal && (
+                      <CouponConfirmModal
+                        onClose={() => setOpenDeleteModal(false)}
+                        onConfirm={handleDeleteCoupon}
+                        coupon={coupon}
+                      />
+                    )}
                   </div>
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
