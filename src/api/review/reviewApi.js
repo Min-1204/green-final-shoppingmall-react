@@ -1,23 +1,23 @@
 import axios from "axios";
+import { axiosInstance } from "../user/axiosIntance";
 
-export const API_SERVER_HOST = "http://localhost:8080";
-const prefix = `${API_SERVER_HOST}/api/review`;
+const prefix = "/api/review";
 
 export const reviewList = async (productId, sort, page = 1, size = 10) => {
-  const { data } = await axios.get(`${prefix}/product/${productId}`, {
+  const { data } = await axiosInstance.get(`${prefix}/product/${productId}`, {
     params: {
       sort: sort,
       page: page,
-      size: size,
-    },
+      size: size
+    }
   });
   console.log("리뷰 목록 => ", data, "제품 Id => ", productId);
   return data;
 };
 
 export const getMyReviews = async (userId, page = 1, size = 10) => {
-  const { data } = await axios.get(`${prefix}/user/${userId}`, {
-    params: { page: page, size: size },
+  const { data } = await axiosInstance.get(`${prefix}/user/${userId}`, {
+    params: { page: page, size: size }
   });
   console.log("내 리뷰 => ", data);
   return data;
@@ -36,8 +36,8 @@ export const reviewAdd = async (review) => {
           userId: review?.userId,
           loginId: review?.loginId,
           productId: review?.productId,
-          orderId: review?.orderId,
-        }),
+          orderId: review?.orderId
+        })
       ],
       { type: "application/json" }
     )
@@ -48,7 +48,7 @@ export const reviewAdd = async (review) => {
   }
 
   const header = { headers: { "Content-Type": "multipart/form-data" } };
-  const { data } = await axios.post(`${prefix}/add`, formData, header);
+  const { data } = await axiosInstance.post(`${prefix}/add`, formData, header);
   console.log("data => ", data);
   return data;
 };
@@ -63,8 +63,8 @@ export const reviewModify = async (reviewId, updatedReview, userId) => {
           content: updatedReview?.content,
           rating: updatedReview?.rating,
           userId: userId,
-          deleteImgUrls: updatedReview?.deleteImgUrls,
-        }),
+          deleteImgUrls: updatedReview?.deleteImgUrls
+        })
       ],
       { type: "application/json" }
     )
@@ -74,33 +74,40 @@ export const reviewModify = async (reviewId, updatedReview, userId) => {
     formData.append("reviewImage", file);
   }
 
-  const { data } = await axios.put(`${prefix}/modify/${reviewId}`, formData);
+  const { data } = await axiosInstance.put(
+    `${prefix}/modify/${reviewId}`,
+    formData
+  );
   console.log("수장하려는 리뷰 Id => ", reviewId);
   return data;
 };
 
 export const reviewDelete = async (reviewId, userId) => {
-  const { data } = await axios.delete(`${prefix}/delete/${reviewId}`, {
-    params: { userId: userId },
+  const { data } = await axiosInstance.delete(`${prefix}/delete/${reviewId}`, {
+    params: { userId: userId }
   });
   console.log("삭제한 리뷰 Id => ", reviewId);
   return data;
 };
 
 export const reviewAvgRating = async (productId) => {
-  const { data } = await axios.get(`${prefix}/product/${productId}/avg`);
+  const { data } = await axiosInstance.get(
+    `${prefix}/product/${productId}/avg`
+  );
   // console.log("제품 리뷰 평균 별점 => ", data);
   return data;
 };
 
 export const reviewCount = async (productId) => {
-  const { data } = await axios.get(`${prefix}/product/${productId}/count`);
+  const { data } = await axiosInstance.get(
+    `${prefix}/product/${productId}/count`
+  );
   // console.log("제품 리뷰 개수 => ", data);
   return data;
 };
 
 export const reviewRatingByCount = async (productId, rating) => {
-  const { data } = await axios.get(
+  const { data } = await axiosInstance.get(
     `${prefix}/product/${productId}/${rating}/count`
   );
   // console.log("제품 리뷰 별점별 개수 => ", data);
@@ -108,7 +115,9 @@ export const reviewRatingByCount = async (productId, rating) => {
 };
 
 export const reviewPositive = async (productId) => {
-  const { data } = await axios.get(`${prefix}/product/${productId}/positive`);
+  const { data } = await axiosInstance.get(
+    `${prefix}/product/${productId}/positive`
+  );
   // console.log("긍정적 리뷰 개수 => ", data);
   return data;
 };

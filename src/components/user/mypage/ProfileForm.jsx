@@ -30,6 +30,15 @@ export default function ProfileForm() {
   const [modifyForm, setModifyForm] = useState(initializeForm(profile));
 
   useEffect(() => {
+    if (user?.loginId && !profile) {
+      console.log(
+        "여기는 ProfileForm 로그인한 유저는 있지만 Profile이 없음으로 API 호출 실행"
+      );
+      dispatch(getUserProfileThunk(user.loginId));
+    }
+  }, [user, profile, dispatch]);
+
+  useEffect(() => {
     if (profile) {
       setModifyForm(initializeForm(profile));
       console.log("ProfileForm: Redux profile 데이터 폼 상태 갱신 완료");
@@ -72,6 +81,9 @@ export default function ProfileForm() {
       console.log("여기는 result 확인용 로그 : ", result);
       if (result.success) {
         alert(result.message);
+        await dispatch(getUserProfileThunk(user.loginId)).unwrap();
+        console.log("프로필 재조회 완료");
+        setModifyForm((prev) => ({ ...prev, password: "" }));
       }
     } catch (error) {
       alert(error.message);
