@@ -164,19 +164,16 @@ export const searchProductsByCondition = async (condition, page, size) => {
 
 export const restockOption = async (updatedOptions) => {
   const res = await axiosInstance.patch(
-    `${API_SERVER_HOST}/api/product_options/restock`,
+    "/api/product_options/restock",
     updatedOptions
   );
   return res.data;
 };
 
 export const applyRestockAlarm = async (userId, optionId) => {
-  const res = await axiosInstance.post(
-    `${API_SERVER_HOST}/api/restock-notification`,
-    {
-      userId,
-      optionId,
-    }
-  );
+  const res = await axiosInstance.post("/api/restock-notification", {
+    userId,
+    optionId,
+  });
   return res.data;
 };
