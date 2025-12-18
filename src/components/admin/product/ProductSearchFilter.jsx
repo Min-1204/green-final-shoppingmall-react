@@ -43,12 +43,12 @@ const ProductSearchFilter = () => {
   const [categories1, setCategories1] = useState([]);
   const [categories2, setCategories2] = useState([]);
   const [categories3, setCategories3] = useState([]);
-  const [categories4, setCategories4] = useState([]);
   const [searchConditions, setSearchConditions] = useState({
     ...initialCondition,
   });
   const [searchResults, setSearchResults] = useState([]);
   const [pageResponse, setPageResponse] = useState({ dtoList: [] });
+  const [hasSearched, setHasSearched] = useState(false);
 
   // 로그 찍는 용도
   useEffect(() => {
@@ -231,37 +231,33 @@ const ProductSearchFilter = () => {
     setSearchConditions((prev) => ({ ...prev, startDate, endDate }));
   };
 
+  const loadProductsData = async (pageNum, pageSize) => {
+    const data = await searchProductsByCondition(
+      searchConditions,
+      pageNum,
+      pageSize
+    );
+    console.log(data);
+    setPageResponse(data);
+    setSearchResults(data.dtoList);
+  };
+
   const searchClick = () => {
     console.log("searchResult");
-
-    const loadProductsData = async () => {
-      const data = await searchProductsByCondition(searchConditions, 1, 10);
-      console.log(data);
-      setPageResponse(data);
-      setSearchResults(data.dtoList);
-    };
-    loadProductsData();
+    setHasSearched(true);
+    loadProductsData(1, 10);
   };
 
   useEffect(() => {
-    const loadProductsData = async () => {
-      const data = await searchProductsByCondition(
-        searchConditions,
-        page,
-        size
-      );
-      console.log(data);
-      setPageResponse(data);
-      setSearchResults(data.dtoList);
-    };
-    loadProductsData();
+    if (hasSearched) {
+      loadProductsData(page, size);
+    }
   }, [page, size]);
 
   const reSetCondition = () => {
     setSearchConditions(initialCondition);
     setCategories2([]);
     setCategories3([]);
-    setCategories4([]);
   };
 
   return (
@@ -270,9 +266,9 @@ const ProductSearchFilter = () => {
       <h2 className="text-2xl font-bold text-gray-800 border-b border-gray-300 pb-4 mb-6 flex justify-between items-center px-2">
         상품 조회
         <div className="space-x-2 text-sm">
-          <button className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 cursor-pointer hover:bg-gray-100 transition shadow-sm">
+          {/* <button className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 cursor-pointer hover:bg-gray-100 transition shadow-sm">
             엑셀 다운로드
-          </button>
+          </button> */}
         </div>
       </h2>
 
@@ -310,24 +306,22 @@ const ProductSearchFilter = () => {
             카테고리
           </div>
           <div className="flex items-center flex-grow p-2 gap-2">
-            {[categories1, categories2, categories3, categories4].map(
-              (cats, i) => (
-                <select
-                  key={i}
-                  name={`category${i + 1}`}
-                  value={searchConditions[`category${i + 1}`]}
-                  onChange={selectCategoryHandler}
-                  className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md"
-                >
-                  <option value="" disabled hidden>
-                    {i + 1}차카테고리
-                  </option>
-                  {cats.map((category) => (
-                    <option key={category.id}>{category.name}</option>
-                  ))}
-                </select>
-              )
-            )}
+            {[categories1, categories2, categories3].map((cats, i) => (
+              <select
+                key={i}
+                name={`category${i + 1}`}
+                value={searchConditions[`category${i + 1}`]}
+                onChange={selectCategoryHandler}
+                className="border border-gray-300 p-1 bg-white cursor-pointer rounded-md"
+              >
+                <option value="" disabled hidden>
+                  {i + 1}차카테고리
+                </option>
+                {cats.map((category) => (
+                  <option key={category.id}>{category.name}</option>
+                ))}
+              </select>
+            ))}
           </div>
         </div>
 
