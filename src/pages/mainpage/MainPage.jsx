@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import Footer from "../../layouts/mainpage/Footer";
 
 const mainImages = [
   "https://www.theskinfood.com/shopimages/skinfood/main_rolling2_364.jpg?1762732886",
@@ -179,8 +180,8 @@ export default function MainPage() {
         </section>
       </main>
 
-      <footer className="bg-gray-100 text-center text-gray-600 py-5 mt-auto">
-        © 2025 SKPL — Skin Korea Pure Lab (미정)
+      <footer>
+        <Footer />
       </footer>
     </div>
   );
