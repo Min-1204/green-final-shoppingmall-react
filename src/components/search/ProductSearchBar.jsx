@@ -162,64 +162,62 @@ const ProductSearchBar = memo(() => {
   };
 
   return (
-    <div
-      className="w-full max-w-lg mx-auto relative mt-6 mb-6"
-      ref={searchBarRef}
-    >
+    <div className="flex-1 max-w-4xl mx-auto relative" ref={searchBarRef}>
       {/* 검색 입력창 */}
       <input
         ref={inputRef}
-        placeholder="상품명을 검색하세요"
+        placeholder="어떤 촉촉함을 찾으시나요?"
         className="
-          w-full border border-gray-300 rounded-full 
-          py-3 pl-12 pr-12 text-sm tracking-wide
-          placeholder-gray-400 focus:outline-none transition
+          w-full h-12 pl-6 pr-24 rounded-full border-2 border-[#FFC1D1] 
+          bg-white focus:border-[#FF6B9C] focus:ring-4 focus:ring-pink-100 
+          outline-none text-gray-700 placeholder-pink-300 
+          transition-all duration-300 shadow-sm
         "
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         onFocus={() => setDropdown(true)}
         onKeyDown={onEnterKey}
       />
-      {/* X 버튼 */}
-      {searchText && (
+
+      <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+        {searchText && (
+          <button
+            type="button"
+            className="
+              w-8 h-8 flex items-center justify-center
+              text-pink-300 hover:text-pink-500 transition-colors
+            "
+            onClick={clearSearch}
+          >
+            <span className="text-lg">✕</span>
+          </button>
+        )}
+
         <button
-          type="button"
           className="
-            absolute right-12 top-1/2 transform -translate-y-1/2
-            w-8 h-8 flex items-center justify-center
-            text-gray-400 hover:text-black cursor-pointer
+            w-9 h-9 flex items-center justify-center rounded-full 
+            bg-gradient-to-r from-[#FF6B9C] to-[#FF8FAB]
+            hover:from-[#FF4D88] hover:to-[#FF6B9C] 
+            text-white shadow-md transition-all duration-200 active:scale-95
           "
-          onClick={clearSearch}
+          onClick={() => handleSearch(searchText)}
         >
-          ✕
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-5 h-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3" /* 선을 조금 더 두껍게 하여 가독성 높임 */
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
         </button>
-      )}
+      </div>
 
-      {/* 검색 아이콘 버튼 */}
-      <button
-        className="
-          absolute right-0 top-1/2 transform -translate-y-1/2 
-          w-12 h-12 flex items-center justify-center 
-          text-gray-400 hover:text-black cursor-pointer
-        "
-        onClick={() => handleSearch(searchText)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-6 h-6"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="11" cy="11" r="5" />
-          <line x1="16.5" y1="16.5" x2="21" y2="21" />
-        </svg>
-      </button>
-
-      {/* 최근 검색어 드롭다운 */}
       {dropdown && (
         <SearchDropdown
           keywords={recentKeywords}
