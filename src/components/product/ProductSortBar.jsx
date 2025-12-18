@@ -9,7 +9,7 @@ const ProductSortBar = ({ sort }) => {
 
   const options = [
     { eng: "sales", hangul: "판매순" },
-    { eng: "popular", hangul: "인기순" },
+    // { eng: "popular", hangul: "인기순" },
     { eng: "latest", hangul: "최신순" },
     { eng: "price_asc", hangul: "낮은 가격순" },
     { eng: "price_desc", hangul: "높은 가격순" },
@@ -18,7 +18,6 @@ const ProductSortBar = ({ sort }) => {
   const updateSortParam = (sortBy) => {
     const newParam = new URLSearchParams(searchParams.toString());
     newParam.set("page", "1");
-    newParam.set("size", "12");
     newParam.set("sort", sortBy);
     console.log("newParam : ", newParam.toString());
     const queryStr = newParam.toString();

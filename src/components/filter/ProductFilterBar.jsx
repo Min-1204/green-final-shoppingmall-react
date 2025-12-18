@@ -13,7 +13,6 @@ const ProductFilterBar = ({ selectedBrand, brandList }) => {
     searchParams.set("brand", brandId);
     searchParams.delete("page");
     searchParams.delete("size");
-    searchParams.delete("sort");
     setSearchParams(searchParams);
   };
 
@@ -34,7 +33,7 @@ const ProductFilterBar = ({ selectedBrand, brandList }) => {
         onChange={handleSelectBrand}
       >
         {/*  전체 브랜드 옵션  */}
-        <option value="">{`— 전체 브랜드 (${brandList.length}개) —`}</option>
+        <option value="0">{`— 전체 브랜드 (${brandList.length}개) —`}</option>
         {brandList.map((b) => (
           <option key={b.id} value={b.id}>
             {b.name}
