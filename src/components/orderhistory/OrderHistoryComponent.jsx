@@ -577,8 +577,7 @@ export default function OrderHistoryComponent() {
       {reviewModal && (
         <ReviewAddComponent
           closeModal={() => setReviewModal(false)}
-          productId={selectedProduct.productId}
-          orderId={selectedProduct.orderId}
+          orderItem={selectedProduct}
         />
       )}
       {deliveryModal && selectedItem && (

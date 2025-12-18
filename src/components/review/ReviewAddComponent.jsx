@@ -2,9 +2,13 @@ import { useRef, useState } from "react";
 import { reviewAdd } from "../../api/review/reviewApi";
 import { useSelector } from "react-redux";
 
-const ReviewAddComponent = ({ closeModal, productId, orderId }) => {
+const ReviewAddComponent = ({ closeModal, orderItem }) => {
+  console.log("orderItem => ", orderItem);
   const [currentRating, setCurrentRating] = useState(0);
   const { user } = useSelector((state) => state.authSlice);
+  //주문 아이템에서 필요한 데이터 추출
+  const { productId, orderId, productName, imageUrl, totalAmount } = orderItem;
+  //서버 전송용 파일 객체
   const [review, setReview] = useState({
     content: "",
     rating: 0,
@@ -12,7 +16,9 @@ const ReviewAddComponent = ({ closeModal, productId, orderId }) => {
     productId: productId,
     orderId: orderId,
     userId: user.id,
-  }); //서버 전송용 파일 객체
+    loginId: user.loginId,
+  });
+
   const [images, setImages] = useState([]); //이미지 미리보기용
   const uploadRef = useRef();
 
@@ -82,39 +88,40 @@ const ReviewAddComponent = ({ closeModal, productId, orderId }) => {
           </button>
         </h2>
 
-        {/* 상품 + 별점 */}
-        <div className="flex items-center space-x-4 border-b pb-4">
-          <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center text-xs text-gray-500">
-            이미지
-          </div>
+        {/* 상품 정보 영역 */}
+        <div className="flex items-center gap-4 border-b pb-4">
+          {/* 상품 이미지 */}
+          <img
+            src={imageUrl}
+            alt={productName}
+            className="w-16 h-16 object-cover rounded-md border"
+          />
+
           <div>
-            <p className="text-sm font-semibold text-gray-800">
-              고보습 세럼 앰플 - 19C 라이트
+            {/* 상품명 */}
+            <p className="text-sm font-semibold">{productName}</p>
+
+            {/* 상품 가격 */}
+            <p className="text-xs text-gray-500">
+              {totalAmount.toLocaleString()}원
             </p>
-            <div className="flex items-center space-x-2 mt-1">
-              <span className="text-gray-600 text-sm">별점:</span>
-              <div className="flex space-x-1 text-2xl">
-                {[1, 2, 3, 4, 5].map((star) => {
-                  let starClass = "cursor-pointer transition text-gray-300";
-                  if (currentRating >= star)
-                    starClass = "cursor-pointer transition text-yellow-500";
-                  return (
-                    <span
-                      key={star}
-                      className={starClass}
-                      onClick={() => {
-                        setCurrentRating(star);
-                        setReview({
-                          ...review,
-                          rating: star,
-                        });
-                      }}
-                    >
-                      {currentRating >= star ? "★" : "☆"}
-                    </span>
-                  );
-                })}
-              </div>
+
+            {/* 별점 */}
+            <div className="flex gap-1 mt-1 text-2xl">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`cursor-pointer ${
+                    currentRating >= star ? "text-yellow-500" : "text-gray-300"
+                  }`}
+                  onClick={() => {
+                    setCurrentRating(star);
+                    setReview({ ...review, rating: star });
+                  }}
+                >
+                  ★
+                </span>
+              ))}
             </div>
           </div>
         </div>
