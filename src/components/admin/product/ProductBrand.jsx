@@ -66,16 +66,14 @@ export default function ProductBrand({ onChangeForm }) {
           </div>
 
           {/* 선택된 브랜드 표시 영역 */}
-          {selectedBrand && (
+          {/* {selectedBrand && (
             <div className="border border-gray-300 mb-6 rounded-lg overflow-hidden shadow-lg">
-              {/* 헤더 */}
               <div className="flex border-b border-gray-300 items-stretch bg-gray-50">
                 <div className="w-full px-4 py-3 text-gray-700 font-semibold">
                   선택된 브랜드
                 </div>
               </div>
 
-              {/* 브랜드 정보 */}
               <div className="p-4">
                 <div className="bg-white border border-gray-200 rounded-md px-4 py-3">
                   <p className="text-gray-700 font-medium">
@@ -84,7 +82,7 @@ export default function ProductBrand({ onChangeForm }) {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* 안내 메시지 */}
           <div className="mt-4 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">

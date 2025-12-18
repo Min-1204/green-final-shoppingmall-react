@@ -109,10 +109,10 @@ const ProductModifyPage = () => {
 
         console.log("응답 data :", data);
 
-        alert("상품이 등록되었습니다.");
+        alert("상품이 수정되었습니다.");
       } catch (error) {
         console.error("등록 실패:", error);
-        alert("상품 등록에 실패했습니다.");
+        alert("상품 수정에 실패했습니다.");
       }
     };
     modify();

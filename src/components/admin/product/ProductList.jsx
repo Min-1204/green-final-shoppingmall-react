@@ -3,6 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { restockOption } from "../../../api/admin/product/productApi";
 import RestockModal from "./RestockModal";
 
+const saleStatusObj = {
+  ON_SALE: "정상판매",
+  SOLD_OUT: "품절",
+  STOP_SALE: "판매중단",
+};
+
+const exposureStatusObj = {
+  EXPOSURE: "노출",
+  HIDDEN: "미노출",
+  SCHEDULED: "노출예약",
+};
+
 const getAvailableStock = (product) => {
   const availableOptions = product?.options.filter((op) => op.currentStock > 0);
   const availableOptionCnt = availableOptions.length;
@@ -70,11 +82,11 @@ const ProductList = ({ pageResponse, search }) => {
         </span>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md border border-gray-300 cursor-pointer hover:bg-gray-300 transition shadow-sm">
+          {/* <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md border border-gray-300 cursor-pointer hover:bg-gray-300 transition shadow-sm">
             다운로드
-          </button>
+          </button> */}
 
-          <select
+          {/* <select
             defaultValue="recent"
             className="border border-gray-300 text-gray-700 px-3 py-1 rounded-md cursor-pointer bg-white shadow-sm hover:bg-gray-50 transition"
           >
@@ -89,7 +101,7 @@ const ProductList = ({ pageResponse, search }) => {
             <option value="10">10개</option>
             <option value="20">20개</option>
             <option value="50">50개</option>
-          </select>
+          </select> */}
         </div>
       </div>
 
@@ -178,15 +190,15 @@ const ProductList = ({ pageResponse, search }) => {
                         : "bg-gray-100 text-gray-800"
                     }`}
                   >
-                    {product?.saleInfo?.saleStatus}
+                    {saleStatusObj[product?.saleInfo?.saleStatus]}
                   </span>
                 </td>
 
                 <td className="px-3 py-3 text-center">
-                  {product?.saleInfo?.exposureStatus}
+                  {exposureStatusObj[product?.saleInfo?.exposureStatus]}
                 </td>
 
-                <td className="px-3 py-3 w-[130px]">
+                <td className="px-3 py-3 w-[150px]">
                   <div className="flex flex-col gap-1">
                     <button
                       onClick={() => restockClick(product)}
