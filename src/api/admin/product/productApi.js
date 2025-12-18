@@ -16,11 +16,11 @@ export const registerProduct = async (productForm) => {
           saleInfo: productForm?.saleInfo,
           options: productForm?.options.map((option) => ({
             ...option,
-            image: null
+            image: null,
           })),
           deliveryPolicy: productForm?.deliveryPolicy,
-          detailInfo: productForm?.detailInfo
-        })
+          detailInfo: productForm?.detailInfo,
+        }),
       ],
       { type: "application/json" }
     )
@@ -54,18 +54,18 @@ export const modifyProduct = async (id, productForm) => {
     type: img.type,
     imageUrl: img.type === "existing" ? img.imageUrl : null,
     displayOrder: img.displayOrder,
-    imageType: img.imageType
+    imageType: img.imageType,
   }));
 
   const detailImagesOrderData = productForm.detailImages.map((img) => ({
     type: img.type,
     imageUrl: img.type === "existing" ? img.imageUrl : null,
-    displayOrder: img.displayOrder
+    displayOrder: img.displayOrder,
   }));
 
   const optionsOrderData = productForm.options.map((o) => ({
     ...o,
-    file: null
+    file: null,
   }));
 
   formData.append(
@@ -81,8 +81,8 @@ export const modifyProduct = async (id, productForm) => {
           detailInfo: productForm?.detailInfo,
           mainImages: mainImagesOrderData,
           detailImages: detailImagesOrderData,
-          options: optionsOrderData
-        })
+          options: optionsOrderData,
+        }),
       ],
       { type: "application/json" }
     )
@@ -118,7 +118,7 @@ export const fetchProductsByThirdCategoryIds = async ({
   brandId,
   page,
   size,
-  sort
+  sort,
 }) => {
   const params = new URLSearchParams();
 
@@ -143,7 +143,7 @@ export const fetchBrandsByThirdCategoryIds = async ({ thirdCategoryIds }) => {
   });
 
   const url = `${prefix}/brands?${params.toString()}`;
-  const res = await axios.get(url);
+  const res = await axiosInstance.get(url);
 
   return res.data;
 };
@@ -171,9 +171,12 @@ export const restockOption = async (updatedOptions) => {
 };
 
 export const applyRestockAlarm = async (userId, optionId) => {
-  const res = await axios.post(`${API_SERVER_HOST}/api/restock-notification`, {
-    userId,
-    optionId
-  });
+  const res = await axiosInstance.post(
+    `${API_SERVER_HOST}/api/restock-notification`,
+    {
+      userId,
+      optionId,
+    }
+  );
   return res.data;
 };

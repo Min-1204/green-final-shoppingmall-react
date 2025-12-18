@@ -29,8 +29,8 @@ export const getOrdersBySearch = async (condition, sort, page, size) => {
     params: {
       sort: sort,
       page: page,
-      size: size
-    }
+      size: size,
+    },
   });
   // console.log("getOrdersBySearch => ", res.data);
   return res.data;
@@ -43,7 +43,9 @@ export const confirmOrder = async (orderId) => {
 };
 
 export const changeOrderProductStatus = async (orderId, newStatus) => {
-  const res = await axios.put(`${prefix}/${orderId}`, { status: newStatus });
+  const res = await axiosInstance.put(`${prefix}/${orderId}`, {
+    status: newStatus,
+  });
   console.log("changeOrderProductStatus => ", res.data);
   return res.data;
 };
