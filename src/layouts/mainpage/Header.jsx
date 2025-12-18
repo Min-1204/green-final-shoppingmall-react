@@ -7,7 +7,6 @@ import { logoutAsyncThunk } from "../../redux/slices/features/user/authSlice";
 
 export default function Header() {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.authSlice);
 
@@ -17,7 +16,7 @@ export default function Header() {
     "배송지연 지역 안내 (서울/경기 일부)",
   ];
   const [current, setCurrent] = useState(0);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const timer = setInterval(
@@ -37,116 +36,106 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full bg-white">
-      {/* 1) 공지 바 */}
-      <div className="w-full h-9 border-b border-gray-200 flex items-center">
+    <header className="w-full">
+      {/* 최상단 공지 바: 푸터와 연결되는 느낌을 위해 살짝 더 짙은 핑크 */}
+      <div className="w-full h-10 bg-[#FFE4E9] flex items-center">
         <div className="max-w-7xl mx-auto w-full px-6 flex items-center justify-center">
-          <div className="flex items-center gap-2 notice-slide">
-            <span className="w-2 h-2 rounded-full bg-[#b6423a] notice-blink" />
-            <p className="text-xs text-gray-600 tracking-tight">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" />
+            <p className="text-sm text-pink-800 font-semibold tracking-tight">
               {notices[current]}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="w-full">
-        <div className="max-w-7xl mx-auto px-6 py-5 lg:py-6 relative flex items-center justify-center">
-          <div className="text-center leading-tight">
-            <h1 className="text-black text-[30px] tracking-[0.32em] font-semibold">
-              <Link to="/" className="cursor-pointer">
-                SKPL
-              </Link>
-            </h1>
-            <p className="text-[12px] text-black mt-1 tracking-[0.08em]">
-              Skin Korea Pure Lab
-            </p>
+      <div className="w-full bg-[#FFF5F7] border-b border-[#FCE2E6]">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-between gap-8">
+          <div className="flex-shrink-0">
+            <Link to="/" className="block">
+              <h1 className="text-[32px] font-black tracking-[0.1em] text-[#FF6B9C] drop-shadow-sm hover:text-[#FF4D88] transition-all duration-300">
+                달빛나라 촉촉마을
+              </h1>
+              <p className="text-[12px] tracking-[0.25em] font-bold text-[#FF9EBC] mt-1 text-center">
+                MOONLIGHT MOIST VILLAGE
+              </p>
+            </Link>
           </div>
-
-          <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-end gap-1">
-            <div className="flex items-center gap-2.5 text-[12px] text-black">
+          <div>
+            <ProductSearchBar />
+          </div>
+          <div className="flex-shrink-0 flex flex-col items-end gap-4">
+            <div className="flex items-center gap-4 text-[13px] font-semibold text-[#8B6E75]">
               {user?.loginId ? (
                 <>
                   <button
                     onClick={handleLogout}
-                    className="hover:text-gray-400 cursor-pointer transition-colors"
+                    className="hover:text-[#FF6B9C]"
                   >
                     로그아웃
                   </button>
-                  <span className="text-white/30">|</span>
-                  {user?.userRole === "ADMIN" ? (
-                    <button
-                      onClick={() => navigate("/admin/products")}
-                      className="hover:text-gray-400 cursor-pointer transition-colors"
-                    >
-                      관리자페이지
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => navigate("/mypage")}
-                      className="hover:text-gray-400 cursor-pointer transition-colors"
-                    >
-                      마이페이지
-                    </button>
-                  )}
+                  <span className="text-[#E9D5D8]">|</span>
+                  <button
+                    onClick={() =>
+                      navigate(
+                        user?.userRole === "ADMIN"
+                          ? "/admin/products"
+                          : "/mypage"
+                      )
+                    }
+                    className="hover:text-[#FF6B9C]"
+                  >
+                    {user?.userRole === "ADMIN" ? "관리자" : "마이페이지"}
+                  </button>
                 </>
               ) : (
                 <>
                   <button
                     onClick={() => navigate("/login")}
-                    className="hover:text-gray-400 cursor-pointer transition-colors"
+                    className="hover:text-[#FF6B9C]"
                   >
                     로그인
                   </button>
-                  <span className="text-white/30">|</span>
+                  <span className="text-[#E9D5D8]">|</span>
                   <button
                     onClick={() => navigate("/signup")}
-                    className="hover:text-gray-400 cursor-pointer transition-colors"
+                    className="hover:text-[#FF6B9C]"
                   >
                     회원가입
                   </button>
                 </>
               )}
-
-              <span className="text-white/30">|</span>
+              <span className="text-[#E9D5D8]">|</span>
               <button
                 onClick={() => navigate("/cart")}
-                className="hover:text-gray-400 cursor-pointer transition-colors"
+                className="hover:text-[#FF6B9C]"
               >
                 장바구니
               </button>
-              <span className="text-white/30">|</span>
-              <button
-                onClick={() => navigate("/helpcenter")}
-                className="hover:text-gray-400 cursor-pointer transition-colors"
-              >
-                고객센터
-              </button>
             </div>
 
-            {/* 아래쪽: 오특 | 랭킹 | 신상 | 이벤트 */}
-            <div className="flex items-center gap-3 text-sm">
-              <button className="text-black hover:text-orange-400 cursor-pointer transition-colors">
-                오특
-              </button>
-              <span className="w-[1px] h-4 bg-white/15"></span>
-              <button className="text-black hover:text-orange-400 cursor-pointer transition-colors">
-                랭킹
-              </button>
-              <span className="w-[1px] h-4 bg-white/15"></span>
-              <button className="text-black hover:text-orange-400 cursor-pointer transition-colors">
-                신상
-              </button>
-              <span className="w-[1px] h-4 bg-white/15"></span>
-              <button className="text-orange-600 font-medium cursor-pointer">
-                이벤트
-              </button>
+            {/* 태그 메뉴: 화사한 파스텔 톤 유지 */}
+            <div className="flex items-center gap-2">
+              {[
+                { label: "오특", color: "bg-orange-400" },
+                { label: "랭킹", color: "bg-[#FF8FAB]" },
+                { label: "신상", color: "bg-purple-400" },
+                { label: "이벤트", color: "bg-red-400", pulse: true },
+              ].map((tag) => (
+                <button
+                  key={tag.label}
+                  className={`px-4 py-1.5 rounded-full text-white text-[12px] font-bold shadow-sm hover:scale-105 transition-transform ${
+                    tag.color
+                  } ${tag.pulse ? "animate-bounce" : ""}`}
+                >
+                  {tag.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      <ProductSearchBar />
       <NavBar />
     </header>
   );
