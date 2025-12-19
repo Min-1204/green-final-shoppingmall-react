@@ -42,12 +42,16 @@ const signUpSlice = createSlice({
     signUpSuccess: false,
     checkingLoginId: false,
     loginIdCheckResult: null,
-    loginIdCheckError: null
+    loginIdCheckError: null,
+    message: null,
+    coupon: null
   },
   reducers: {
     // 회원가입 성공 상태 초기화
     resetSignUpSuccess: (state) => {
       state.signUpSuccess = false;
+      state.message = null;
+      state.coupon = null;
     },
     // 에러 초기화
     clearError: (state) => {
@@ -69,7 +73,9 @@ const signUpSlice = createSlice({
       .addCase(signUpThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.signUpSuccess = true;
+        state.signUpSuccess = action.payload.success;
+        state.message = action.payload.message;
+        state.coupon = action.payload.coupon;
         console.log("SignUpSlice 콘솔 회원 가입 성공 :", action.payload);
       })
       .addCase(signUpThunk.rejected, (state, action) => {

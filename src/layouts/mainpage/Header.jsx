@@ -13,7 +13,7 @@ export default function Header() {
   const notices = [
     "[WELCOME] 공지/이벤트(미정)",
     "11월 신규가입 3,000P 지급 예정",
-    "배송지연 지역 안내 (서울/경기 일부)",
+    "배송지연 지역 안내 (서울/경기 일부)"
   ];
   const [current, setCurrent] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,7 +61,7 @@ export default function Header() {
               </p>
             </Link>
           </div>
-          <div>
+          <div className="flex-1 max-w-2xl">
             <ProductSearchBar />
           </div>
           <div className="flex-shrink-0 flex flex-col items-end gap-4">
@@ -120,7 +120,7 @@ export default function Header() {
                 { label: "오특", color: "bg-orange-400" },
                 { label: "랭킹", color: "bg-[#FF8FAB]" },
                 { label: "신상", color: "bg-purple-400" },
-                { label: "이벤트", color: "bg-red-400", pulse: true },
+                { label: "이벤트", color: "bg-red-400", pulse: true }
               ].map((tag) => (
                 <button
                   key={tag.label}

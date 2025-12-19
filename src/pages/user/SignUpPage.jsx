@@ -14,7 +14,7 @@ import {
 
 export default function SignUpPage() {
   const dispatch = useDispatch();
-  const { error, loading, signUpSuccess } = useSelector(
+  const { error, loading, signUpSuccess, message, coupon } = useSelector(
     (state) => state.signUpSlice
   );
 
@@ -25,7 +25,7 @@ export default function SignUpPage() {
   const [terms, setTerms] = useState({
     tos: false, // 약관
     privacy: false, // 개인정보동의
-    age14: false, // 만 14세이상 동의
+    age14: false // 만 14세이상 동의
   });
 
   // 회원가입 form
@@ -43,7 +43,7 @@ export default function SignUpPage() {
     address: "", // 기본주소
     addressDetail: "", // 상세주소
     smsAgreement: false, // SMS 알림 동의
-    emailAgreement: false, // Email 알림 동의
+    emailAgreement: false // Email 알림 동의
   });
 
   // 모달 열릴 때 페이지 스크롤 잠금 overflow-hidden 클래스 추가
@@ -76,13 +76,15 @@ export default function SignUpPage() {
   };
 
   useEffect(() => {
-    if (signUpSuccess) {
-      alert("회원가입이 완료되었습니다.");
+    if (signUpSuccess && message && coupon) {
+      console.log("✅ 회원가입 성공 : 메세지 , 쿠폰", { message, coupon });
+      alert(message);
+      alert(coupon);
       dispatch(resetSignUpSuccess());
-      console.log("✅ SignUpPage 콘솔 회원가입 성공! SuccessStep으로 이동");
+      console.log("✅ SignUpPage 콘솔 회원가입 성공! SuccessStep으로 이동완료");
       setStep(3);
     }
-  }, [signUpSuccess, dispatch]);
+  }, [signUpSuccess, message, coupon, dispatch]);
 
   // 에러처리 로직
   useEffect(() => {
