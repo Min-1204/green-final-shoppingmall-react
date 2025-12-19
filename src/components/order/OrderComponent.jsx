@@ -9,6 +9,7 @@ import {
 } from "../../api/order/orderApi";
 import CouponModal from "./CouponModal";
 import { getActivePoints } from "../../api/point/pointApi";
+import { refundPayment } from "../../api/payment/paymentApi";
 
 const API_SERVER_HOST = "http://localhost:8080";
 
@@ -297,6 +298,9 @@ const OrderComponent = () => {
               }
             } catch (error) {
               alert("서버 검증 실패:", error);
+              const reason = "서버 검증 실패";
+              result = await refundPayment(resultOrderId, reason);
+              console.log(result);
               const result = await deleteOneOrder(resultOrderId);
               console.log(result);
               if (error.response) {

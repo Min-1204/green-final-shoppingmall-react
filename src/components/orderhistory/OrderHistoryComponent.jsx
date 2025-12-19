@@ -14,6 +14,7 @@ import ConfimPurchaseModal from "./ConfimPurchaseModal";
 import ConfirmPurchaseCompleteModal from "./ConfirmPurchaseCompleteModal";
 import DeliveryModal from "./DeliveryModal";
 import ReturnModal from "./ReturnModal";
+import { refundPayment } from "../../api/payment/paymentApi";
 
 export default function OrderHistoryComponent() {
   const statusClass = (s) =>
@@ -245,10 +246,9 @@ export default function OrderHistoryComponent() {
     setConfirmPurchaseCompleteModal(true);
   };
 
-  const handleConfirmCancel = async (orderId) => {
-    const result = await deleteOneOrder(orderId);
-    console.log("deleteOneOrder result", result);
-
+  const handleConfirmCancel = async (orderId, reason) => {
+    const result = await refundPayment(orderId, reason);
+    console.log("refundPayment 호출 결과 =>", result);
     // 서버 요청이 성공적이라면 (보통 result가 존재하거나 성공 코드를 반환할 때)
     // 화면의 orderList 상태에서 방금 취소한 orderId를 가진 주문만 제외시킵니다.
     setOrderList((prevList) =>
