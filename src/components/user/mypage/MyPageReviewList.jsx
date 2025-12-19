@@ -33,7 +33,7 @@ const MyPageReviewList = () => {
     console.log("페이지 정보:", { page, size });
 
     const getReviews = async () => {
-      const reviews = await getMyReviews(user.id, page, size);
+      const reviews = await getMyReviews(page, size);
       setPageResponse(reviews);
       console.log("reviews => ", reviews);
     };

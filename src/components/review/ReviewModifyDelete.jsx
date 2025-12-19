@@ -9,9 +9,6 @@ const ReviewModifyDelete = ({ closeModal, review, update, product }) => {
   const [newFiles, setNewFiles] = useState([]); // 새로 첨부한 파일 관리
   const [deleteImgUrls, setDeleteImgUrls] = useState([]); // 삭제할 기존 이미지 url
   const [originalImgUrls, setOriginalImgUrls] = useState([]); // 원본 이미지 URL 저장
-
-  const { user } = useSelector((state) => state.authSlice);
-
   const uploadRef = useRef();
 
   useEffect(() => {
@@ -33,16 +30,12 @@ const ReviewModifyDelete = ({ closeModal, review, update, product }) => {
     }
 
     try {
-      const updateReview = await reviewModify(
-        review.id,
-        {
-          content: reviewContent,
-          rating: currentRating,
-          newImages: newFiles,
-          deleteImgUrls: deleteImgUrls,
-        },
-        user.id
-      );
+      const updateReview = await reviewModify(review.id, {
+        content: reviewContent,
+        rating: currentRating,
+        newImages: newFiles,
+        deleteImgUrls: deleteImgUrls,
+      });
 
       alert("리뷰가 수정되었습니다.");
 
@@ -76,7 +69,7 @@ const ReviewModifyDelete = ({ closeModal, review, update, product }) => {
     if (!ok) return;
 
     try {
-      await reviewDelete(id, user.id);
+      await reviewDelete(id);
       alert("리뷰가 삭제되었습니다.");
 
       if (update) {

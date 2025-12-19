@@ -29,6 +29,11 @@ const UserInfoMgr = () => {
 
   const [users, setUsers] = useState([]);
 
+  const userGrades = (gradeOptions) => {
+    if (gradeOptions.includes("전체")) return null;
+    return gradeOptions.filter((grade) => grade !== "전체");
+  };
+
   const agreementStateuses = (option) => {
     if (option.includes("전체")) return null;
     if (option.includes("동의")) return true;
@@ -50,7 +55,7 @@ const UserInfoMgr = () => {
       searchKeyword,
       startDate: startDate || null,
       endDate: endDate || null,
-      userGrade: memberGrades,
+      userGrade: userGrades(memberGrades),
       smsAgreement: agreementStateuses(smsOptions),
       emailAgreement: agreementStateuses(emailOptions),
       userStatuses: convertUserStatuses(memberStatus),

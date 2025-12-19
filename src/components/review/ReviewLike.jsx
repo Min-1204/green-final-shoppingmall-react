@@ -8,11 +8,10 @@ import { useSelector } from "react-redux";
 const ReviewLike = ({ reviewId }) => {
   const [like, setLike] = useState(false); // true=좋아요 상태, false=취소 상태
   const [likeCount, setLikeCount] = useState(0); // 좋아요 개수
-  const { user } = useSelector((state) => state.authSlice);
 
   //리뷰 좋아요(도움이 돼요) 토글
   const reviewLikeToggleHandler = async () => {
-    const data = await reviewLikeToggleTrueFalse(reviewId, user.id);
+    const data = await reviewLikeToggleTrueFalse(reviewId);
     console.log("리뷰 좋아요 데이터 확인 => ", data);
     setLike(data);
 
