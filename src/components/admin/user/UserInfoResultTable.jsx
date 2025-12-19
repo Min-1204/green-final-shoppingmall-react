@@ -1,6 +1,8 @@
-import React from "react";
+import { useState } from "react";
 
-const UserInfoResultTable = ({ users }) => {
+const UserInfoResultTable = ({ users, onSort }) => {
+  const [sort, setSort] = useState("recent");
+
   const headers = [
     "선택",
     "번호",
@@ -14,6 +16,12 @@ const UserInfoResultTable = ({ users }) => {
   ];
 
   const gradeOptions = ["일반", "매니저", "관리자"];
+
+  const sortHandler = (e) => {
+    const value = e.target.value;
+    setSort(value);
+    onSort(value);
+  };
 
   return (
     <div className="w-full mt-6">
@@ -31,11 +39,12 @@ const UserInfoResultTable = ({ users }) => {
           </button>
 
           <select
-            defaultValue="recent"
+            value={sort}
+            onChange={sortHandler}
             className="border border-gray-300 text-gray-700 px-3 py-1 rounded-md cursor-pointer bg-white shadow-sm hover:bg-gray-50 transition"
           >
-            <option value="recent">최근 가입 순</option>
-            <option value="old">오래된 가입 순</option>
+            <option value="recent">최근가입순</option>
+            <option value="old">오래된가입순</option>
           </select>
         </div>
       </div>
@@ -45,15 +54,15 @@ const UserInfoResultTable = ({ users }) => {
         <table className="min-w-full table-fixed border-collapse text-sm text-center">
           {/* 컬럼 폭 고정 */}
           <colgroup>
-            <col style={{ width: "20px" }} /> {/* 선택 */}
-            <col style={{ width: "20px" }} /> {/* 번호 */}
-            <col style={{ width: "100px" }} /> {/* 아이디 */}
-            <col style={{ width: "150px" }} /> {/* 이메일 */}
-            <col style={{ width: "150px" }} /> {/* 핸드폰 */}
-            <col style={{ width: "70px" }} /> {/* 권한 */}
-            <col style={{ width: "70px" }} /> {/* 등급 */}
-            <col style={{ width: "100px" }} /> {/* 가입일 */}
-            <col style={{ width: "50px" }} /> {/* 회원 상태 */}
+            <col style={{ width: "20px" }} />
+            <col style={{ width: "20px" }} />
+            <col style={{ width: "100px" }} />
+            <col style={{ width: "150px" }} />
+            <col style={{ width: "150px" }} />
+            <col style={{ width: "70px" }} />
+            <col style={{ width: "70px" }} />
+            <col style={{ width: "100px" }} />
+            <col style={{ width: "50px" }} />
           </colgroup>
 
           <thead className="bg-gray-100 border-b border-gray-300">

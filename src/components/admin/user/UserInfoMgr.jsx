@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserInfoResultTable from "./UserInfoResultTable";
 import CheckboxGroup from "../CheckboxGroup";
 import dayjs from "dayjs";
 import { userFilterSearch } from "../../../api/admin/user/adminUserSearchApi";
+import {
+  generatePath,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import Pagination from "../../pagination/Pagination";
 
 const UserInfoMgr = () => {
+  //------------------------옵션
   const memberGradeOptions = [
     "BRONZE",
     "SILVER",
@@ -17,8 +25,10 @@ const UserInfoMgr = () => {
   const emailOptionList = ["동의", "거부", "전체"];
   const memberStatusOptions = ["정상", "탈퇴", "전체"];
 
+  //------------------------상태
   const [searchType, setSearchType] = useState("이름");
   const [searchKeyword, setSearchKeyword] = useState("");
+
   const [memberGrades, setMemberGrades] = useState(memberGradeOptions); //회원 등급
   const [smsOptions, setSmsOptions] = useState(smsOptionList); //SMS 수신 state
   const [emailOptions, setEmailOptions] = useState(emailOptionList); //email 수신 state
@@ -28,6 +38,19 @@ const UserInfoMgr = () => {
   const [endDate, setEndDate] = useState("");
 
   const [users, setUsers] = useState([]);
+  const [pageResponse, setPageResponse] = useState(null);
+
+  //-------------------------------------------------------------------------
+  const [queryParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [sort, setSort] = useState("recent");
+  const [searched, setSearched] = useState(false);
+
+  //-------------------------------------------------------------------------
+  const getNum = (param, defaultValue) => {
+    if (!param) return defaultValue;
+    return parseInt(param, 10);
+  };
 
   const userGrades = (gradeOptions) => {
     if (gradeOptions.includes("전체")) return null;
@@ -49,7 +72,8 @@ const UserInfoMgr = () => {
     return userStateList;
   };
 
-  const userSearchHandler = async () => {
+  //유저 조회 함수
+  const userSearchHandler = async (page, size) => {
     const condition = {
       searchType,
       searchKeyword,
@@ -59,12 +83,25 @@ const UserInfoMgr = () => {
       smsAgreement: agreementStateuses(smsOptions),
       emailAgreement: agreementStateuses(emailOptions),
       userStatuses: convertUserStatuses(memberStatus),
+      sort,
     };
 
-    const userList = await userFilterSearch(condition);
-    setUsers(userList);
+    const userList = await userFilterSearch(condition, page, size, sort);
+    setUsers(userList.dtoList);
+    setPageResponse(userList);
   };
 
+  useEffect(() => {
+    //검색이 한버이라도 실행된 경우에만 api 호출
+    if (searched) {
+      const page = getNum(queryParams.get("page"), 1);
+      const size = getNum(queryParams.get("size"), 10);
+
+      userSearchHandler(page, size);
+    }
+  }, [queryParams, sort, searched]);
+
+  //날짜 버튼
   const dateHandler = (label) => {
     let today = dayjs(); //오늘 기준
     let start;
@@ -88,6 +125,7 @@ const UserInfoMgr = () => {
     setEndDate(today.format("YYYY-MM-DD"));
   };
 
+  //초기화 버튼
   const resetHandler = () => {
     //검색어 초기화
     setSearchType("이름");
@@ -105,6 +143,7 @@ const UserInfoMgr = () => {
 
     //검색 결과 초기화
     setUsers([]);
+    setPageResponse(null);
   };
 
   return (
@@ -214,7 +253,9 @@ const UserInfoMgr = () => {
       <div className="flex justify-center gap-4 mb-6">
         <button
           className="bg-blue-600 text-white px-8 py-2 cursor-pointer rounded-md shadow-md hover:bg-blue-700 transition font-semibold"
-          onClick={userSearchHandler}
+          onClick={() => {
+            userSearchHandler(1, 10), setSearched(true);
+          }}
         >
           검색
         </button>
@@ -227,7 +268,15 @@ const UserInfoMgr = () => {
       </div>
 
       {/* 결과 테이블 */}
-      <UserInfoResultTable users={users} />
+      <UserInfoResultTable users={users} onSort={(value) => setSort(value)} />
+      {pageResponse && (
+        <Pagination
+          pageResponseDTO={pageResponse}
+          movepage={(page) =>
+            navigate(`?page=${page}&size=${size}&sort=${sort}`)
+          }
+        />
+      )}
     </div>
   );
 };
