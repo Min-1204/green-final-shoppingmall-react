@@ -1,37 +1,27 @@
-// src/components/mypage/CouponList.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getUserCoupons } from "../../../api/coupon/couponApi";
+import { useSelector } from "react-redux";
 
-export default function CouponList() {
-  const coupons = [
-    {
-      id: 1,
-      title: "[신규회원] 5,000원 할인",
-      until: "2025-11-30",
-      rule: "전체상품",
-    },
-    {
-      id: 2,
-      title: "[가을 프로모션] 10% 할인",
-      until: "2025-10-31",
-      rule: "3만원 이상",
-    },
-  ];
-
+export default function CouponList({ coupons }) {
   return (
     <div className="space-y-3">
       {coupons.map((c) => (
         <div
-          key={c.id}
+          key={c?.id}
           className="border rounded-xl p-4 flex justify-between items-center"
         >
           <div>
-            <p className="font-semibold">{c.title}</p>
+            <p className="font-semibold">{c?.coupon?.couponName}</p>
             <p className="text-xs text-zinc-500 mt-1">
-              유효기간: {c.until} 까지
+              {c?.coupon?.validTo
+                ? `유효기간: ${c.coupon.validTo.split("T")[0]} 까지`
+                : `유효기간: 평생`}
             </p>
           </div>
           <span className="text-xs bg-zinc-100 px-3 py-1 rounded-full">
-            {c.rule}
+            {c?.coupon?.hasLimitMinOrder
+              ? `${c?.coupon?.minOrderAmount?.toLocaleString()}원 이상 결제시 할인`
+              : `최소금액 제한 없음`}
           </span>
         </div>
       ))}

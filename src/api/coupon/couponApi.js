@@ -8,3 +8,12 @@ export const getUserCoupons = async (userId) => {
   //   console.log("유저 쿠폰 불러오기", res.data);
   return res.data;
 };
+
+export const issueCouponByCode = async (userId, couponCode) => {
+  const res = await axiosInstance.post(`${prefix}/code`, {
+    userId,
+    couponCode,
+  });
+
+  return res.data;
+};
