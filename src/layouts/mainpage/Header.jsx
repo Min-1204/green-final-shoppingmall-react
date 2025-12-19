@@ -13,7 +13,7 @@ export default function Header() {
   const notices = [
     "[WELCOME] 공지/이벤트(미정)",
     "11월 신규가입 3,000P 지급 예정",
-    "배송지연 지역 안내 (서울/경기 일부)"
+    "배송지연 지역 안내 (서울/경기 일부)",
   ];
   const [current, setCurrent] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -85,7 +85,7 @@ export default function Header() {
                     }
                     className="hover:text-[#FF6B9C]"
                   >
-                    {user?.userRole === "ADMIN" ? "관리자" : "마이페이지"}
+                    {user?.userRole === "ADMIN" ? "관리자페이지" : "마이페이지"}
                   </button>
                 </>
               ) : (
@@ -112,6 +112,13 @@ export default function Header() {
               >
                 장바구니
               </button>
+              <span className="text-[#E9D5D8]">|</span>
+              <button
+                onClick={() => navigate("/helpcenter")}
+                className="hover:text-[#FF6B9C]"
+              >
+                고객센터
+              </button>
             </div>
 
             {/* 태그 메뉴: 화사한 파스텔 톤 유지 */}
@@ -120,7 +127,7 @@ export default function Header() {
                 { label: "오특", color: "bg-orange-400" },
                 { label: "랭킹", color: "bg-[#FF8FAB]" },
                 { label: "신상", color: "bg-purple-400" },
-                { label: "이벤트", color: "bg-red-400", pulse: true }
+                { label: "이벤트", color: "bg-red-400", pulse: true },
               ].map((tag) => (
                 <button
                   key={tag.label}

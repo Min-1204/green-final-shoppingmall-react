@@ -1,13 +1,13 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
   return (
-    <footer className="w-full rounded-b-3xl shadow-1xl bg-gradient-to-b from-[#fff6f9] to-[#fdecef] py-20 px-6 text-[#6b4b55] font-sans">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16">
-        {/* 브랜드 & 회사정보 */}
+    <footer className="w-full rounded-b-3xl shadow-1xl pb-2 border-b border-t border-t-pink-200 bg-gradient-to-b from-[#fff6f9] to-[#fdecef] py-20 px-6 text-[#6b4b55] font-sans">
+      <div className="max-w-7xl mx-auto pb-5 grid grid-cols-1 lg:grid-cols-12 gap-16">
         <div className="lg:col-span-6 space-y-10">
-          {/* 로고 */}
           <div>
             <h2 className="text-3xl pb-2 font-semibold tracking-[0.35em] text-pink-500 drop-shadow-sm">
               MOONLIGHT MOIST
@@ -17,7 +17,6 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* 회사 정보 (박스 없음) */}
           <div className="space-y-3 text-[13px] leading-relaxed">
             <Info label="TeamName : ">
               신소라와 세남자 (신소라, 임병국, 박종민, 강민석)
@@ -36,8 +35,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* 고객센터 */}
-        <div className="lg:col-span-6 flex flex-col justify-between">
+        <div className="lg:col-span-5 lg:col-start-8 flex flex-col justify-between">
           <div>
             <p className="text-2xl pb-2 tracking-widest text-pink-400 mb-4">
               고객센터
@@ -51,9 +49,30 @@ const Footer = () => {
               주말 및 공휴일 휴무
             </p>
             <div className=" pb-3 flex gap-4">
-              <Social icon={<FaFacebookF />} />
-              <Social icon={<FaInstagram />} />
-              <Social icon={<FaTwitter />} />
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full border border-pink-300 text-pink-400 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-all shadow-sm"
+              >
+                <FaFacebookF />
+              </a>
+              <a
+                href="https://www.instagram.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full border border-pink-300 text-pink-400 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-all shadow-sm"
+              >
+                <FaInstagram />
+              </a>
+              <a
+                href="https://x.com/?lang=ko"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full border border-pink-300 text-pink-400 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-all shadow-sm"
+              >
+                <FaTwitter />
+              </a>
             </div>
           </div>
           <p
@@ -66,7 +85,7 @@ const Footer = () => {
           </p>
         </div>
       </div>
-      <div className="flex w-full pt-9 justify-center gap-x-20 gap-y-10 text-[16px] text-pink-600">
+      <div className="flex w-full pt-5 pb-5 border-t border-b border-pink-200 justify-center gap-x-20 gap-y-10 text-[16px] text-pink-600">
         {["이용약관", "개인정보처리방침", "가맹문의", "채용안내"].map((v) => (
           <button key={v} className="hover:text-pink-600 transition-colors">
             <strong>{v}</strong>
