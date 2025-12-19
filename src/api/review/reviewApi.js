@@ -8,16 +8,16 @@ export const reviewList = async (productId, sort, page = 1, size = 10) => {
     params: {
       sort: sort,
       page: page,
-      size: size
-    }
+      size: size,
+    },
   });
   console.log("리뷰 목록 => ", data, "제품 Id => ", productId);
   return data;
 };
 
-export const getMyReviews = async (userId, page = 1, size = 10) => {
-  const { data } = await axiosInstance.get(`${prefix}/user/${userId}`, {
-    params: { page: page, size: size }
+export const getMyReviews = async (page = 1, size = 10) => {
+  const { data } = await axiosInstance.get(`${prefix}/user`, {
+    params: { page: page, size: size },
   });
   console.log("내 리뷰 => ", data);
   return data;
@@ -33,11 +33,9 @@ export const reviewAdd = async (review) => {
         JSON.stringify({
           content: review?.content,
           rating: review?.rating,
-          userId: review?.userId,
-          loginId: review?.loginId,
           productId: review?.productId,
-          orderId: review?.orderId
-        })
+          orderId: review?.orderId,
+        }),
       ],
       { type: "application/json" }
     )
@@ -53,7 +51,7 @@ export const reviewAdd = async (review) => {
   return data;
 };
 
-export const reviewModify = async (reviewId, updatedReview, userId) => {
+export const reviewModify = async (reviewId, updatedReview) => {
   const formData = new FormData();
   formData.append(
     "review",
@@ -62,9 +60,8 @@ export const reviewModify = async (reviewId, updatedReview, userId) => {
         JSON.stringify({
           content: updatedReview?.content,
           rating: updatedReview?.rating,
-          userId: userId,
-          deleteImgUrls: updatedReview?.deleteImgUrls
-        })
+          deleteImgUrls: updatedReview?.deleteImgUrls,
+        }),
       ],
       { type: "application/json" }
     )
@@ -82,10 +79,8 @@ export const reviewModify = async (reviewId, updatedReview, userId) => {
   return data;
 };
 
-export const reviewDelete = async (reviewId, userId) => {
-  const { data } = await axiosInstance.delete(`${prefix}/delete/${reviewId}`, {
-    params: { userId: userId }
-  });
+export const reviewDelete = async (reviewId) => {
+  const { data } = await axiosInstance.delete(`${prefix}/delete/${reviewId}`);
   console.log("삭제한 리뷰 Id => ", reviewId);
   return data;
 };

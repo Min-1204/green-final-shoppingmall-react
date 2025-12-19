@@ -9,35 +9,28 @@ export const reviewCommentGetList = async (reviewId) => {
   return data;
 };
 
-export const reviewCommentAdd = async (userId, reviewId, content) => {
+export const reviewCommentAdd = async (reviewId, content) => {
   console.log("reviewId => ", reviewId, "content => ", content);
   const { data } = await axiosInstance.post(`${prefix}/add`, {
-    userId,
     reviewId,
-    content
+    content,
   });
   console.log("리뷰 댓글 => ", data);
   return data;
 };
 
-export const reviewCommentModify = async (commentId, content, userId) => {
+export const reviewCommentModify = async (commentId, content) => {
   console.log("수정하려는 댓글 id => ", commentId, "수정 내용 => ", content);
-  const { data } = await axiosInstance.put(
-    `${prefix}/modify/${commentId}`,
-    {
-      content
-    },
-    { params: { userId } }
-  );
+  const { data } = await axiosInstance.put(`${prefix}/modify/${commentId}`, {
+    content,
+  });
   console.log("수정 내용 => ", data);
   return data;
 };
 
-export const reviewCommentDelete = async (commentId, userId) => {
+export const reviewCommentDelete = async (commentId) => {
   console.log("삭제하려는 댓글 id => ", commentId);
-  const { data } = await axiosInstance.delete(`${prefix}/delete/${commentId}`, {
-    params: { userId: userId }
-  });
+  const { data } = await axiosInstance.delete(`${prefix}/delete/${commentId}`);
   console.log("삭제한 댓글 => ", data);
   return data;
 };

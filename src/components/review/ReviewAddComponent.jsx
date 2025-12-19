@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 const ReviewAddComponent = ({ closeModal, orderItem }) => {
   console.log("orderItem => ", orderItem);
   const [currentRating, setCurrentRating] = useState(0);
-  const { user } = useSelector((state) => state.authSlice);
   //주문 아이템에서 필요한 데이터 추출
   const { productId, orderId, productName, imageUrl, totalAmount } = orderItem;
   //서버 전송용 파일 객체
@@ -15,8 +14,6 @@ const ReviewAddComponent = ({ closeModal, orderItem }) => {
     images: [],
     productId: productId,
     orderId: orderId,
-    userId: user.id,
-    loginId: user.loginId,
   });
 
   const [images, setImages] = useState([]); //이미지 미리보기용

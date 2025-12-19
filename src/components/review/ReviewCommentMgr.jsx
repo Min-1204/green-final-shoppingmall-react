@@ -35,7 +35,7 @@ const ReviewCommentMgr = ({ reviewId, commentUpdate }) => {
       alert("댓글 내용을 입력해주세요!");
       return;
     }
-    await reviewCommentAdd(user.id, reviewId, content);
+    await reviewCommentAdd(reviewId, content);
     setContent("");
     getCommentList();
   };
@@ -48,7 +48,7 @@ const ReviewCommentMgr = ({ reviewId, commentUpdate }) => {
       return;
     }
     try {
-      await reviewCommentModify(commentId, newContent, user.id);
+      await reviewCommentModify(commentId, newContent);
       setEditId(null);
       getCommentList();
     } catch (error) {
@@ -76,7 +76,7 @@ const ReviewCommentMgr = ({ reviewId, commentUpdate }) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      await reviewCommentDelete(commentId, user.id);
+      await reviewCommentDelete(commentId);
       alert("댓글이 삭제되었습니다.");
       getCommentList();
     } catch (error) {

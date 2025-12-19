@@ -3,10 +3,8 @@ import { axiosInstance } from "../user/axiosIntance";
 
 const prefix = "/api/like";
 
-export const reviewLikeToggleTrueFalse = async (reviewId, userId) => {
-  const { data } = await axiosInstance.post(`${prefix}/${reviewId}`, {
-    userId
-  });
+export const reviewLikeToggleTrueFalse = async (reviewId) => {
+  const { data } = await axiosInstance.post(`${prefix}/${reviewId}`);
   return data;
 };
 
