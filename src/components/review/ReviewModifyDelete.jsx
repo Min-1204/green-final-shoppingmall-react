@@ -73,7 +73,7 @@ const ReviewModifyDelete = ({ closeModal, review, update, product }) => {
       alert("리뷰가 삭제되었습니다.");
 
       if (update) {
-        update({ deleted: true, id: id });
+        update({ ...review, deleted: true, id: id });
       }
       closeModal();
     } catch (error) {

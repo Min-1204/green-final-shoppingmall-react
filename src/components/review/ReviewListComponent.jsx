@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import ReviewRatingComponent from "./ReviewRatingComponent";
-import { reviewList } from "../../api/review/reviewApi";
+import { reviewDelete, reviewList } from "../../api/review/reviewApi";
 import ReviewCommentMgr from "./ReviewCommentMgr";
 import ReviewLike from "./ReviewLike";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "../pagination/Pagination";
+import { useSelector } from "react-redux";
 
 const ReviewListComponent = ({ productId }) => {
   const sortOptions = [
@@ -24,6 +25,7 @@ const ReviewListComponent = ({ productId }) => {
   const [commentData, setCommentData] = useState({}); // 각 리뷰의 댓글 데이터 저장
 
   const [queryParams] = useSearchParams();
+  const { user } = useSelector((state) => state.authSlice);
 
   // URL 쿼리에서 숫자 값을 읽어오는 함수
   const getNum = (param, defaultValue) => {
@@ -80,6 +82,34 @@ const ReviewListComponent = ({ productId }) => {
 
   const openModal = (img) => setModalImage(img);
   const closeModal = () => setModalImage(null);
+
+  const adminDeleteReviewHandler = async (reviewId) => {
+    if (!window.confirm("정말 이 회원의 리뷰를 삭제하시겠습니까?")) return;
+
+    try {
+      await reviewDelete(reviewId);
+      alert("리뷰가 삭제되었습니다.");
+
+      //삭제된 리뷰 목록에서 제거
+      setPageResponse((prev) => ({
+        ...prev,
+        dtoList: prev.dtoList.filter((review) => review.id !== reviewId),
+        totalDataCount: prev.totalDataCount - 1,
+      }));
+    } catch (error) {
+      console.error("리뷰 삭제 실패:", error);
+
+      if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert("리뷰 삭제 중 오류가 발생했습니다.");
+      }
+    }
+  };
+
+  // 관리자 권한 확인
+  const isAdmin = user && user.userRole === "ADMIN";
+  console.log("유저 정보 확인 => ", user);
 
   return (
     <div className="w-full min-h-screen">
@@ -181,6 +211,16 @@ const ReviewListComponent = ({ productId }) => {
                         ({commentCount})
                       </span>
                     </div>
+
+                    {/* 관리자용 리뷰 삭제 버튼 */}
+                    {isAdmin && (
+                      <button
+                        onClick={() => adminDeleteReviewHandler(review.id)}
+                        className="px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
+                      >
+                        삭제
+                      </button>
+                    )}
 
                     {/* 댓글 수 로딩용 */}
                     <div className="hidden">
