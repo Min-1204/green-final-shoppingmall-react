@@ -45,7 +45,7 @@ const OrderCompleteComponent = () => {
     fetchOrder();
   }, [orderId]);
 
-  console.log("order=> ", order);
+  // console.log("order=> ", order);
 
   if (!order) {
     return (

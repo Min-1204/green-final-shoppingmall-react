@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  changeOrderProductStatus,
   deleteOneOrder,
   getOneOrder,
   registerOrder,
 } from "../../api/order/orderApi";
 import CouponModal from "./CouponModal";
 import { getActivePoints } from "../../api/point/pointApi";
-import { refundPayment } from "../../api/payment/paymentApi";
+import { refundPayment, verifyPaymentAndCompleteOrder } from "../../api/payment/paymentApi";
 
 const API_SERVER_HOST = "http://localhost:8080";
 
@@ -279,16 +280,8 @@ const OrderComponent = () => {
           }
           if (response.success) {
             console.log("결제 성공(검증 전)! imp_uid:", response.imp_uid);
-
             try {
-              const verificationResponse = await axios.post(
-                `${API_SERVER_HOST}/api/payments/verify`,
-                {
-                  imp_uid: response.imp_uid,
-                  merchant_uid: response.merchant_uid,
-                }
-              );
-
+              const verificationResponse = await verifyPaymentAndCompleteOrder(response.imp_uid, response.merchant_uid);
               if (verificationResponse.status === 200) {
                 //서버 검증까지 최종 성공 시 페이지 이동
                 console.log("결제 및 서버 검증이 완료되었습니다.");
@@ -298,11 +291,6 @@ const OrderComponent = () => {
               }
             } catch (error) {
               alert("서버 검증 실패:", error);
-              const reason = "서버 검증 실패";
-              result = await refundPayment(resultOrderId, reason);
-              console.log(result);
-              const result = await deleteOneOrder(resultOrderId);
-              console.log(result);
               if (error.response) {
                 // 서버가 응답을 보냈지만 에러 상태 (400,500 등)
                 alert(
