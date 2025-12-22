@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
 export default function OptionRegistration({ onChangeForm }) {
-  const [isOpen, setIsOpen] = useState(true);
   const [options, setOptions] = useState([
     {
       optionName: "",
@@ -61,18 +60,11 @@ export default function OptionRegistration({ onChangeForm }) {
 
   return (
     <div className="w-full bg-white p-6 text-sm font-['Inter']">
-      <div
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center p-3 border-b"
-      >
+      <div className="flex justify-between items-center p-3 border-b">
         <h2 className="text-lg font-semibold text-gray-800">상품 옵션 등록</h2>
-
-        <button className="text-gray-600 hover:text-gray-900 transition-colors">
-          {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-        </button>
       </div>
 
-      {isOpen && (
+      {
         <div className="px-3 py-3">
           <button
             onClick={addOptionHandler}
@@ -280,7 +272,7 @@ export default function OptionRegistration({ onChangeForm }) {
             </p>
           </div>
         </div>
-      )}
+      }
     </div>
   );
 }

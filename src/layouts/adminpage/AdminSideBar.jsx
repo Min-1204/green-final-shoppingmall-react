@@ -117,7 +117,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
                     상품등록
                   </button>
                 </li>
-                <li>
+                {/* <li>
                   <button
                     className={`${baseSubMenuClass} ${
                       activeTab === "restock-notification"
@@ -134,7 +134,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
                   >
                     재입고 알림
                   </button>
-                </li>
+                </li> */}
               </ul>
             )}
           </li>
@@ -229,22 +229,6 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
                 <li>
                   <button
                     className={`${baseSubMenuClass} ${
-                      activeTab === "coupon-register" ? activeSubMenuClass : ""
-                    }`}
-                    onClick={(e) =>
-                      handleSubItemClick(
-                        e,
-                        "coupon-register",
-                        "/admin/coupon/register"
-                      )
-                    }
-                  >
-                    쿠폰 등록
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className={`${baseSubMenuClass} ${
                       activeTab === "coupon-search" ? activeSubMenuClass : ""
                     }`}
                     onClick={(e) =>
@@ -258,12 +242,28 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
                     쿠폰 조회
                   </button>
                 </li>
+                <li>
+                  <button
+                    className={`${baseSubMenuClass} ${
+                      activeTab === "coupon-register" ? activeSubMenuClass : ""
+                    }`}
+                    onClick={(e) =>
+                      handleSubItemClick(
+                        e,
+                        "coupon-register",
+                        "/admin/coupon/register"
+                      )
+                    }
+                  >
+                    쿠폰 등록
+                  </button>
+                </li>
               </ul>
             )}
           </li>
 
           {/* === 5. 통계 (statistics) === */}
-          <li className="border-l-4 border-transparent">
+          {/* <li className="border-l-4 border-transparent">
             <div
               className={`${baseMainMenuClass} border-l-4 border-blue-400`}
               onClick={() => toggleMenu("statistics")}
@@ -297,7 +297,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
                 </li>
               </ul>
             )}
-          </li>
+          </li> */}
         </ul>
       </nav>
     </aside>

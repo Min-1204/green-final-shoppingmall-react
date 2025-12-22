@@ -6,14 +6,16 @@ export default function ProductDetailInfo({ detailImages }) {
 
   return (
     <div className="py-12">
-      <div className="space-y-0">
-        {/* 첫 번째 이미지 */}
-        <img
-          src={detailImages?.[0].imageUrl}
-          className="w-full rounded-lg shadow-sm"
-          alt="상품 상세 이미지 1"
-        />
-      </div>
+      {detailImages?.length > 0 && (
+        <div className="space-y-0">
+          {/* 첫 번째 이미지 */}
+          <img
+            src={detailImages?.[0]?.imageUrl}
+            className="w-full rounded-lg shadow-sm"
+            alt="상품 상세 이미지 1"
+          />
+        </div>
+      )}
 
       {/* 더보기 영역 (나머지 이미지가 있을 때만) */}
       {detailImages?.length > 1 && !isExpanded && (
