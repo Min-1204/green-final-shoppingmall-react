@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ChevronDown, X, Bell } from "lucide-react";
 import { useSelector } from "react-redux";
-import { applyRestockAlarm } from "../../../api/admin/product/productApi";
+import {
+  applyRestockAlarm,
+  cancelRestockAlarm,
+  isAppliedRestockAlarm,
+} from "../../../api/admin/product/productApi";
 
 const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
   const auth = useSelector((state) => state.authSlice);
@@ -11,9 +15,28 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
     return null;
   }
   const [isOpen, setIsOpen] = useState(false);
+  const [optionNotiStatus, setOptionNotiStatus] = useState({});
 
   const options = product?.options || [];
-  // console.log("options", options);
+  const soldOutOprionIds = options
+    .filter((o) => o.currentStock === 0)
+    .map((o) => o.id);
+
+  const loadRestockAlarm = async () => {
+    const data = await isAppliedRestockAlarm(auth?.user?.id, soldOutOprionIds);
+
+    console.log("loadRestockAlarm : ", data);
+    setOptionNotiStatus(data.optionNotiStatus);
+  };
+
+  useEffect(() => {
+    console.log("== product.options : ", product.options);
+    console.log("soldOutOprionIds : ", soldOutOprionIds);
+
+    if (auth.isLoggedIn && soldOutOprionIds.length > 0) {
+      loadRestockAlarm();
+    }
+  }, []);
 
   const handleSelect = (option) => {
     setSelectedItems((prev) => {
@@ -41,14 +64,14 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
     });
   };
 
-  // 옵션을 제거하는 함수 (기존 로직 유지)
+  // 옵션을 제거하는 함수
   const handleRemoveOption = (option) => {
     setSelectedItems((prev) => prev.filter((i) => i.id !== option.id));
   };
 
-  useEffect(() => {
-    console.log("selectedItems 변경", selectedItems);
-  }, [selectedItems]);
+  // useEffect(() => {
+  //   console.log("selectedItems 변경", selectedItems);
+  // }, [selectedItems]);
 
   const applyRestockMessage = async (e, optionId) => {
     e.stopPropagation();
@@ -57,12 +80,28 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
       alert(`로그인을 하셔야 재입고 알람 요청을 할 수 있습니다.`);
     } else {
       const result = await applyRestockAlarm(auth.user.id, optionId);
-      console.log("재입고 알림 신청 응답 : ", result);
+      // console.log("재입고 알림 신청 응답 : ", result);
 
       if (result !== 0) {
         alert("재입고 알림 신청이 완료되었습니다.");
+        loadRestockAlarm();
       } else {
         alert("이미 알림 신청한 상품입니다.");
+      }
+    }
+  };
+
+  const cancelRestockMessage = async (e, optionId) => {
+    e.stopPropagation();
+    if (!auth.isLoggedIn) {
+      alert(`로그인을 하셔야 재입고 알람 취소 요청을 할 수 있습니다.`);
+    } else {
+      const result = await cancelRestockAlarm(auth.user.id, optionId);
+      // console.log("재입고 알림 신청 취소 응답 : ", result);
+
+      if (result !== 0) {
+        alert("재입고 알림 신청 취소가 완료되었습니다.");
+        loadRestockAlarm();
       }
     }
   };
@@ -149,15 +188,40 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
                   )}
 
                   {/* 재입고 알림 버튼 */}
-                  {option.currentStock === 0 && (
+
+                  {option.currentStock === 0 && !auth.isLoggedIn && (
                     <button
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-600 bg-white border border-green-300 rounded-md hover:bg-green-50 transition-colors"
                       onClick={(e) => applyRestockMessage(e, option.id)}
                     >
                       <Bell className="w-3.5 h-3.5" />
                       재입고 알림
                     </button>
                   )}
+
+                  {option.currentStock === 0 &&
+                    auth.isLoggedIn &&
+                    optionNotiStatus[option.id] !== "WAITING" && (
+                      <button
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-600 bg-white border border-green-300 rounded-md hover:bg-green-50 transition-colors"
+                        onClick={(e) => applyRestockMessage(e, option.id)}
+                      >
+                        <Bell className="w-3.5 h-3.5" />
+                        재입고 알림
+                      </button>
+                    )}
+
+                  {option.currentStock === 0 &&
+                    auth.isLoggedIn &&
+                    optionNotiStatus[option.id] === "WAITING" && (
+                      <button
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 bg-white border border-orange-300 rounded-md hover:bg-orange-50 transition-colors"
+                        onClick={(e) => cancelRestockMessage(e, option.id)}
+                      >
+                        <Bell className="w-3.5 h-3.5" />
+                        재입고 알림 취소
+                      </button>
+                    )}
                 </div>
               </li>
             ))}
