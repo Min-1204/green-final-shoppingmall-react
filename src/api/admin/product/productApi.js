@@ -198,3 +198,13 @@ export const isAppliedRestockAlarm = async (userId, optionIds) => {
   );
   return res.data;
 };
+
+export const fetchNewProducts = async () => {
+  const res = await axiosInstance.get(`${prefix}/new`);
+  return res.data;
+};
+
+export const fetchBestProducts = async () => {
+  const res = await axiosInstance.get(`${prefix}/best`);
+  return res.data;
+};

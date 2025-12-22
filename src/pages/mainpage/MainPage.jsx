@@ -1,10 +1,15 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Header from "../../layouts/mainpage/Header";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import Footer from "../../layouts/mainpage/Footer";
+import {
+  fetchBestProducts,
+  fetchNewProducts,
+} from "../../api/admin/product/productApi";
+import { useNavigate } from "react-router-dom";
 
 const mainImages = [
   "https://www.theskinfood.com/shopimages/skinfood/main_rolling2_364.jpg?1762732886",
@@ -36,7 +41,28 @@ export default function MainPage() {
   const newSwiperRef = useRef(null);
   const bestSwiperRef = useRef(null);
   const bannerSwiperRef = useRef(null);
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const [newProducts, setNewProducts] = useState([]);
+  const [bestProducts, setBestProducts] = useState([]);
+
+  const loadNewProducts = async () => {
+    const data = await fetchNewProducts();
+    console.log("newProductsData : ", data);
+    setNewProducts(data);
+  };
+
+  const loadBestProducts = async () => {
+    const data = await fetchBestProducts();
+    console.log("bestProductsData : ", data);
+    setBestProducts(data);
+  };
+
+  useEffect(() => {
+    loadNewProducts();
+    loadBestProducts();
+  }, []);
 
   const sliderSettings = {
     modules: [Navigation],
@@ -61,6 +87,10 @@ export default function MainPage() {
   const handleNextClick = (swiperRef) => {
     if (swiperRef.current && swiperRef.current.swiper)
       swiperRef.current.swiper.slideNext();
+  };
+
+  const goToProductPage = (id) => {
+    navigate(`/product/${id}`);
   };
 
   return (
@@ -131,11 +161,12 @@ export default function MainPage() {
             </div>
           </div>
           <Swiper {...sliderSettings} ref={newSwiperRef} className="w-full">
-            {newImages.map((img, i) => (
+            {newProducts.map((p, i) => (
               <SwiperSlide key={i}>
                 <div className="cursor-pointer">
                   <img
-                    src={img}
+                    onClick={() => goToProductPage(p.id)}
+                    src={p?.mainImages[0].imageUrl}
                     alt={`NEW ${i}`}
                     className="rounded-xl w-full h-[300px] object-cover"
                   />
@@ -165,11 +196,12 @@ export default function MainPage() {
             </div>
           </div>
           <Swiper {...sliderSettings} ref={bestSwiperRef} className="w-full">
-            {bestImages.map((img, i) => (
+            {bestProducts.map((p, i) => (
               <SwiperSlide key={i}>
                 <div className="cursor-pointer">
                   <img
-                    src={img}
+                    onClick={() => goToProductPage(p.id)}
+                    src={p?.mainImages[0].imageUrl}
                     alt={`BEST ${i}`}
                     className="rounded-xl w-full h-[300px] object-cover"
                   />

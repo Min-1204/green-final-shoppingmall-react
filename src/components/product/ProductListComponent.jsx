@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import ProductCard from "./ProductCard";
 import ProductSortBar from "./ProductSortBar";
@@ -136,60 +136,6 @@ const ProductListComponent = () => {
     loadData();
   }, [categoryDepth, categoryId, page, size, sort, brandId]);
 
-  // const { main, sub, deep } = useParams();
-  // const decodedMain = decodeURIComponent(main).replace(/-/g, "/");
-  // const decodedSub = sub ? decodeURIComponent(sub).replace(/-/g, "/") : null;
-  // const decodedDeep = deep ? decodeURIComponent(deep).replace(/-/g, "/") : null;
-
-  // ✅ 제품 필터링 (기존 로직 유지)
-  // let categoryProducts = products.filter((p) => p.categoryMain === decodedMain);
-
-  // if (decodedSub) {
-  //   categoryProducts = categoryProducts.filter(
-  //     (p) => p.categorySub === decodedSub
-  //   );
-  // }
-
-  // if (decodedDeep) {
-  //   categoryProducts = categoryProducts.filter(
-  //     (p) => p.categoryDeep === decodedDeep
-  //   );
-  // }
-
-  // 브랜드 필터(브랜드별로 상품 조회 가능하게 하는 필터) (기존 로직 유지)
-
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const itemsPerPage = 12;
-
-  // 제품 브랜드들을 brandOptions에 담아서 ProductFilterBar에 전달 (기존 로직 유지)
-  // const brandOptions = [...new Set(categoryProducts.map((p) => p.brand))];
-
-  // const brandOptions = [
-  //   ...new Set(pageResponse?.dtoList?.map((p) => p.brand.name)),
-  // ];
-
-  // console.log("brandOptions:", brandOptions);
-
-  // ✅ 정렬 (원하면 나중에 확장 가능) (기존 로직 유지)
-  // const sortedProducts = [...categoryProducts];
-
-  // 예시: 정렬 기능은 필요 시 확장 가능
-
-  // const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
-  // const pagedProducts = sortedProducts.slice(
-  //   (currentPage - 1) * itemsPerPage,
-  //   currentPage * itemsPerPage
-  // );
-
-  // const sideCategory = CATEGORY_DATA.find((c) => c.main === decodedMain);
-  // const sideCategory = { subs: [] };
-
-  // URL 파라미터(카테고리)가 변경될 때마다 currentPage를 1로 리셋 (기존 로직 유지)
-  // useEffect(() => {
-  //   // main, sub, deep 중 하나라도 변경되면 실행됩니다.
-  //   setCurrentPage(1);
-  // }, [main, sub, deep]);
-
   return (
     <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col lg:flex-row gap-8 lg:gap-12">
       {/*  사이드바 */}
@@ -263,17 +209,23 @@ const ProductListComponent = () => {
           {Boolean(secondCategory.name) && (
             <>
               <ChevronRight className="w-4 h-4 text-gray-300" />
-              <span className="font-bold text-gray-700">
+              <Link
+                to={`/products?categoryDepth=2&categoryId=${secondCategory.id}`}
+                className="font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
                 {secondCategory.name}
-              </span>
+              </Link>
             </>
           )}
           {selectedCategory.depth === 3 && (
             <>
               <ChevronRight className="w-4 h-4 text-gray-300" />
-              <span className="font-bold text-gray-800">
+              <Link
+                to={`/products?categoryDepth=3&categoryId=${selectedCategory.id}`}
+                className="font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
                 {selectedCategory.name}
-              </span>
+              </Link>
             </>
           )}
         </nav>
