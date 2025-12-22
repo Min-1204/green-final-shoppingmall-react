@@ -177,3 +177,24 @@ export const applyRestockAlarm = async (userId, optionId) => {
   });
   return res.data;
 };
+
+export const cancelRestockAlarm = async (userId, optionId) => {
+  const res = await axiosInstance.post("/api/restock-notification/cancel", {
+    userId,
+    optionId,
+  });
+  return res.data;
+};
+
+export const isAppliedRestockAlarm = async (userId, optionIds) => {
+  const params = new URLSearchParams();
+  params.append("userId", userId);
+  optionIds.forEach((id) => {
+    params.append("optionId", id);
+  });
+
+  const res = await axiosInstance.get(
+    `/api/restock-notification?${params.toString()}`
+  );
+  return res.data;
+};
