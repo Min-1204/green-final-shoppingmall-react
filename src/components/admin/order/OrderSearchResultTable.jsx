@@ -13,6 +13,8 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
   // 상태 변경 요청할 상태
   const [requestStatus, setRequestStatus] = useState();
 
+  const [selectedItem, setSelectedItem] = useState([]);
+
   // orders가 유효한 객체인지 확인하고, 아니면 기본값(빈 객체)을 사용
   const data = orders || {};
 
@@ -54,7 +56,37 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
     // console.log("handleConfirmChangeStatus => ", item, value);
     await changeOrderProductStatus(item.orderId, value);
     await searchHandler();
+    setSelectedItem([]);
   };
+
+  const handleSelectItem = (item) => {
+    setSelectedItem((prev) =>
+      prev.some((i) => i.id == item.id)
+        ? prev.filter((i) => i.id != item.id)
+        : [...prev, item]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedItem.length != flatOrders.length) setSelectedItem(flatOrders);
+    else setSelectedItem([]);
+  };
+
+  const handleChangeSelectedItemStatus = async () => {
+    if (selectedItem.some((i) => i.orderProductStatus != "PAID")) {
+      setSelectedItem([]);
+      return alert("결제완료된 상품만 출고가 가능합니다.");
+    }
+    // console.log("handleChangeSelectedItemStatus");
+    for (const element of selectedItem) {
+      // console.log("element", element);
+      await changeOrderProductStatus(element.orderId, "PREPARING");
+    }
+    alert("선택한 상품의 출고가 완료됐습니다.");
+    setSelectedItem([]);
+  };
+
+  console.log("selectedItem", selectedItem);
 
   return (
     <div className="w-full mt-8">
@@ -63,7 +95,10 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
           검색 결과 (총 {totalCount} 건)
         </span>
         <div className="flex items-center gap-2 flex-wrap">
-          <button className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm">
+          <button
+            className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm"
+            onClick={handleChangeSelectedItemStatus}
+          >
             선택 상품 출고
           </button>
           <button className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm">
@@ -77,7 +112,16 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
         <table className="min-w-full border-collapse text-sm text-center">
           <thead className="bg-gray-100 border-b border-gray-300">
             <tr className="text-gray-700 font-semibold text-sm divide-x divide-gray-300">
-              <th className="px-1 py-3 w-13">선택</th>
+              <th className="px-1 py-3 w-13">
+                <input
+                  type="checkbox"
+                  onChange={handleSelectAll}
+                  checked={
+                    flatOrders.length > 0 &&
+                    selectedItem.length == flatOrders.length
+                  }
+                ></input>
+              </th>
               <th className="px-2 py-3">번호</th>
               <th className="px-3 py-3">주문날짜</th>
               <th className="px-3 py-3">주문번호</th>
@@ -100,6 +144,8 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
                   <input
                     type="checkbox"
                     className="w-3.5 h-3.5 border-gray-400 rounded text-blue-600 cursor-pointer"
+                    onChange={() => handleSelectItem(item)}
+                    checked={selectedItem.some((i) => i.id == item.id)}
                   />
                 </td>
                 {item.isFirstProduct && (
