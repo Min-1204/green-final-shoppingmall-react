@@ -4,7 +4,7 @@ export const API_SERVER = "http://localhost:8080";
 
 export const axiosInstance = axios.create({
   baseURL: API_SERVER,
-  withCredentials: true
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -22,10 +22,34 @@ axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      console.error("인증 실패 : 토큰 만료");
-      window.location.href = "/login";
+  async (error) => {
+    const originalRequest = error.config; // 실패한 원래 요청의 모든 설정(URL, 파라미터 등)을 보관
+    const isCurrentUser = originalRequest?.url?.includes("/currentUser");
+    const isRefreshRequest = originalRequest?.url?.includes("/refresh");
+
+    if (isCurrentUser && error.response?.status === 401) {
+      return Promise.reject(error);
+    }
+
+    if (
+      error.response?.status === 401 &&
+      !isRefreshRequest &&
+      !originalRequest._retry // 재시도중이라는
+    ) {
+      originalRequest._retry = true; // 무한루프 방지. 여기서 재시도 플래그 설정
+
+      try {
+        await axiosInstance.post("/api/user/refresh");
+
+        // 성공 시 재시도
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        console.error("토큰 갱신 실패 - 재 로그인이 필요합니다");
+        if (!isCurrentUser) {
+          window.location.href = "/login";
+        }
+        return Promise.reject(refreshError);
+      }
     }
     return Promise.reject(error);
   }

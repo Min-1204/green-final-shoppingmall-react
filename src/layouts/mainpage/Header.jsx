@@ -74,18 +74,24 @@ export default function Header() {
                   >
                     로그아웃
                   </button>
+
                   <span className="text-[#E9D5D8]">|</span>
+                  {user?.userRole === "ADMIN" && (
+                    <>
+                      <button
+                        onClick={() => navigate("/admin/products")}
+                        className="hover:text-[#FF6B9C]"
+                      >
+                        관리자페이지
+                      </button>
+                      <span className="text-[#E9D5D8]">|</span>
+                    </>
+                  )}
                   <button
-                    onClick={() =>
-                      navigate(
-                        user?.userRole === "ADMIN"
-                          ? "/admin/products"
-                          : "/mypage"
-                      )
-                    }
+                    onClick={() => navigate("/mypage")}
                     className="hover:text-[#FF6B9C]"
                   >
-                    {user?.userRole === "ADMIN" ? "관리자페이지" : "마이페이지"}
+                    마이페이지
                   </button>
                 </>
               ) : (
