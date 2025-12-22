@@ -4,12 +4,27 @@ import { useNavigate } from "react-router-dom";
 
 const NavBar = memo(() => {
   const [open, setOpen] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
   const navigate = useNavigate();
 
   const menus = ["스킨케어", "마스크팩", "클렌징", "선케어", "메이크업"];
 
+  // 스크롤 이벤트 리스너
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav className="bg-[#ffffff] relative">
+    <nav
+      className={`bg-[#ffffff] transition-all duration-300 ${
+        isSticky ? "fixed top-0 left-0 right-0 z-50 shadow-lg" : "relative"
+      }`}
+    >
       <div className="max-w-7xl mx-auto h-12 flex items-center px-13 gap-15">
         {/* ☰ 카테고리 */}
         <button

@@ -64,7 +64,7 @@ export default function Header() {
             <ProductSearchBar />
           </div>
           <div className="flex-shrink-0 flex flex-col items-end gap-4">
-            <div className="flex items-center gap-4 text-[13px] font-semibold text-[#8B6E75]">
+            <div className="flex items-center gap-4 text-[13px] font-semibold text-gray-500">
               {user?.loginId ? (
                 <>
                   <button

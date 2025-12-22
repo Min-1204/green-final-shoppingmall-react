@@ -1,113 +1,150 @@
 import React from "react";
-import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import {
+  Facebook,
+  Instagram,
+  Twitter,
+  Mail,
+  Phone,
+  ArrowRight,
+} from "lucide-react";
 
 const Footer = () => {
-  const navigate = useNavigate();
+  const handleNav = (path) => console.log(`Maps to: ${path}`);
+
+  const socialLinks = [
+    { Icon: Facebook, url: "https://www.facebook.com" },
+    { Icon: Instagram, url: "https://www.instagram.com" },
+    { Icon: Twitter, url: "https://x.com" },
+  ];
+
   return (
-    <footer className="w-full rounded-b-3xl shadow-1xl pb-2 border-b border-t border-t-pink-200 bg-gradient-to-b from-[#fff6f9] to-[#fdecef] py-20 px-6 text-[#6b4b55] font-sans">
-      <div className="max-w-7xl mx-auto pb-5 grid grid-cols-1 lg:grid-cols-12 gap-16">
-        <div className="lg:col-span-6 space-y-10">
-          <div>
-            <h2 className="text-3xl pb-2 font-semibold tracking-[0.35em] text-pink-500 drop-shadow-sm">
-              MOONLIGHT MOIST
-            </h2>
-            <p className="mt-2 pb-2 text-sm tracking-widest text-pink-400">
-              <strong>달빛나라 촉촉마을</strong>
-            </p>
-          </div>
-
-          <div className="space-y-3 text-[13px] leading-relaxed">
-            <Info label="TeamName : ">
-              신소라와 세남자 (신소라, 임병국, 박종민, 강민석)
-            </Info>
-            <Info label="Address : ">
-              경기도 성남시 분당구 돌마로 46, 그린아카데미 5층 505호
-            </Info>
-            <Info label="Business : ">
-              742-81-00924 | 통신판매 제2025-경기성남-0112호
-            </Info>
-            <Info label="Contact : ">
-              <span className="italic text-pink-500 ">
-                <strong>sinprincess@moonmoist.com</strong>
-              </span>
-            </Info>
-          </div>
-        </div>
-
-        <div className="lg:col-span-5 lg:col-start-8 flex flex-col justify-between">
-          <div>
-            <p className="text-2xl pb-2 tracking-widest text-pink-400 mb-4">
-              고객센터
-            </p>
-            <p className="text-4xl font-light text-[#3f2a30] tracking-tight drop-shadow-sm">
-              070-1234-5678
-            </p>
-            <p className="mt-4 pb-2 text-sm text-[#7a5a63] leading-relaxed">
-              평일 10:00 - 17:00 (점심 12:00 - 13:30)
-              <br />
-              주말 및 공휴일 휴무
-            </p>
-            <div className=" pb-3 flex gap-4">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full border border-pink-300 text-pink-400 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-all shadow-sm"
-              >
-                <FaFacebookF />
-              </a>
-              <a
-                href="https://www.instagram.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full border border-pink-300 text-pink-400 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-all shadow-sm"
-              >
-                <FaInstagram />
-              </a>
-              <a
-                href="https://x.com/?lang=ko"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full border border-pink-300 text-pink-400 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-all shadow-sm"
-              >
-                <FaTwitter />
-              </a>
+    <footer className="w-full bg-white border-1 border-gray-200 text-gray-500 font-sans pt-10 pb-5">
+      <div className="max-w-7xl mx-auto px-6 md:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
+          <div className="lg:col-span-4 space-y-7">
+            <div>
+              <h2 className="text-2xl font-black tracking-[0.15em] text-[#52a3ff]">
+                MOONLIGHT MOIST
+              </h2>
+              <p className="text-[13px] tracking-[0.2em] text-[#52a3ff] mt-1 font-bold">
+                달빛나라 촉촉마을
+              </p>
+            </div>
+            <div className="space-y-3.5 text-[13px]">
+              <p className="flex items-center gap-2">
+                <span className="font-bold text-gray-700 min-w-[65px]">
+                  Team
+                </span>
+                <span className="text-gray-600">신소라와 세남자</span>
+              </p>
+              <p className="flex items-start gap-2">
+                <span className="font-bold text-gray-700 min-w-[65px]">
+                  Address
+                </span>
+                <span className="text-gray-600">
+                  경기도 성남시 분당구 돌마로 46, 그린아카데미 5층 505호
+                </span>
+              </p>
+              <p className="flex items-center gap-2">
+                <span className="font-bold text-gray-700 min-w-[65px]">
+                  Business
+                </span>
+                <span className="text-gray-600">
+                  742-81-00924 | 제2025-경기성남-0112호
+                </span>
+              </p>
+              <p className="flex items-center gap-2 text-[#52a3ff] font-semibold italic mt-2">
+                <Mail size={14} />
+                <span>sinprincess@moonmoist.com</span>
+              </p>
             </div>
           </div>
-          <p
-            className="text-sm tracking-[0.3em] text-[#2b1a1f] mb-4"
-            style={{
-              textShadow: "0 2px 0 #ffe1ea, 0 8px 24px rgba(255,150,180,0.4)",
-            }}
-          >
-            © 2025 MOONLIGHT MOIST VILLAGE
+
+          <div className="lg:col-span-3 space-y-6 lg:border-l lg:border-gray-50 lg:pl-10">
+            <div className="space-y-4">
+              <p className="text-sm font-bold text-gray-600 uppercase tracking-widest border-b border-gray-100 pb-2 flex justify-between items-center">
+                Shopping Info
+                <ArrowRight size={12} className="text-gray-300" />
+              </p>
+              <ul className="text-[13px] space-y-3">
+                <li className="flex justify-between">
+                  <span className="text-gray-400">배송안내</span>
+                  <span className="text-gray-700 font-medium">CJ대한통운</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-400">계좌정보</span>
+                  <span className="text-gray-700 font-medium">
+                    국민 123456-01-123456
+                  </span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-400">예금주</span>
+                  <span className="text-gray-700 font-medium">
+                    촉촉마을(주)
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* SNS 아이콘 */}
+            <div className="flex gap-3 mt-4">
+              {socialLinks.map(({ Icon, url }, i) => (
+                <a
+                  key={i}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-lg border border-[#a4cfff] text-[#a4cfff] transition-all duration-300"
+                >
+                  <Icon size={15} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="lg:col-span-5 space-y-6 lg:pl-12">
+            <div className="p-7">
+              <p className="text-xs font-bold text-gray-600 mb-2 tracking-widest uppercase flex items-center gap-2">
+                <Phone size={12} />
+                Customer Support
+              </p>
+              <p className="text-2xl font-black text-gray-600 tracking-tighter mb-5">
+                070-1234-5678
+              </p>
+              <div className="text-[13px] leading-6 text-gray-600 font-medium space-y-1">
+                <p>평일 운영: 10:00 - 17:00</p>
+                <p>점심 시간: 12:00 - 13:30</p>
+                <p className="text-gray-400 pt-2 border-t border-gray-200 mt-2">
+                  주말 및 공휴일은 Q&A 게시판을 이용해주세요.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="pt-5 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-wrap justify-center gap-x-10 gap-y-2 text-[14px] font-bold text-gray-700">
+            {["이용약관", "개인정보처리방침", "가맹문의", "채용안내"].map(
+              (v) => (
+                <button
+                  key={v}
+                  onClick={() => handleNav(v)}
+                  className="hover:text-[#52a3ff] transition-colors relative group"
+                >
+                  {v}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#52a3ff] transition-all group-hover:w-full"></span>
+                </button>
+              )
+            )}
+          </div>
+          <p className="text-[11px] font-medium tracking-[0.1em] text-gray-400">
+            © 2025 MOONLIGHT MOIST VILLAGE. ALL RIGHTS RESERVED.
           </p>
         </div>
-      </div>
-      <div className="flex w-full pt-5 pb-5 border-t border-b border-pink-200 justify-center gap-x-20 gap-y-10 text-[16px] text-pink-600">
-        {["이용약관", "개인정보처리방침", "가맹문의", "채용안내"].map((v) => (
-          <button key={v} className="hover:text-pink-600 transition-colors">
-            <strong>{v}</strong>
-          </button>
-        ))}
       </div>
     </footer>
   );
 };
-
-/* 재사용 컴포넌트 */
-const Info = ({ label, children }) => (
-  <div className="flex gap-6">
-    <span className="w-20 shrink-0 text-pink-400 font-medium">{label}</span>
-    <span className="text-[#6b4b55]">{children}</span>
-  </div>
-);
-
-const Social = ({ icon }) => (
-  <button className="w-9 h-9 rounded-full border border-pink-300 text-pink-400 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-all shadow-sm">
-    {icon}
-  </button>
-);
 
 export default Footer;
