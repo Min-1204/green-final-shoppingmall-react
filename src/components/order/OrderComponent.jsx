@@ -10,7 +10,10 @@ import {
 } from "../../api/order/orderApi";
 import CouponModal from "./CouponModal";
 import { getActivePoints } from "../../api/point/pointApi";
-import { refundPayment, verifyPaymentAndCompleteOrder } from "../../api/payment/paymentApi";
+import {
+  refundPayment,
+  verifyPaymentAndCompleteOrder,
+} from "../../api/payment/paymentApi";
 
 const API_SERVER_HOST = "http://localhost:8080";
 
@@ -281,7 +284,10 @@ const OrderComponent = () => {
           if (response.success) {
             console.log("결제 성공(검증 전)! imp_uid:", response.imp_uid);
             try {
-              const verificationResponse = await verifyPaymentAndCompleteOrder(response.imp_uid, response.merchant_uid);
+              const verificationResponse = await verifyPaymentAndCompleteOrder(
+                response.imp_uid,
+                response.merchant_uid
+              );
               if (verificationResponse.status === 200) {
                 //서버 검증까지 최종 성공 시 페이지 이동
                 console.log("결제 및 서버 검증이 완료되었습니다.");
@@ -472,17 +478,6 @@ const OrderComponent = () => {
                   >
                     신규 배송지
                   </button>
-                  <label className="flex items-center gap-2 cursor-pointer ml-auto">
-                    <input
-                      type="checkbox"
-                      checked={defaultAddress}
-                      onChange={(e) => setDefaultAddress(e.target.checked)}
-                      className="w-4 h-4"
-                    />
-                    <span className="text-[13px] text-[#111]">
-                      기본 배송지로 저장
-                    </span>
-                  </label>
                 </div>
 
                 <div className="space-y-3 pt-2">
