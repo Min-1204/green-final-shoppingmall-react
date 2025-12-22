@@ -1,16 +1,41 @@
+import { useState } from "react";
+
 export default function CancelModal({
   selectedOrder,
   item,
   onConfirm,
   closeModal,
 }) {
-  // orderProductGroup: 해당 주문 번호에 묶인 전체 상품 리스트 (배열)
+  // 취소 사유 상태(선택한 사유)
+  const [selectedReason, setSelectedReason] = useState("");
+  // 취소 사유 상태(직접 입력한 사유)
+  const [customReason, setCustomReason] = useState("");
   const totalItemsCount = selectedOrder.orderProducts?.length || 1;
   const isMultiple = totalItemsCount > 1;
 
-  console.log("item", item);
-  console.log("selectedOrder", selectedOrder);
-  console.log("orderProducts", selectedOrder.orderProducts);
+  // 사유 입력 확인 후 컨펌 호출
+  const handleConfirmClick = () => {
+    console.log("handleComfirmClick 호출");
+    if (selectedReason != "기타") {
+      // 선택한 사유가 '기타'가 아니었을 때
+      if (!selectedReason.trim()) {
+        alert("취소 사유를 입력하거나 선택해 주세요.");
+        return;
+      }
+      onConfirm(selectedOrder.id, selectedReason);
+    } else {
+      // 선택한 사유가 기타였을 때 직접 입력한 사유를 전달
+      if (!customReason.trim()) {
+        alert("취소 사유를 입력하거나 선택해 주세요.");
+        return;
+      }
+      onConfirm(selectedOrder.id, customReason);
+    }
+  };
+
+  // console.log("item", item);
+  // console.log("selectedOrder", selectedOrder);
+  // console.log("orderProducts", selectedOrder.orderProducts);
 
   return (
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50 p-4">
@@ -66,9 +91,37 @@ export default function CancelModal({
             </div>
           </div>
 
-          <p className="text-[12px] text-gray-400 mt-4 text-center">
-            취소 완료 후, 필요한 상품만 장바구니에 담아 다시 결제해 주세요.
-          </p>
+          {/* 취소 사유 입력 */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-gray-700">
+              취소 사유
+            </label>
+            <select
+              className="w-full p-3 border rounded-xl text-sm focus:ring-2 focus:ring-black outline-none"
+              value={selectedReason}
+              onChange={(e) => {
+                setSelectedReason(e.target.value);
+                // 선택한 사유가 기타가 아니면 직접 입력한 사유는 초기화
+                if (selectedReason != "기타") setCustomReason("");
+              }}
+            >
+              <option value="">사유를 선택해주세요</option>
+              <option value="단순 변심">단순 변심</option>
+              <option value="주문 정보 실수">
+                주문 정보 실수 (옵션/배송지 등)
+              </option>
+              <option value="재결제 예정">취소 후 재결제</option>
+              <option value="기타">기타 (직접 입력)</option>
+            </select>
+
+            {selectedReason === "기타" && (
+              <textarea
+                className="w-full p-3 border rounded-xl text-sm mt-2 outline-none focus:ring-2 focus:ring-black"
+                placeholder="상세한 취소 사유를 입력해주세요."
+                onChange={(e) => setCustomReason(e.target.value)}
+              />
+            )}
+          </div>
         </div>
 
         {/* 하단 버튼 */}
@@ -81,7 +134,7 @@ export default function CancelModal({
           </button>
           <button
             className="flex-1 py-3 text-sm font-semibold text-white bg-[#111] rounded-xl hover:bg-black transition-colors shadow-lg shadow-black/10"
-            onClick={() => onConfirm(selectedOrder.id)}
+            onClick={() => handleConfirmClick()}
           >
             전체 취소하기
           </button>
