@@ -49,3 +49,15 @@ export const changeOrderProductStatus = async (orderId, newStatus) => {
   console.log("changeOrderProductStatus => ", res.data);
   return res.data;
 };
+
+export const getOrderStatusSummary = async (userId, startDate, endDate) => {
+  const res = await axiosInstance.get(`${prefix}/summary`, {
+    params: {
+      userId: userId,
+      startDate: startDate,
+      endDate: endDate,
+    },
+  });
+  console.log("getOrderStatusSummary => ", res.data);
+  return res.data;
+};
