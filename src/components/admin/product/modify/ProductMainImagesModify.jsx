@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 function ProductMainImagesModify({ existingData, onChangeForm }) {
   const thumbnailRef = useRef(null);
   const galleryRef = useRef(null);
-  const [isOpen, setIsOpen] = useState(true);
   const [images, setImages] = useState([]);
   // 선택된 미리보기 이미지의 인덱스 (미리보기 상세 정보를 보여주기 위함)
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
@@ -111,18 +110,11 @@ function ProductMainImagesModify({ existingData, onChangeForm }) {
 
   return (
     <div className="w-full bg-white p-6 text-sm font-['Inter']">
-      <div
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center p-3 border-b"
-      >
+      <div className="flex justify-between items-center p-3 border-b">
         <h2 className="text-lg font-semibold text-gray-800">상품 대표 사진</h2>
-
-        <button className="text-gray-600 hover:text-gray-900 transition-colors">
-          {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-        </button>
       </div>
 
-      {isOpen && (
+      {
         <div>
           {/* 안내 메시지 */}
           <div className="mb-4 mt-4 px-2">
@@ -315,7 +307,7 @@ function ProductMainImagesModify({ existingData, onChangeForm }) {
             </div>
           </div>
         </div>
-      )}
+      }
     </div>
   );
 }

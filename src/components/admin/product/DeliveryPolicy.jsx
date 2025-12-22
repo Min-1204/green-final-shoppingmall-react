@@ -59,82 +59,114 @@ export default function DeliveryPolicy({ onChangeForm }) {
 
   if (loading) {
     return (
-      <div className="p-4 bg-gray-50 rounded-lg">
-        <p className="text-gray-600">배송 정책을 불러오는 중...</p>
+      <div className="w-full bg-white p-6 text-sm font-['Inter']">
+        <div className="flex justify-between items-center p-3 border-b">
+          <h2 className="text-lg font-semibold text-gray-800">
+            배송 정책 선택
+          </h2>
+        </div>
+        <div className="px-3 py-6">
+          <p className="text-gray-600">배송 정책을 불러오는 중...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 rounded-lg">
-        <p className="text-red-600">{error}</p>
+      <div className="w-full bg-white p-6 text-sm font-['Inter']">
+        <div className="flex justify-between items-center p-3 border-b">
+          <h2 className="text-lg font-semibold text-gray-800">
+            배송 정책 선택
+          </h2>
+        </div>
+        <div className="px-3 py-6">
+          <p className="text-red-600">{error}</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          배송 정책 선택
-        </label>
-        <select
-          value={selectedPolicy?.id || ""}
-          onChange={handlePolicyChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        >
-          {policies.map((policy) => (
-            <option key={policy.id} value={policy.id}>
-              {policy.name}
-            </option>
-          ))}
-        </select>
+    <div className="w-full bg-white p-6 text-sm font-['Inter']">
+      <div className="flex justify-between items-center p-3 border-b">
+        <h2 className="text-lg font-semibold text-gray-800">배송 정책 선택</h2>
       </div>
 
-      {selectedPolicy && (
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">
-            선택된 정책: {selectedPolicy.name}
-          </h3>
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <span className="text-sm font-medium text-gray-600 w-32">
-                정책 유형:
-              </span>
-              <span className="text-sm text-gray-800">
-                {getPolicyTypeLabel(selectedPolicy.policyType)}
-              </span>
+      <div className="px-3 py-3">
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            배송 정책
+          </label>
+          <select
+            value={selectedPolicy?.id || ""}
+            onChange={handlePolicyChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            {policies.map((policy) => (
+              <option key={policy.id} value={policy.id}>
+                {policy.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {selectedPolicy && (
+          <div className="border border-gray-300 rounded-lg shadow-md overflow-hidden">
+            <div className="bg-gray-100 px-4 py-3 border-b border-gray-300">
+              <h3 className="text-sm font-semibold text-gray-800">
+                선택된 정책: {selectedPolicy.name}
+              </h3>
             </div>
-            <div className="flex items-center">
-              <span className="text-sm font-medium text-gray-600 w-32">
-                기본 배송비:
-              </span>
-              <span className="text-sm text-gray-800">
-                {formatCurrency(selectedPolicy.basicDeliveryFee)}
-              </span>
-            </div>
-            {selectedPolicy.freeConditionAmount !== null && (
+            <div className="bg-white p-4 space-y-3">
               <div className="flex items-center">
-                <span className="text-sm font-medium text-gray-600 w-32">
-                  무료 배송 조건:
+                <span className="text-sm font-medium text-gray-600 w-40">
+                  정책 유형:
                 </span>
                 <span className="text-sm text-gray-800">
-                  {formatCurrency(selectedPolicy.freeConditionAmount)} 이상 구매
-                  시
+                  {getPolicyTypeLabel(selectedPolicy.policyType)}
                 </span>
               </div>
-            )}
-            {selectedPolicy.defaultPolicy && (
-              <div className="mt-3 pt-3 border-t border-blue-300">
-                <span className="inline-block px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded">
-                  기본 정책
+              <div className="flex items-center">
+                <span className="text-sm font-medium text-gray-600 w-40">
+                  기본 배송비:
+                </span>
+                <span className="text-sm text-gray-800">
+                  {formatCurrency(selectedPolicy.basicDeliveryFee)}
                 </span>
               </div>
-            )}
+              {selectedPolicy.freeConditionAmount !== null && (
+                <div className="flex items-center">
+                  <span className="text-sm font-medium text-gray-600 w-40">
+                    무료 배송 조건:
+                  </span>
+                  <span className="text-sm text-gray-800">
+                    {formatCurrency(selectedPolicy.freeConditionAmount)} 이상
+                    구매시
+                  </span>
+                </div>
+              )}
+              {selectedPolicy.defaultPolicy && (
+                <div className="pt-3 border-t border-gray-200">
+                  <span className="inline-block px-3 py-1 text-xs font-medium text-green-700 bg-green-50 rounded-md border border-green-200">
+                    기본 정책
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
+        )}
+
+        <div className="mt-4 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-gray-700">
+            * 상품에 적용할 배송 정책을 선택해주세요.
+          </p>
+          <p className="text-sm text-gray-700 mt-1">
+            * 배송 정책은 관리자 페이지에서 미리 등록된 정책 중 선택할 수
+            있습니다.
+          </p>
         </div>
-      )}
+      </div>
     </div>
   );
 }

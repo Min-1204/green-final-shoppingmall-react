@@ -261,14 +261,13 @@ export default function ProductDetailComponent() {
             />
           )}
 
-          {/* 🔴 [추가] 상품 금액 합계 UI */}
+          {/*  상품 금액 합계 UI */}
           {product?.options?.length === 1 && (
             <div className="pt-4 pb-6 border-t border-gray-300">
               <div className="flex justify-between items-end">
                 <span className="text-base font-semibold text-gray-900">
                   상품금액 합계
                 </span>
-                {/* **[디자인 적용]** 올리브영 스타일의 빨간색 금액 강조 */}
                 <span className="text-2xl font-extrabold text-[#ff6e18]">
                   {(product?.options[0]?.sellingPrice * qty).toLocaleString()}원
                   {/* 이 금액이 계산된 총액을 표시하게 됩니다. */}
@@ -282,7 +281,6 @@ export default function ProductDetailComponent() {
                 <span className="text-base font-semibold text-gray-900">
                   상품금액 합계
                 </span>
-                {/* **[디자인 적용]** 올리브영 스타일의 빨간색 금액 강조 */}
                 <span className="text-2xl font-extrabold text-[#ff6e18]">
                   {totalPrice.toLocaleString()}원
                   {/* 이 금액이 계산된 총액을 표시하게 됩니다. */}
@@ -291,7 +289,7 @@ export default function ProductDetailComponent() {
             </div>
           )}
 
-          {/* 🔹 개선된 버튼 영역 */}
+          {/*  버튼  */}
           <div className="flex gap-3 pt-6">
             {product?.options?.length > 1 ? (
               <>
@@ -336,7 +334,7 @@ export default function ProductDetailComponent() {
             </button>
           </div>
 
-          {/* 🔹 배송 정보 추가 */}
+          {/*  배송 정보 */}
           <div className="mt-8 p-5 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 space-y-3 text-sm">
             <div className="flex justify-between items-center">
               <span className="text-gray-600 font-medium">배송비</span>
@@ -354,7 +352,7 @@ export default function ProductDetailComponent() {
         </div>
       </div>
 
-      {/* 🔹 개선된 탭 메뉴 */}
+      {/* 탭 메뉴 */}
       <div className="sticky top-0 bg-white z-10 border-b-2 border-gray-200 shadow-sm">
         <div className="flex gap-0 overflow-x-auto">
           {tabs.map((t) => (

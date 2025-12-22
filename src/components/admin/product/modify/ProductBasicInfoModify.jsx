@@ -2,7 +2,6 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 export default function ProductBasicInfoModify({ existingData, onChangeForm }) {
-  const [isOpen, setIsOpen] = useState(true);
   const [productBasicInfo, setProductBasicInfo] = useState({
     productName: "",
     searchKeywords: "",
@@ -31,18 +30,11 @@ export default function ProductBasicInfoModify({ existingData, onChangeForm }) {
 
   return (
     <div className="w-full bg-white p-6 text-sm font-['Inter']">
-      <div
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center p-3 border-b"
-      >
+      <div className="flex justify-between items-center p-3 border-b">
         <h2 className="text-lg font-semibold text-gray-800">기본 정보</h2>
-
-        <button className="text-gray-600 hover:text-gray-900 transition-colors">
-          {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-        </button>
       </div>
 
-      {isOpen && (
+      {
         <div>
           {/* 필터 전체 영역 */}
           <div className="border border-gray-300 mb-6 mt-6 rounded-lg overflow-hidden shadow-lg">
@@ -113,7 +105,7 @@ export default function ProductBasicInfoModify({ existingData, onChangeForm }) {
             </div>
           </div>
         </div>
-      )}
+      }
     </div>
   );
 }

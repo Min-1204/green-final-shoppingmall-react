@@ -69,7 +69,7 @@ const AdminLayout = ({ children }) => {
       {/* 네비게이션 바 */}
       <nav className="flex justify-between items-center px-8 h-16 bg-gray-800 text-white shadow-md">
         <div className="navbar-brand">
-          <h1 className="text-xl font-semibold">FirstMall 관리자</h1>
+          <h1 className="text-xl font-semibold">관리자 페이지</h1>
         </div>
         <div className="flex items-center gap-4">
           <div className="navbar-user text-sm">{profile?.loginId}</div>

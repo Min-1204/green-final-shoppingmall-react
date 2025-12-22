@@ -16,7 +16,6 @@ const init = {
 };
 
 function ProductDetailInfoModify({ existingData, onChangeForm }) {
-  const [isOpen, setIsOpen] = useState(true);
   const [productDetailInfo, setProductDetailInfo] = useState(init);
 
   useEffect(() => {
@@ -35,18 +34,11 @@ function ProductDetailInfoModify({ existingData, onChangeForm }) {
 
   return (
     <div className="w-full bg-white p-6 text-sm font-['Inter']">
-      <div
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center p-3 border-b cursor-pointer"
-      >
+      <div className="flex justify-between items-center p-3 border-b cursor-pointer">
         <h2 className="text-lg font-semibold text-gray-800">상품 상세 정보</h2>
-
-        <button className="text-gray-600 hover:text-gray-900 transition-colors">
-          {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-        </button>
       </div>
 
-      {isOpen && (
+      {
         <div>
           {/* 안내 메시지 */}
           <div className="mb-4 mt-4 px-2">
@@ -284,7 +276,7 @@ function ProductDetailInfoModify({ existingData, onChangeForm }) {
             </div>
           </div>
         </div>
-      )}
+      }
     </div>
   );
 }

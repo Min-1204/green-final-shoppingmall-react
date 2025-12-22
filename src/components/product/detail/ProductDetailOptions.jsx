@@ -103,17 +103,19 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
                 }
               >
                 <div className="flex items-center gap-3 flex-1">
-                  <img
-                    src={option.imageUrl}
-                    alt={option.optionName}
-                    className="w-10 h-10 object-cover rounded-md flex-shrink-0"
-                    // 이미지 URL이 없을 경우 대비하여 에러 핸들링 추가
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src =
-                        "https://placehold.co/40x40/f3f4f6/a1a1aa?text=NoImg";
-                    }}
-                  />
+                  {option?.imageUrl && (
+                    <img
+                      src={option.imageUrl}
+                      alt={option.optionName}
+                      className="w-10 h-10 object-cover rounded-md flex-shrink-0"
+                      // 이미지 URL이 없을 경우 대비하여 에러 핸들링 추가
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src =
+                          "https://placehold.co/40x40/f3f4f6/a1a1aa?text=NoImg";
+                      }}
+                    />
+                  )}
 
                   <div className="flex items-center gap-2 min-w-0">
                     {/* 품절 표시 */}
@@ -171,17 +173,19 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
               key={option.id}
               className="flex items-center justify-between gap-4 p-4 bg-white border border-gray-200 rounded-lg"
             >
-              <img
-                src={option.imageUrl}
-                alt={option.optionName}
-                className="w-10 h-10 object-cover rounded-md flex-shrink-0"
-                // 이미지 URL이 없을 경우 대비하여 에러 핸들링 추가
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "https://placehold.co/40x40/f3f4f6/a1a1aa?text=NoImg";
-                }}
-              />
+              {option?.imageUrl && (
+                <img
+                  src={option.imageUrl}
+                  alt={option.optionName}
+                  className="w-10 h-10 object-cover rounded-md flex-shrink-0"
+                  // 이미지 URL이 없을 경우 대비하여 에러 핸들링 추가
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src =
+                      "https://placehold.co/40x40/f3f4f6/a1a1aa?text=NoImg";
+                  }}
+                />
+              )}
               {/* 제품명 */}
               <div className="flex-1 text-sm font-medium text-gray-900 min-w-0">
                 <div className="truncate">{option.optionName}</div>

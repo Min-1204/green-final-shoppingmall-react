@@ -62,6 +62,28 @@ const UserInfoResultTable = ({ users, onSort }) => {
     }
   };
 
+  const phoneNumberFormatter = (number) => {
+    if (number.length === 11) {
+      return (
+        number.substring(0, 3) +
+        "-" +
+        number.substring(3, 7) +
+        "-" +
+        number.substring(7, 11)
+      );
+    }
+
+    if (number.length === 10) {
+      return (
+        number.substring(0, 3) +
+        "-" +
+        number.substring(3, 6) +
+        "-" +
+        number.substring(6, 10)
+      );
+    }
+  };
+
   return (
     <>
       <div className="w-full mt-6">
@@ -154,7 +176,7 @@ const UserInfoResultTable = ({ users, onSort }) => {
                     <td>{user.email}</td>
 
                     {/* 핸드폰 */}
-                    <td>{user.phoneNumber}</td>
+                    <td>{phoneNumberFormatter(user.phoneNumber)}</td>
 
                     {/* 권한 */}
                     <td>

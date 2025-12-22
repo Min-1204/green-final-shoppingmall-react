@@ -48,19 +48,75 @@ const initForm = {
       image: null,
     },
   ],
-  detailInfo: {},
+  detailInfo: {
+    capacity: "",
+    skinType: "",
+    usagePeriod: "",
+    usageMethod: "",
+    manufacturer: "",
+    madeInCountry: "",
+    ingredients: "",
+    functionalCertification: "",
+    caution: "",
+    qualityGuarantee: "",
+    customerServiceNumber: "",
+  },
 };
 
 const ProductAddPage = () => {
   const [productForm, setProductForm] = useState(initForm);
 
-  // const formDataHandler = (data) => {};
-
   useEffect(() => {
     console.log(productForm);
   }, [productForm]);
 
+  // 필수항목 상품멱, 카테고리, 브랜드, 썸네일 이미지, 옵션 필드, 상품 상세정보
+  const validateRequiredField = () => {
+    if (productForm.basicInfo.productName.trim() === "") {
+      alert("상품명은 필수항목으로 반드시 입력하셔야 합니다.");
+      return true;
+    } else if (!productForm.category?.id) {
+      alert("카테고리는 필수항목으로 반드시 선택하셔야 합니다.");
+      return true;
+    } else if (!productForm.brand?.id) {
+      alert("브랜드는 필수항목으로 반드시 선택하셔야 합니다.");
+      return true;
+    } else if (!productForm.mainImages?.thumbnailImage) {
+      alert("썸네일 이미지는 필수항목으로 반드시 추가하셔야 합니다.");
+      return true;
+    } else if (productForm.options.find((o) => o.optionName.trim() === "")) {
+      alert("옵션명은 필수항목으로 반드시 입력하셔야 합니다.");
+      return true;
+    } else if (productForm.options.find((o) => o.purchasePrice.trim() === "")) {
+      alert("옵션의 매입가는 필수항목으로 반드시 입력하셔야 합니다.");
+      return true;
+    } else if (productForm.options.find((o) => o.sellingPrice.trim() === "")) {
+      alert("옵션의 판매가는 필수항목으로 반드시 입력하셔야 합니다.");
+      return true;
+    } else if (productForm.options.find((o) => o.currentStock.trim() === "")) {
+      alert("옵션의 현재 재고는 필수항목으로 반드시 입력하셔야 합니다.");
+      return true;
+    } else if (productForm.options.find((o) => o.initialStock.trim() === "")) {
+      alert("옵션의 초기재고는 필수항목으로 반드시 입력하셔야 합니다.");
+      return true;
+    } else if (
+      Object.values(productForm.detailInfo).some((v) => v.trim() === "")
+    ) {
+      alert(
+        "상품 상세정보의 모든항목은 필수항목으로 반드시 입력하셔야 합니다."
+      );
+      return true;
+    }
+
+    return false;
+  };
+
   const submitHandler = () => {
+    // 필수 항목 입력되어있는지 검증 로직
+    if (validateRequiredField()) {
+      return;
+    }
+
     const register = async () => {
       try {
         const data = await registerProduct(productForm);

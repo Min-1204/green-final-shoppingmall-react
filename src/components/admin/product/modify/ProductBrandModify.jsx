@@ -3,7 +3,6 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 import { getBrandList } from "../../../../api/admin/brand/brandApi";
 
 export default function ProductBrandModify({ existingData, onChangeForm }) {
-  const [isOpen, setIsOpen] = useState(true);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [brandsData, setBrandsData] = useState([]);
 
@@ -30,18 +29,11 @@ export default function ProductBrandModify({ existingData, onChangeForm }) {
 
   return (
     <div className="w-full bg-white p-6 text-sm font-['Inter']">
-      <div
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center p-3 border-b"
-      >
+      <div className="flex justify-between items-center p-3 border-b">
         <h2 className="text-lg font-semibold text-gray-800">브랜드</h2>
-
-        <button className="text-gray-600 hover:text-gray-900 transition-colors">
-          {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-        </button>
       </div>
 
-      {isOpen && (
+      {
         <div>
           {/* 브랜드 선택 영역 */}
           <div className="border border-gray-300 mb-6 mt-6 rounded-lg overflow-hidden shadow-lg">
@@ -103,7 +95,7 @@ export default function ProductBrandModify({ existingData, onChangeForm }) {
             </p>
           </div>
         </div>
-      )}
+      }
     </div>
   );
 }

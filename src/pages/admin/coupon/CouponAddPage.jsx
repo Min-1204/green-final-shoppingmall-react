@@ -4,6 +4,7 @@ import DiscountSetting from "../../../components/admin/coupon/DiscountSetting";
 import IssueSetting from "../../../components/admin/coupon/IssueSetting";
 import PeriodSetting from "../../../components/admin/coupon/PeriodSetting";
 import { registerCoupon } from "../../../api/admin/coupon/couponApi";
+import { useNavigate } from "react-router-dom";
 
 const initState = {
   basicInfo: { couponName: "", availability: "USABLE" },
@@ -45,6 +46,7 @@ const getEndTimeOfDay = (day) => {
 };
 
 const CouponAddPage = () => {
+  const navigate = useNavigate();
   const [couponRegisterForm, setCouponRegisterForm] = useState({
     ...initState,
   });
@@ -53,25 +55,68 @@ const CouponAddPage = () => {
     console.log("couponRegisterForm : ", couponRegisterForm);
   }, [couponRegisterForm]);
 
+  const validateRequiredField = () => {
+    if (couponRegisterForm.basicInfo.couponName.trim() === "") {
+      alert("쿠폰 이름은 필수항목으로 반드시 입력하셔야 합니다.");
+      return true;
+    } else if (
+      couponRegisterForm.discountSetting.discountPercentage === 0 &&
+      couponRegisterForm.discountSetting.fixedDiscountAmount === 0
+    ) {
+      alert("정률할인 % 또는 정액할인 금액을 입력하셔야 합니다.");
+      return true;
+    } else if (couponRegisterForm.issueSetting.totalQuantity === 0) {
+      alert("최대발급 수량은 1이상 이어야 합니다.");
+      return true;
+    } else if (couponRegisterForm.periodSetting.hasLimitUsagePeriod) {
+      if (couponRegisterForm.periodSetting.validFrom.trim() === "") {
+        alert("사용기간 제한이 있다면 사용기간을 설정해 주셔야합니다.");
+        return true;
+      }
+      if (couponRegisterForm.periodSetting.validTo.trim() === "") {
+        alert("사용기간 제한이 있다면 사용기간을 설정해 주셔야합니다.");
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const submitHandler = () => {
+    if (validateRequiredField()) {
+      return;
+    }
+
     const register = async () => {
       const result = await registerCoupon({
         ...couponRegisterForm.basicInfo,
         ...couponRegisterForm.discountSetting,
         ...couponRegisterForm.issueSetting,
         ...couponRegisterForm.periodSetting,
-        validFrom: getStartTimeOfDay(
-          couponRegisterForm.periodSetting.validFrom
-        ),
-        validTo: getEndTimeOfDay(couponRegisterForm.periodSetting.validTo),
-        issuableStartDate: getStartTimeOfDay(
-          couponRegisterForm.periodSetting.issuableStartDate
-        ),
-        issuableEndDate: getEndTimeOfDay(
-          couponRegisterForm.periodSetting.issuableEndDate
-        ),
+        validFrom:
+          couponRegisterForm.periodSetting.validFrom.trim() === ""
+            ? ""
+            : getStartTimeOfDay(couponRegisterForm.periodSetting.validFrom),
+        validTo:
+          couponRegisterForm.periodSetting.validTo.trim() === ""
+            ? ""
+            : getEndTimeOfDay(couponRegisterForm.periodSetting.validTo),
+        issuableStartDate:
+          couponRegisterForm.periodSetting.issuableStartDate.trim() === ""
+            ? ""
+            : getStartTimeOfDay(
+                couponRegisterForm.periodSetting.issuableStartDate
+              ),
+        issuableEndDate:
+          couponRegisterForm.periodSetting.issuableEndDate.trim() === ""
+            ? ""
+            : getEndTimeOfDay(couponRegisterForm.periodSetting.issuableEndDate),
       });
       console.log("result : ", result);
+      if (result === "ok") {
+        alert("쿠폰이 성공적으로 등록되었습니다.");
+        navigate("/admin/coupon/search");
+      }
     };
     register();
   };
