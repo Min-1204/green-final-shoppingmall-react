@@ -25,7 +25,7 @@ const CategoryMegaMenu = ({ isOpen, setOpen }) => {
 
   return (
     // ✨ 배경 및 그림자 강화, z-index 유지
-    <div className="absolute left-0 w-full bg-white border-t border-gray-100 shadow-2xl z-50">
+    <div className="absolute left-0 top-15 w-full bg-white/80 backdrop-blur-sm border-t border-gray-100 shadow-2xl z-50">
       {/* ✨ 최대 너비 조정 및 패딩 */}
       <div className="max-w-screen-xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* ✨ 반응형 그리드 적용: 모바일(1열), 태블릿(3열), 데스크톱(5열) */}

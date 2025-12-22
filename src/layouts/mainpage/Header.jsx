@@ -37,26 +37,25 @@ export default function Header() {
 
   return (
     <header className="w-full">
-      {/* 최상단 공지 바: 푸터와 연결되는 느낌을 위해 살짝 더 짙은 핑크 */}
-      <div className="w-full h-10 bg-[#FFE4E9] flex items-center">
+      <div className="w-full h-10 bg-[#d4e6fa] flex items-center">
         <div className="max-w-7xl mx-auto w-full px-6 flex items-center justify-center">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" />
-            <p className="text-sm text-pink-800 font-semibold tracking-tight">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            <p className="text-sm text-gray-700 font-semibold tracking-tight">
               {notices[current]}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="w-full bg-[#FFF5F7] border-b border-[#FCE2E6]">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-between gap-8">
+      <div className="w-full border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-8 py-8 flex items-center justify-between gap-8">
           <div className="flex-shrink-0">
             <Link to="/" className="block">
-              <h1 className="text-[32px] font-black tracking-[0.1em] text-[#FF6B9C] drop-shadow-sm hover:text-[#FF4D88] transition-all duration-300">
+              <h1 className="text-[37px] font-black tracking-[0.1em] text-[#52a3ff] drop-shadow-sm hover:text-[#2779d8] transition-all duration-300">
                 달빛나라 촉촉마을
               </h1>
-              <p className="text-[12px] tracking-[0.25em] font-bold text-[#FF9EBC] mt-1 text-center">
+              <p className="text-[12px] tracking-[0.25em] font-bold text-[#52a3ff] mt-1 text-center">
                 MOONLIGHT MOIST VILLAGE
               </p>
             </Link>
@@ -70,7 +69,7 @@ export default function Header() {
                 <>
                   <button
                     onClick={handleLogout}
-                    className="hover:text-[#FF6B9C]"
+                    className="hover:text-[#52a3ff] cursor-pointer"
                   >
                     로그아웃
                   </button>
@@ -89,7 +88,7 @@ export default function Header() {
                   )}
                   <button
                     onClick={() => navigate("/mypage")}
-                    className="hover:text-[#FF6B9C]"
+                    className="hover:text-[#52a3ff] cursor-pointer"
                   >
                     마이페이지
                   </button>
@@ -98,36 +97,35 @@ export default function Header() {
                 <>
                   <button
                     onClick={() => navigate("/login")}
-                    className="hover:text-[#FF6B9C]"
+                    className="hover:text-[#52a3ff] cursor-pointer"
                   >
                     로그인
                   </button>
-                  <span className="text-[#E9D5D8]">|</span>
+                  <span className="text-[#cbe3ff]">|</span>
                   <button
                     onClick={() => navigate("/signup")}
-                    className="hover:text-[#FF6B9C]"
+                    className="hover:text-[#52a3ff] cursor-pointer"
                   >
                     회원가입
                   </button>
                 </>
               )}
-              <span className="text-[#E9D5D8]">|</span>
+              <span className="text-[#cbe3ff]">|</span>
               <button
                 onClick={() => navigate("/cart")}
-                className="hover:text-[#FF6B9C]"
+                className="hover:text-[#52a3ff] cursor-pointer"
               >
                 장바구니
               </button>
-              <span className="text-[#E9D5D8]">|</span>
+              <span className="text-[#cbe3ff]">|</span>
               <button
                 onClick={() => navigate("/helpcenter")}
-                className="hover:text-[#FF6B9C]"
+                className="hover:text-[#52a3ff] cursor-pointer"
               >
                 고객센터
               </button>
             </div>
 
-            {/* 태그 메뉴: 화사한 파스텔 톤 유지 */}
             <div className="flex items-center gap-2">
               {[
                 { label: "오특", color: "bg-orange-400" },
@@ -137,7 +135,7 @@ export default function Header() {
               ].map((tag) => (
                 <button
                   key={tag.label}
-                  className={`px-4 py-1.5 rounded-full text-white text-[12px] font-bold shadow-sm hover:scale-105 transition-transform ${
+                  className={`px-4 py-1.5 rounded-full text-white text-[12px] font-bold shadow-sm hover:scale-105 transition-transform cursor-pointer ${
                     tag.color
                   } ${tag.pulse ? "animate-bounce" : ""}`}
                 >
