@@ -56,10 +56,10 @@ export const getCurrentUserThunk = createAsyncThunk(
       return response.user;
     } catch (error) {
       if (error.response?.status === 401 || error.response?.status === 403) {
-        console.log("로그인되지 않은 상태 입니다.");
+        // console.log("로그인되지 않은 상태 입니다.");
         return rejectWithValue(null);
       }
-      console.error(" API 에러 : ", error);
+      console.error(" API 에러 : ", error); //
       return rejectWithValue(error.response?.data);
     }
   }

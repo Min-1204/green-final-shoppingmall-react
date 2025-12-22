@@ -28,7 +28,7 @@ export const signUpApi = async (signUpForm) => {
       address: signUpForm.address, // 기본주소
       addressDetail: signUpForm.addressDetail, // 상세주소
       smsAgreement: signUpForm.smsAgreement, // SMS 알림 동의
-      emailAgreement: signUpForm.emailAgreement // Email 알림 동의
+      emailAgreement: signUpForm.emailAgreement, // Email 알림 동의
     };
 
     console.log("백엔드로 보내는 데이터 콘솔", requestData);
@@ -93,9 +93,10 @@ export const getCurrentUserApi = async () => {
     console.log("getCurrentUser API 성공 : ", response.data);
     return response.data;
   } catch (error) {
-    if (error.response?.status !== 401 && error.response?.status !== 403) {
-      console.error("getCurrentUser API 실패 : ", error);
+    if (error.response?.status === 401 && error.response?.status === 403) {
+      throw error;
     }
+    // console.error("getCurrentUser API 실패 : ", error);
     throw error;
   }
 };
