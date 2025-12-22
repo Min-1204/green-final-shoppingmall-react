@@ -1,21 +1,10 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  changeOrderProductStatus,
-  deleteOneOrder,
-  getOneOrder,
-  registerOrder,
-} from "../../api/order/orderApi";
-import CouponModal from "./CouponModal";
+import { getOneOrder, registerOrder } from "../../api/order/orderApi";
+import { verifyPaymentAndCompleteOrder } from "../../api/payment/paymentApi";
 import { getActivePoints } from "../../api/point/pointApi";
-import {
-  refundPayment,
-  verifyPaymentAndCompleteOrder,
-} from "../../api/payment/paymentApi";
-
-const API_SERVER_HOST = "http://localhost:8080";
+import CouponModal from "./CouponModal";
 
 // Helper function to format price with commas and '원'
 const formatPrice = (price) => {

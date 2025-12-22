@@ -5,6 +5,7 @@ import {
   confirmOrder,
   deleteOneOrder,
   getOrdersBySearch,
+  getOrderStatusSummary,
 } from "../../api/order/orderApi";
 import { earnPoint, getActivePoints } from "../../api/point/pointApi";
 import Pagination from "../pagination/Pagination";
@@ -73,6 +74,9 @@ export default function OrderHistoryComponent() {
   // 상품 리뷰 작성
   const [selectedProduct, setSelectedProduct] = useState({});
 
+  // 검색을 눌렀는지 여부
+  const [hasSearched, setHasSearched] = useState(false);
+
   // 오늘 날짜 가져오기
   const today = new Date();
 
@@ -131,7 +135,9 @@ export default function OrderHistoryComponent() {
       setPageResponseDTO(data);
     };
 
-    fetchOrderList();
+    if (hasSearched) {
+      fetchOrderList();
+    }
   }, [queryParams]);
 
   useEffect(() => {
@@ -147,34 +153,31 @@ export default function OrderHistoryComponent() {
       배송중: 0,
       배송완료: 0,
     };
-    console.log("orderList =>", orderList);
-    orderList
-      ?.flatMap((o) => o.orderProducts)
-      .map((op) => op.orderProductStatus)
-      .forEach((status) => {
-        switch (status) {
-          case "PENDING_PAYMENT":
-            newCountState["주문접수"] += 1;
-            break;
-          case "PAID":
-            newCountState["결제완료"] += 1;
-            break;
-          case "PREPARING":
-            newCountState["배송준비중"] += 1;
-            break;
-          case "SHIPPING":
-            newCountState["배송중"] += 1;
-            break;
-          case "DELIVERED":
-            newCountState["배송완료"] += 1;
-            break;
-          case "CONFIRMED":
-            newCountState["배송완료"] += 1;
-            break;
-        }
-      });
-    setCountStatus(newCountState);
-  }, [orderList]);
+
+    const start = `${startYear}-${String(startMonth).padStart(2, "0")}-${String(
+      startDay
+    ).padStart(2, "0")}`;
+    const end = `${endYear}-${String(endMonth).padStart(2, "0")}-${String(
+      endDay
+    ).padStart(2, "0")}`;
+
+    const fetchOrderStatusSummary = async () => {
+      const result = await getOrderStatusSummary(user.id, start, end);
+      newCountState["주문접수"] = result["PENDING_PAYMENT"]
+        ? result["PENDING_PAYMENT"]
+        : 0;
+      newCountState["결제완료"] = result["PAID"] ? result["PAID"] : 0;
+      newCountState["배송준비중"] = result["PREPARING"]
+        ? result["PREPARING"]
+        : 0;
+      newCountState["배송중"] = result["SHIPPING"] ? result["SHIPPING"] : 0;
+      newCountState["배송완료"] = result["DELIVERED"] ? result["DELIVERED"] : 0;
+      if (hasSearched) {
+        setCountStatus(newCountState);
+      }
+    };
+    fetchOrderStatusSummary();
+  }, [pageResponseDTO]);
 
   const handleSelectPeriod = (month) => {
     const now = new Date();
@@ -214,6 +217,7 @@ export default function OrderHistoryComponent() {
     const newParams = new URLSearchParams(queryParams.toString());
     newParams.set("page", page);
     navigate({ pathname: location.pathname, search: newParams.toString() });
+    setHasSearched(true);
   };
 
   const handlePurchaseConfirm = async (userId, order) => {
@@ -437,7 +441,8 @@ export default function OrderHistoryComponent() {
           </thead>
 
           <tbody className="divide-y divide-gray-100">
-            {orderList &&
+            {/* 주문 내역이 있는 경우 */}
+            {orderList && orderList.length > 0 ? (
               orderList.map((order) => (
                 <Fragment key={order.id}>
                   {order.orderProducts.map((item, index) => (
@@ -565,7 +570,21 @@ export default function OrderHistoryComponent() {
                     </tr>
                   ))}
                 </Fragment>
-              ))}
+              ))
+            ) : (
+              // 주문 내역이 없는 경우 표시될 행
+              <tr>
+                <td
+                  colSpan="7"
+                  className="py-20 text-center text-gray-500 bg-white"
+                >
+                  <div className="flex flex-col items-center justify-center">
+                    <span className="text-lg mb-2">📦</span>
+                    <p>주문 내역이 없습니다.</p>
+                  </div>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
