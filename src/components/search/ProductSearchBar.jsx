@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState, useRef } from "react";
+import { memo, useEffect, useState, useRef } from "react";
 import SearchDropdown from "./SearchDropdown";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -162,62 +162,58 @@ const ProductSearchBar = memo(() => {
   };
 
   return (
-    <div className="flex-1 max-w-4xl mx-auto relative" ref={searchBarRef}>
-      {/* 검색 입력창 */}
-      <input
-        ref={inputRef}
-        placeholder="어떤 촉촉함을 찾으시나요?"
-        className="
-          w-full h-12 pl-6 pr-24 rounded-full border-2 border-[#FFC1D1] 
-          bg-white focus:border-[#FF6B9C] focus:ring-4 focus:ring-pink-100 
-          outline-none text-gray-700 placeholder-pink-300 
-          transition-all duration-300 shadow-sm
-        "
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-        onFocus={() => setDropdown(true)}
-        onKeyDown={onEnterKey}
-      />
+    <div
+      className="flex-1 w-full max-w-[400px] mx-auto relative"
+      ref={searchBarRef}
+    >
+      <div className="relative top-2.5">
+        <input
+          ref={inputRef}
+          placeholder="어떤 촉촉함을 찾으시나요?"
+          className="w-full h-11 pl-5 pr-24 rounded-2xl border-2 border-[#cae3ff] bg-white text-gray-700 placeholder-[#a0bcdb] outline-none"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onFocus={() => setDropdown(true)}
+          onKeyDown={onEnterKey}
+        />
 
-      <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-        {searchText && (
+        <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          {searchText && (
+            <button
+              type="button"
+              className="w-8 h-8 flex items-center justify-center text-pink-300 hover:text-pink-500 transition-colors"
+              onClick={clearSearch}
+            >
+              <span className="text-lg">✕</span>
+            </button>
+          )}
+
           <button
-            type="button"
             className="
-              w-8 h-8 flex items-center justify-center
-              text-pink-300 hover:text-pink-500 transition-colors
+              w-8 h-8 flex items-center justify-center rounded-full 
+              bg-gradient-to-r from-[#cae3ff] to-[#cae3ff]
+              hover:from-[#a9d0fc] hover:to-[#a9d0fc] 
+              text-white transition-all duration-200 active:scale-95
+              cursor-pointer
             "
-            onClick={clearSearch}
+            onClick={() => handleSearch(searchText)}
           >
-            <span className="text-lg">✕</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
           </button>
-        )}
-
-        <button
-          className="
-            w-9 h-9 flex items-center justify-center rounded-full 
-            bg-gradient-to-r from-[#FF6B9C] to-[#FF8FAB]
-            hover:from-[#FF4D88] hover:to-[#FF6B9C] 
-            text-white shadow-md transition-all duration-200 active:scale-95
-          "
-          onClick={() => handleSearch(searchText)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3" /* 선을 조금 더 두껍게 하여 가독성 높임 */
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-        </button>
+        </div>
       </div>
-
       {dropdown && (
         <SearchDropdown
           keywords={recentKeywords}
