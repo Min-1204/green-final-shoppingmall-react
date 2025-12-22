@@ -6,8 +6,6 @@ import ConfirmModal from "./ConfirmModal";
 const OrderSearchResultTable = ({ orders, searchHandler }) => {
   // console.log("orders", orders);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
   // 상태 변경 모달창
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   // 상태 변경 모달창에 전달하는 주문 상품 item
@@ -42,13 +40,6 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
 
   // console.log("flatOrders", flatOrders);
 
-  const selectSortHandler = (value) => {
-    setSearchParams((prev) => {
-      prev.set("sort", "" + value);
-      return prev;
-    });
-  };
-
   const handleChangeStatus = async (item, value) => {
     if (value == "CONFIRMED")
       return alert("구매확정은 사용자가 할 수 있습니다.");
@@ -75,25 +66,9 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
           <button className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm">
             선택 상품 출고
           </button>
-          <button className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md border border-gray-300 cursor-pointer hover:bg-gray-300 transition">
-            다운로드
+          <button className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm">
+            반품/환불 처리
           </button>
-
-          <select
-            defaultValue="latest"
-            className="border border-gray-300 bg-white text-gray-700 px-2 py-1 rounded-md text-sm cursor-pointer"
-            onChange={(e) => selectSortHandler(e.target.value)}
-          >
-            <option value="latest">최근 주문 순</option>
-            <option value="earliest">오래된 주문 순</option>
-          </select>
-
-          <select
-            defaultValue="10"
-            className="border border-gray-300 bg-white text-gray-700 px-2 py-1 rounded-md text-sm cursor-pointer"
-          >
-            <option value="10">10개</option>
-          </select>
         </div>
       </div>
 
@@ -116,7 +91,7 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
           </thead>
 
           <tbody className="bg-white divide-y divide-gray-200">
-            {flatOrders.map((item, index) => (
+            {flatOrders.map((item) => (
               <tr
                 key={`${item.orderId}-${item.id}`} // 주문 id와 상품 id를 조합
                 className="hover:bg-gray-50 transition divide-x divide-gray-200"

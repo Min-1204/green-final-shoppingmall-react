@@ -27,7 +27,6 @@ const AdminOrderMgrComponent = () => {
     "반품/환불 신청",
     "반품/환불 완료",
   ]); //주문상태
-  const [selectedDelivery, setSelectedDelivery] = useState([]); //배송방법 state
   const [selectedPayment, setSelectedPayment] = useState([
     "전체",
     "신용/체크카드",
@@ -58,7 +57,6 @@ const AdminOrderMgrComponent = () => {
       startDate,
       endDate,
       selectedOrderStatus: selectedOrderStatuses.map((s) => orderStatusMap[s]),
-      selectedDelivery,
       selectedPayment: selectedPayment.map((p) => paymentMap[p]),
     };
     const result = await getOrdersBySearch(condition, sort, page, size);
@@ -93,7 +91,6 @@ const AdminOrderMgrComponent = () => {
     "반품/환불 완료": "RETURNED",
   };
 
-  const allDelivery = ["대한통운", "우체국", "직접입력"];
   const allPayment = [
     "전체",
     "신용/체크카드",
@@ -201,14 +198,6 @@ const AdminOrderMgrComponent = () => {
       {/* 헤더 */}
       <h2 className="text-2xl font-bold text-gray-800 border-b border-gray-300 pb-4 mb-6 flex justify-between items-center px-2">
         전체 주문 조회
-        <div className="space-x-2 text-sm">
-          <button className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 cursor-pointer hover:bg-gray-100 transition shadow-sm">
-            엑셀 다운로드
-          </button>
-          <button className="rounded-md border border-gray-300 bg-white px-3 py-1 text-gray-700 cursor-pointer hover:bg-gray-100 transition shadow-sm">
-            프린트 설정
-          </button>
-        </div>
       </h2>
 
       {/* 필터 영역 */}
@@ -295,12 +284,6 @@ const AdminOrderMgrComponent = () => {
           selectedOptions={selectedOrderStatuses}
           setSelectedOptions={setSelectedOrderStatuses}
           showAll={true}
-        />
-        <CheckboxGroup
-          title="배송방법"
-          options={allDelivery}
-          selectedOptions={selectedDelivery}
-          setSelectedOptions={setSelectedDelivery}
         />
         <CheckboxGroup
           title="주문결제"
