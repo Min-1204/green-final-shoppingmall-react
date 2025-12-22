@@ -3,7 +3,6 @@ import { reviewAdd } from "../../api/review/reviewApi";
 import { useSelector } from "react-redux";
 
 const ReviewAddComponent = ({ closeModal, orderItem }) => {
-  console.log("orderItem => ", orderItem);
   const [currentRating, setCurrentRating] = useState(0);
   //주문 아이템에서 필요한 데이터 추출
   const { productId, orderId, productName, imageUrl, totalAmount } = orderItem;
@@ -24,9 +23,33 @@ const ReviewAddComponent = ({ closeModal, orderItem }) => {
       alert("리뷰 내용을 입력해주세요");
       return;
     }
-    reviewAdd(review);
-    alert("리뷰가 등록되었습니다");
-    closeModal();
+
+    try {
+      await reviewAdd(review);
+
+      alert("리뷰가 등록되었습니다");
+      closeModal();
+    } catch (error) {
+      console.error("리뷰 등록 실패:", error);
+
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data?.errorMessage;
+
+        //로그인 안 된 경우
+        if (status === 401 || status === 403) {
+          alert("로그인 후 리뷰를 작성할 수 있습니다.");
+          return;
+        }
+
+        if (message) {
+          alert(message);
+          return;
+        }
+      }
+
+      alert("리뷰 등록 중 오류가 발생했습니다.");
+    }
   };
 
   // 사진 첨부 핸들러

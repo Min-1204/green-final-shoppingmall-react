@@ -6,35 +6,53 @@ import {
 import { useSelector } from "react-redux";
 
 const ReviewLike = ({ reviewId }) => {
-  const [like, setLike] = useState(false); // true=좋아요 상태, false=취소 상태
   const [likeCount, setLikeCount] = useState(0); // 좋아요 개수
+  const { user } = useSelector((state) => state.authSlice);
 
   //리뷰 좋아요(도움이 돼요) 토글
   const reviewLikeToggleHandler = async () => {
-    const data = await reviewLikeToggleTrueFalse(reviewId);
-    console.log("리뷰 좋아요 데이터 확인 => ", data);
-    setLike(data);
+    if (!user) {
+      alert("로그인 후 이용해 주세요.");
+      return;
+    }
 
-    //토글 후 좋아요 개수 다시 가져오기
-    const count = await reviewLikeCount(reviewId);
-    setLikeCount(count);
+    try {
+      await reviewLikeToggleTrueFalse(reviewId);
+
+      //토글 후 카운터 재조회
+      const count = await reviewLikeCount(reviewId);
+      setLikeCount(count);
+    } catch (error) {
+      console.error("리뷰 좋아요 처리 중 오류:", error);
+
+      const message =
+        error.response?.data?.message || "처리 중 오류가 발생했습니다.";
+      alert(message);
+    }
   };
 
-  // 초기 좋아요 개수 불러오기
+  // 좋아요 개수 불러오기
   useEffect(() => {
-    const getReviewLikeCount = async () => {
-      const count = await reviewLikeCount(reviewId);
-      console.log("리뷰 좋아요 개수 => ", count);
-      setLikeCount(count);
+    if (!reviewId) return;
+
+    const fetchReviewLikeCount = async () => {
+      try {
+        const count = await reviewLikeCount(reviewId);
+        setLikeCount(count);
+      } catch (error) {
+        console.error("리뷰좋아요 개수 조회 실패:", error);
+      }
     };
-    getReviewLikeCount();
-  }, []);
+    fetchReviewLikeCount();
+  }, [reviewId]);
 
   return (
     <div>
       <button
         onClick={reviewLikeToggleHandler}
-        className="cursor-pointer hover:text-gray-900 transition"
+        className={`cursor-pointer transition ${
+          user ? "hover:text-gray-900" : "text-gray-400"
+        }`}
       >
         👍 도움이 돼요 {likeCount}
       </button>

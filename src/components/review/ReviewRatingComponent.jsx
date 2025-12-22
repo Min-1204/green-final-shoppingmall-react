@@ -24,7 +24,6 @@ const ReviewRatingComponent = ({ productId }) => {
     if (!productId) return;
     const productReviewAvgRating = async () => {
       const data = await reviewAvgRating(productId);
-      // console.log("평균별점 데이터 => ", data);
       setAvgRating(data);
     };
     productReviewAvgRating();
@@ -35,7 +34,6 @@ const ReviewRatingComponent = ({ productId }) => {
     if (!productId) return;
     const productReviewCount = async () => {
       const data = await reviewCount(productId);
-      // console.log("리뷰 개수 데이터 => ", data);
       setReviewTotalCount(data);
     };
     productReviewCount();
@@ -49,7 +47,6 @@ const ReviewRatingComponent = ({ productId }) => {
       for (let rating = 1; rating <= 5; rating++) {
         const data = await reviewRatingByCount(productId, rating);
         counts[rating] = data;
-        // console.log(`별점 ${rating}점 개수 => `, data);
       }
       setRatingByCount(counts);
     };
@@ -70,12 +67,9 @@ const ReviewRatingComponent = ({ productId }) => {
         percent = Math.trunc((positive / total) * 100);
       }
       setPositivePercent(percent);
-      // console.log("positive -> ", positive, "total -> ", total);
-      // console.log("percent -> ", percent);
     };
     productReviewPositive();
   }, [productId]);
-  // console.log("positivePercent -> ", positivePercent);
 
   // 그래프 너비 계산
   const maxCount = Math.max(...Object.values(ratingByCount));

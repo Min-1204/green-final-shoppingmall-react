@@ -1,4 +1,3 @@
-import axios from "axios";
 import { axiosInstance } from "../user/axiosIntance";
 
 const prefix = "/api/search";
@@ -6,7 +5,7 @@ const prefix = "/api/search";
 //상품 검색
 export const searchProductList = async (keyword, page, size) => {
   const { data } = await axiosInstance.get(`${prefix}/product`, {
-    params: { keyword: keyword, page: page, size: size }
+    params: { keyword: keyword, page: page, size: size },
   });
   return data;
 };
@@ -16,8 +15,8 @@ export const recentSearches = async (userId, guestId) => {
   const { data } = await axiosInstance.get(`${prefix}/recent`, {
     params: {
       userId: userId ?? null,
-      guestId: guestId ?? null
-    }
+      guestId: guestId ?? null,
+    },
   });
   return data;
 };
@@ -31,7 +30,7 @@ export const popularSearches = async () => {
 //검색어 저장
 export const searchKeywordAdd = async (keyword, userId, guestId) => {
   await axiosInstance.post(`${prefix}/add`, null, {
-    params: { keyword, userId: userId ?? null, guestId: guestId ?? null }
+    params: { keyword, userId: userId ?? null, guestId: guestId ?? null },
   });
 };
 
@@ -41,8 +40,8 @@ export const deleteOneRecentKeyword = async (keyword, userId, guestId) => {
     params: {
       keyword,
       userId: userId ?? null,
-      guestId: guestId ?? null
-    }
+      guestId: guestId ?? null,
+    },
   });
 };
 
@@ -51,7 +50,7 @@ export const deleteAllRecentKeywords = async (userId, guestId) => {
   await axiosInstance.delete(`${prefix}/recent/all`, {
     params: {
       userId: userId ?? null,
-      guestId: guestId ?? null
-    }
+      guestId: guestId ?? null,
+    },
   });
 };

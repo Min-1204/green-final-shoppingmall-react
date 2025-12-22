@@ -17,15 +17,20 @@ const ReviewCommentMgr = ({ reviewId, commentUpdate }) => {
 
   // 댓글 목록 가져오기
   const getCommentList = async () => {
-    const comments = await reviewCommentGetList(reviewId);
-    setCommentList(comments);
+    try {
+      const comments = await reviewCommentGetList(reviewId);
+      setCommentList(comments);
 
-    if (commentUpdate) {
-      commentUpdate(comments);
+      if (commentUpdate) {
+        commentUpdate(comments);
+      }
+    } catch (error) {
+      console.error("댓글 목록 조회 실패:", error);
     }
   };
 
   useEffect(() => {
+    if (!reviewId) return;
     getCommentList();
   }, [reviewId]);
 
@@ -35,65 +40,49 @@ const ReviewCommentMgr = ({ reviewId, commentUpdate }) => {
       alert("댓글 내용을 입력해주세요!");
       return;
     }
+
     try {
       await reviewCommentAdd(reviewId, content);
       setContent("");
+
       //전체 목록 다시 불러오기 생성된 댓글의 전체 정보를 얻기 위해
       getCommentList();
     } catch (error) {
       console.error("댓글 등록 실패: ", error);
-      alert("댓글 등록 중 오류가 발생했습니다.");
+
+      const message =
+        error.response?.data?.message || "댓글 등록 중 오류가 발생했습니다.";
+      alert(message);
     }
   };
 
   // 댓글 수정
   const commentUpdateHandler = async (commentId) => {
     const newContent = updatedComment[commentId];
-    if (!newContent.trim()) {
+
+    if (!newContent || !newContent.trim()) {
       alert("댓글 내용을 입력해주세요!");
       return;
     }
 
     try {
-      const updateComment = await reviewCommentModify(commentId, newContent);
-      //서버에서 받은 전체 정보로 즉시 상태 업데이트
-      getCommentList((prev) =>
-        prev.map((comment) =>
-          comment.id === commentId ? updateComment : comment
-        )
-      );
+      await reviewCommentModify(commentId, newContent);
+      await getCommentList();
 
-      //부모 컴포넌트에도 업데이트 알림
-      if (commentUpdate) {
-        const newList = commentList.map((comment) =>
-          comment.id === commentId ? updateComment : comment
-        );
-        commentUpdate(newList);
-      }
-
-      // 수정 모드 종료 및 임시 저장 데이터 제거
       setEditId(null);
       setUpdatedComment((prev) => {
-        const newState = { ...prev };
-        delete newState[commentId];
-        return newState;
+        const next = { ...prev };
+        delete next[commentId];
+        return next;
       });
     } catch (error) {
-      console.error("댓글 수정 실패: ", error);
+      console.error("댓글 수정 실패:", error);
 
-      //백엔드 에러 메시지
-      if (error.response?.data?.message) {
-        alert(error.response.data.message);
-      } else if (
-        error.response?.status === 403 ||
-        error.response?.status === 400
-      ) {
-        alert("본인의 댓글만 수정할 수 있습니다.");
-      } else {
-        alert("댓글 수정 중 오류가 발생했습니다.");
-      }
+      const message =
+        error.response?.data?.message || "댓글 수정 중 오류가 발생했습니다.";
 
-      //수정 모드 취소
+      alert(message);
+
       setEditId(null);
     }
   };
@@ -104,31 +93,15 @@ const ReviewCommentMgr = ({ reviewId, commentUpdate }) => {
 
     try {
       await reviewCommentDelete(commentId);
-
-      //삭제된 댓글을 즉시 목록에서 제거
-      const newList = commentList.filter((comment) => comment.id !== commentId);
-      setCommentList(newList);
-
-      //부모 컴포넌트에 업데이트 알림
-      if (commentUpdate) {
-        commentUpdate(newList);
-      }
-
+      await getCommentList();
       alert("댓글이 삭제되었습니다.");
     } catch (error) {
       console.error("댓글 삭제 실패: ", error);
 
-      //백엔드 에러 메시지
-      if (error.response?.data?.message) {
-        alert(error.response.data.message);
-      } else if (
-        error.response?.status === 403 ||
-        error.response?.status === 400
-      ) {
-        alert("본인의 댓글만 삭제할 수 있습니다.");
-      } else {
-        alert("댓글 삭제 중 오류가 발생했습니다.");
-      }
+      const message =
+        error.response?.data?.message || "댓글 삭제 중 오류가 발생했습니다.";
+
+      alert(message);
     }
   };
 

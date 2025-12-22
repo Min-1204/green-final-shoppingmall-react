@@ -52,13 +52,14 @@ const ReviewModifyDelete = ({ closeModal, review, update, product }) => {
     } catch (error) {
       console.error("리뷰 수정 실패: ", error);
 
-      //백엔드 에러 메세지
-      if (error.response?.data?.message) {
-        alert(error.response.data.message);
-      } else if (error.response?.status === 403) {
-        alert("본인의 리뷰만 수정할 수 있습니다.");
-      } else {
-        alert("리뷰 수정 중 오류가 발생했습니다.");
+      const message =
+        error.response?.data?.message || "리뷰 수정 중 오류가 발생했습니다.";
+
+      alert(message);
+
+      //리뷰가 더 이상 유효하지 않다면 모달 닫기
+      if (error.response?.status === 404) {
+        closeModal();
       }
     }
   };
@@ -79,13 +80,13 @@ const ReviewModifyDelete = ({ closeModal, review, update, product }) => {
     } catch (error) {
       console.error("리뷰 삭제 실패:", error);
 
-      if (error.response?.data?.message) {
-        alert(error.response.data.message);
-      } else if (error.response?.status === 403) {
-        alert("본인의 리뷰만 삭제할 수 있습니다.");
-      } else {
-        alert("리뷰 삭제 중 오류가 발생했습니다.");
-      }
+      const message =
+        error.response?.data?.message || "리뷰 삭제 중 오류가 발생했습니다.";
+
+      alert(message);
+
+      //리뷰가 이미 없거나 접근 불가 상태일때
+      if (error.response?.status === 404) closeModal();
     }
   };
 
