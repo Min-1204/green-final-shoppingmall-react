@@ -30,12 +30,15 @@ const MyPageReviewList = () => {
     const page = getNum(queryParams.get("page"), 1);
     const size = getNum(queryParams.get("size"), 10);
 
-    console.log("페이지 정보:", { page, size });
-
     const getReviews = async () => {
-      const reviews = await getMyReviews(page, size);
-      setPageResponse(reviews);
-      console.log("reviews => ", reviews);
+      try {
+        const reviews = await getMyReviews(page, size);
+        setPageResponse(reviews);
+      } catch (error) {
+        alert(
+          error.response?.data?.message || "리뷰 목록을 불러오지 못했습니다."
+        );
+      }
     };
     getReviews();
   }, [user, queryParams]);
@@ -61,7 +64,7 @@ const MyPageReviewList = () => {
           }
           return review;
         });
-        console.log("업데이트된 review 배열 => ", update);
+
         return {
           ...prev,
           dtoList: update,

@@ -109,7 +109,6 @@ const ReviewListComponent = ({ productId }) => {
 
   // 관리자 권한 확인
   const isAdmin = user && user.userRole === "ADMIN";
-  console.log("유저 정보 확인 => ", user);
 
   return (
     <div className="w-full min-h-screen">
