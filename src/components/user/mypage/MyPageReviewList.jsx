@@ -87,7 +87,7 @@ const MyPageReviewList = () => {
   };
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white border border-gray-400 rounded-2xl">
       <div className="px-8 pt-6 pb-8">
         {/* 누적 리뷰 건수 */}
         <h3 className="text-ml text-gray-800 font-semibold mb-6">
@@ -97,14 +97,14 @@ const MyPageReviewList = () => {
         </h3>
 
         {/* 테이블 헤더 */}
-        <div className="grid grid-cols-12 gap-4 py-3 border-b border-zinc-200 text-sm text-zinc-600">
+        <div className="grid grid-cols-12 gap-4 py-3 border-b border-gray-400 text-sm text-zinc-600">
           <div className="col-span-6 pl-2">상품</div>
           <div className="col-span-3">리뷰</div>
           <div className="col-span-3"></div>
         </div>
 
         {/* 리뷰 목록 */}
-        <div className="divide-y divide-zinc-200">
+        <div className="divide-y divide-gray-400">
           {reviews.length > 0 ? (
             reviews.map((review) => {
               // 본인 리뷰인지 확인 (마이페이지에서는 모두 본인 리뷰지만 명시적으로)

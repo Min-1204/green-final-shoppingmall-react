@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import Header from "../../layouts/mainpage/Header";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";

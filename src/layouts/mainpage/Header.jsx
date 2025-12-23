@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../../layouts/mainpage/NavBar";
 import ProductSearchBar from "../../components/search/ProductSearchBar";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutAsyncThunk } from "../../redux/slices/features/user/authSlice";
+import logo from "../../images/logo.png";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -11,12 +12,11 @@ export default function Header() {
   const { user } = useSelector((state) => state.authSlice);
 
   const notices = [
-    "[WELCOME] 공지/이벤트(미정)",
-    "11월 신규가입 3,000P 지급 예정",
-    "배송지연 지역 안내 (서울/경기 일부)",
+    "[WELCOME] 공지/이벤트",
+    "1월 신규가입 3,000원 쿠폰 지급 이벤트",
+    "배송지연 지역 안내 (제주도 일부 지역)",
   ];
   const [current, setCurrent] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const timer = setInterval(
@@ -36,7 +36,7 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full">
+    <header className="w-full ">
       <div className="w-full h-10 bg-[#d4e6fa] flex items-center">
         <div className="max-w-7xl mx-auto w-full px-6 flex items-center justify-center">
           <div className="flex items-center gap-2">
@@ -48,16 +48,11 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="w-full border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-8 py-8 flex items-center justify-between gap-8">
+      <div className="w-full border-b border-gray-300">
+        <div className="max-w-7xl mx-auto px-8 pt-3 flex items-center justify-between gap-8">
           <div className="flex-shrink-0">
             <Link to="/" className="block">
-              <h1 className="text-[37px] font-black tracking-[0.1em] text-[#52a3ff] drop-shadow-sm hover:text-[#2779d8] transition-all duration-300">
-                달빛나라 촉촉마을
-              </h1>
-              <p className="text-[12px] tracking-[0.25em] font-bold text-[#52a3ff] mt-1 text-center">
-                MOONLIGHT MOIST VILLAGE
-              </p>
+              <img src={logo} alt="달빛나라 로고" className="h-40 w-auto" />
             </Link>
           </div>
           <div className="flex-1 max-w-2xl">
