@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { changeOrderProductStatus } from "../../../api/order/orderApi";
 import ConfirmModal from "./ConfirmModal";
+import DeliveryConfirmModal from "./DeliveryConfirmModal";
 
 const OrderSearchResultTable = ({ orders, searchHandler }) => {
   // console.log("orders", orders);
@@ -13,7 +14,11 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
   // 상태 변경 요청할 상태
   const [requestStatus, setRequestStatus] = useState();
 
+  // 체크박스로 선택한 상품
   const [selectedItem, setSelectedItem] = useState([]);
+
+  // 선택 상품 출고 모달
+  const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
 
   // orders가 유효한 객체인지 확인하고, 아니면 기본값(빈 객체)을 사용
   const data = orders || {};
@@ -72,21 +77,43 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
     else setSelectedItem([]);
   };
 
-  const handleChangeSelectedItemStatus = async () => {
-    if (selectedItem.some((i) => i.orderProductStatus != "PAID")) {
-      setSelectedItem([]);
-      return alert("결제완료된 상품만 출고가 가능합니다.");
+  const handleOpenDeliveryModal = () => {
+    if (selectedItem.length === 0) {
+      return alert("출고할 상품을 선택해주세요.");
     }
-    // console.log("handleChangeSelectedItemStatus");
-    for (const element of selectedItem) {
-      // console.log("element", element);
-      await changeOrderProductStatus(element.orderId, "PREPARING");
+
+    if (selectedItem.some((i) => i.orderProductStatus !== "PAID")) {
+      return alert("결제완료 상태인 상품만 출고가 가능합니다.");
     }
-    alert("선택한 상품의 출고가 완료됐습니다.");
-    setSelectedItem([]);
+
+    setIsDeliveryModalOpen(true);
   };
 
-  console.log("selectedItem", selectedItem);
+  // 3. 모달에서 '변경 확정'을 눌렀을 때 실행될 최종 로직
+  const handleChangeSelectedItemStatus = async () => {
+    try {
+      // 선택된 아이템들의 orderId를 중복 제거하여 수집
+      const uniqueOrderIds = [
+        ...new Set(selectedItem.map((item) => item.orderId)),
+      ];
+
+      for (const orderId of uniqueOrderIds) {
+        // API 구조에 따라 다르겠지만, 기존 로직대로 orderId 기준 변경 수행
+        await changeOrderProductStatus(orderId, "PREPARING");
+      }
+
+      alert("선택한 주문의 출고 처리가 완료되었습니다.");
+      setSelectedItem([]);
+      await searchHandler();
+    } catch (error) {
+      console.error("출고 처리 중 오류 발생:", error);
+      alert("처리 중 오류가 발생했습니다.");
+    } finally {
+      setIsDeliveryModalOpen(false);
+    }
+  };
+
+  // console.log("selectedItem", selectedItem);
 
   return (
     <div className="w-full mt-8">
@@ -97,7 +124,7 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm"
-            onClick={handleChangeSelectedItemStatus}
+            onClick={handleOpenDeliveryModal}
           >
             선택 상품 출고
           </button>
@@ -220,6 +247,13 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
             setIsConfirmModalOpen(false);
           }}
           onClose={() => setIsConfirmModalOpen(false)}
+        />
+      )}
+      {isDeliveryModalOpen && (
+        <DeliveryConfirmModal
+          selectedCount={selectedItem.length}
+          onConfirm={handleChangeSelectedItemStatus}
+          onClose={() => setIsDeliveryModalOpen(false)}
         />
       )}
     </div>
