@@ -7,7 +7,13 @@ const NavBar = memo(() => {
   const [isSticky, setIsSticky] = useState(false);
   const navigate = useNavigate();
 
-  const menus = ["스킨케어", "마스크팩", "클렌징", "선케어", "메이크업"];
+  const menus = [
+    { name: "스킨케어", url: "/products?categoryDepth=1&categoryId=1" },
+    { name: "마스크팩", url: "/products?categoryDepth=1&categoryId=2" },
+    { name: "클렌징", url: "/products?categoryDepth=1&categoryId=3" },
+    { name: "선케어", url: "/products?categoryDepth=1&categoryId=4" },
+    { name: "메이크업", url: "/products?categoryDepth=1&categoryId=5" },
+  ];
 
   // 스크롤 이벤트 리스너
   React.useEffect(() => {
@@ -45,10 +51,11 @@ const NavBar = memo(() => {
           {menus.map((menu, idx) => (
             <li key={idx} className="shrink-0">
               <button
+                onClick={() => navigate(menu.url)}
                 className="inline-flex items-center gap-1 text-gray-700 hover:text-white whitespace-nowrap transition-colors cursor-pointer"
                 aria-disabled
               >
-                <span className="text-gray-700 text-[14px]">{menu}</span>
+                <span className="text-gray-700 text-[14px]">{menu.name}</span>
               </button>
             </li>
           ))}
