@@ -8,3 +8,10 @@ export const userFilterSearch = async (condition, page, size, sort) => {
   });
   return data;
 };
+
+export const userRoleChange = async (userId, role) => {
+  const { data } = await axiosInstance.patch(`${prefix}/${userId}/role`, null, {
+    params: { userRole: role },
+  });
+  return data;
+};

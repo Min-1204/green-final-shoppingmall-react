@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import SmsModal from "./SmsModal";
 import { sendSmsMessage } from "../../../api/admin/message/messageApi";
+import UserRoleModal from "./UserRoleModal";
+import { userRoleChange } from "../../../api/admin/user/adminUserSearchApi";
 
-const UserInfoResultTable = ({ users, onSort }) => {
+const UserInfoResultTable = ({ users, setUsers, onSort }) => {
   const [sort, setSort] = useState("recent");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [isSmsModalOpen, setIsSmsModalOpen] = useState(false);
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [selectedRoleUser, setSelectedRoleUser] = useState(null);
 
   const headers = [
     "선택",
@@ -20,11 +24,9 @@ const UserInfoResultTable = ({ users, onSort }) => {
     "회원 상태",
   ];
 
-  const gradeOptions = ["일반", "매니저", "관리자"];
-
   useEffect(() => {
     setSelectedUsers([]);
-  }, users);
+  }, [users]);
 
   const sortHandler = (e) => {
     const value = e.target.value;
@@ -84,6 +86,19 @@ const UserInfoResultTable = ({ users, onSort }) => {
     }
   };
 
+  const userRoleChangeHandler = async (user, newRole) => {
+    console.log("권한 변경 => ", user.id, newRole);
+
+    await userRoleChange(user.id, newRole);
+
+    setUsers((prev) =>
+      prev.map((u) => (u.id === user.id ? { ...u, userRole: newRole } : u))
+    );
+
+    setIsRoleModalOpen(false);
+    setSelectedRoleUser(null);
+  };
+
   return (
     <>
       <div className="w-full mt-6">
@@ -119,13 +134,14 @@ const UserInfoResultTable = ({ users, onSort }) => {
           <table className="min-w-full table-fixed border-collapse text-sm text-center">
             {/* 컬럼 폭 고정 */}
             <colgroup>
-              <col style={{ width: "20px" }} />
-              <col style={{ width: "20px" }} />
+              <col style={{ width: "30px" }} />
+              <col style={{ width: "30px" }} />
               <col style={{ width: "100px" }} />
-              <col style={{ width: "150px" }} />
-              <col style={{ width: "150px" }} />
-              <col style={{ width: "70px" }} />
-              <col style={{ width: "70px" }} />
+              <col style={{ width: "200px" }} />
+              <col style={{ width: "200px" }} />
+              <col style={{ width: "100px" }} />
+              <col style={{ width: "100px" }} />
+              <col style={{ width: "50px" }} />
               <col style={{ width: "100px" }} />
               <col style={{ width: "50px" }} />
             </colgroup>
@@ -180,16 +196,15 @@ const UserInfoResultTable = ({ users, onSort }) => {
 
                     {/* 권한 */}
                     <td>
-                      <select
-                        defaultValue={user.userRole}
-                        className="border border-gray-300 text-sm text-gray-700 outline-none rounded-md w-[70px]"
+                      <button
+                        onClick={() => {
+                          setSelectedRoleUser(user);
+                          setIsRoleModalOpen(true);
+                        }}
+                        className="w-[100px] text-ms py-1 border border-gray-200 rounded-md text-blue-800 hover:bg-blue-100 cursor-pointer bg-transparent text-center"
                       >
-                        {gradeOptions.map((opt) => (
-                          <option key={opt} value={opt}>
-                            {opt}
-                          </option>
-                        ))}
-                      </select>
+                        {user.userRole}
+                      </button>
                     </td>
 
                     {/* 등급 */}
@@ -237,6 +252,12 @@ const UserInfoResultTable = ({ users, onSort }) => {
         onClose={() => setIsSmsModalOpen(false)}
         selectedUsers={selectedUsers}
         onSend={handleSendSms}
+      />
+      <UserRoleModal
+        isOpen={isRoleModalOpen}
+        user={selectedRoleUser}
+        onClose={() => setIsRoleModalOpen(false)}
+        onConfirm={userRoleChangeHandler}
       />
     </>
   );
