@@ -152,10 +152,10 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
 
       for (const orderId of uniqueOrderIds) {
         // "RETURNED" 상태로 변경 API 호출
-        await changeOrderProductStatus(orderId, "RETURNED");
         const item = selectedItem.filter((item) => item.orderId == orderId);
         // console.log("item", item);
         await refundPayment(orderId, item.returnReason);
+        await changeOrderProductStatus(orderId, "RETURNED");
         await deleteOneOrder(orderId);
       }
     } catch (error) {
