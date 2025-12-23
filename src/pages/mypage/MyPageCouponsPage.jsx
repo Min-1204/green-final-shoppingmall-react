@@ -39,7 +39,7 @@ export default function MyPageCouponsPage() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-8">
+    <div className="bg-white border border-gray-400 rounded-2xl shadow-sm p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold">쿠폰함</h1>

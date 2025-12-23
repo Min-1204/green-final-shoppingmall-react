@@ -1,4 +1,10 @@
 import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+import {
   createSearchParams,
   useLocation,
   useNavigate,
@@ -69,7 +75,7 @@ const Pagination = ({ pageResponseDTO }) => {
         className="px-3 py-1 border border-zinc-300 rounded text-sm cursor-pointer"
         onClick={() => moveToPage(1)}
       >
-        {"<<"}
+        <ChevronsLeft size={20} className="text-gray-500" />
       </button>
 
       {/* < 이전 페이지 그룹 이동 */}
@@ -79,7 +85,7 @@ const Pagination = ({ pageResponseDTO }) => {
           // prevPage는 ReviewPageResponseDTO에서 계산된 값
           onClick={() => moveToPage(prevPage)}
         >
-          {"<"}
+          <ChevronLeftIcon size={20} className="text-gray-500" />
         </button>
       )}
 
@@ -87,9 +93,14 @@ const Pagination = ({ pageResponseDTO }) => {
       {pageNumList?.map((num) => (
         <button
           key={num}
-          className={`px-3 py-1 border border-zinc-300 rounded text-sm cursor-pointer ${
-            num === page ? "bg-zinc-300 font-bold" : "" // 현재 페이지 강조
-          }`}
+          className={`
+      px-3 py-1 border rounded text-sm cursor-pointer
+      ${
+        num === page
+          ? "bg-[#d7eaff] border-[#d7eaff] font-bold"
+          : "border-zinc-300"
+      }
+    `}
           onClick={() => moveToPage(num)}
         >
           {num}
@@ -103,7 +114,7 @@ const Pagination = ({ pageResponseDTO }) => {
           // nextPage는 PageResponseDTO에서 계산된 값
           onClick={() => moveToPage(nextPage)}
         >
-          {">"}
+          <ChevronRightIcon size={20} className="text-gray-500" />
         </button>
       )}
 
@@ -112,7 +123,7 @@ const Pagination = ({ pageResponseDTO }) => {
         className="px-3 py-1 border border-zinc-300 rounded text-sm cursor-pointer"
         onClick={() => moveToPage(totalPage)}
       >
-        {">>"}
+        <ChevronsRight size={20} className="text-gray-500" />
       </button>
     </div>
   );

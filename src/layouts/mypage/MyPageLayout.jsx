@@ -39,9 +39,9 @@ const menuGroups = [
 
 export default function MyPageLayout() {
   const { user } = useSelector((state) => state.authSlice);
-
+  //bg-[#f4f5f7]
   return (
-    <div className="min-h-screen bg-[#f4f5f7]">
+    <div className="min-h-screen bg-white">
       <Header />
       {/* 전체 컨테이너 */}
       <div className="max-w-7xl mx-auto py-8  flex flex-col gap-6 lg:flex-row">

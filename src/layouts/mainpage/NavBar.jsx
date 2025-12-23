@@ -13,6 +13,9 @@ const NavBar = memo(() => {
     { name: "클렌징", url: "/products?categoryDepth=1&categoryId=3" },
     { name: "선케어", url: "/products?categoryDepth=1&categoryId=4" },
     { name: "메이크업", url: "/products?categoryDepth=1&categoryId=5" },
+    { name: "헤어케어", url: "/products?categoryDepth=1&categoryId=7" },
+    { name: "바디케어", url: "/products?categoryDepth=1&categoryId=8" },
+    { name: "향수/디퓨저", url: "/products?categoryDepth=1&categoryId=9" },
   ];
 
   // 스크롤 이벤트 리스너
@@ -24,14 +27,14 @@ const NavBar = memo(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+  //  bg-[#c7dffa]/80
   return (
     <nav
-      className={`bg-[#ffffff] transition-all duration-300 ${
+      className={`bg-[#c9e0f9]/80 transition-all duration-300 border-b border-gray-300 ${
         isSticky ? "fixed top-0 left-0 right-0 z-50 shadow-lg" : "relative"
       }`}
     >
-      <div className="max-w-7xl mx-auto h-12 flex items-center px-13 gap-15">
+      <div className="max-w-7xl mx-auto h-14 flex items-center px-13 gap-15">
         {/* ☰ 카테고리 */}
         <button
           type="button"
@@ -43,7 +46,7 @@ const NavBar = memo(() => {
             <span className="w-5 h-[2px] bg-gray-700 rounded transition-opacity duration-300" />
             <span className="w-5 h-[2px] bg-gray-700 rounded transition-transform duration-300" />
           </span>
-          <span>카테고리</span>
+          <span className="text-[18px]">카테고리</span>
         </button>
 
         {/* 메뉴 목록 */}
@@ -55,7 +58,9 @@ const NavBar = memo(() => {
                 className="inline-flex items-center gap-1 text-gray-700 hover:text-white whitespace-nowrap transition-colors cursor-pointer"
                 aria-disabled
               >
-                <span className="text-gray-700 text-[14px]">{menu.name}</span>
+                <span className="text-gray-700 font-semibold text-[16px]">
+                  {menu.name}
+                </span>
               </button>
             </li>
           ))}
