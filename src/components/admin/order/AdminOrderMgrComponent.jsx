@@ -37,8 +37,8 @@ const AdminOrderMgrComponent = () => {
     "계좌이체",
   ]); //주문결제 state
 
-  console.log("selectedOrderStatuses", selectedOrderStatuses);
-  console.log("selectedPayment", selectedPayment);
+  // console.log("selectedOrderStatuses", selectedOrderStatuses);
+  // console.log("selectedPayment", selectedPayment);
 
   // URL 쿼리에서 숫자 값을 읽어오는 함수
   const getNum = (param, defaultValue) => {
@@ -64,7 +64,7 @@ const AdminOrderMgrComponent = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect 실행(searchParams 의존성 배열이 변경됨)");
+    // console.log("useEffect 실행(searchParams 의존성 배열이 변경됨)");
     fetchOrdersBySearch();
   }, [searchParams]);
 
@@ -154,7 +154,7 @@ const AdminOrderMgrComponent = () => {
   };
 
   const searchHandler = async () => {
-    console.log("searchHandler 발생");
+    // console.log("searchHandler 발생");
     setSearchParams((prev) => {
       prev.set("page", "1");
       // t(timeStamp)를 넣어서 searchParams가 무조건 바뀌게 하여 useEffect를 트리거함
@@ -181,7 +181,6 @@ const AdminOrderMgrComponent = () => {
       "반품/환불 신청",
       "반품/환불 완료",
     ]);
-    setSelectedDelivery([]);
     setSelectedPayment([
       "전체",
       "신용/체크카드",
