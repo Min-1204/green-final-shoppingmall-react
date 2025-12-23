@@ -126,11 +126,11 @@ export default function MyPageLayout() {
 
         <main className="flex-1">
           {/* 검은 박스처럼 보이는 상단 요약 영역 - 페이지 공통 */}
-          <div className="hidden lg:flex gap-4 mb-6">
+          {/* <div className="hidden lg:flex gap-4 mb-6">
             <div className="flex-1 bg-slate-900 rounded-2xl px-6 py-5 text-white flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-200/80 mb-1">
-                  {/* {user.name} 님은 <b>{user.user_level}</b>입니다. */}
+                  {user.name} 님은 <b>{user.user_level}</b>입니다.
                 </p>
                 <p className="text-xs text-slate-300">
                   구매금액 0원 · 쿠폰 2개 · 위시리스트 3건
@@ -142,7 +142,7 @@ export default function MyPageLayout() {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="w-full">
             <Outlet />
