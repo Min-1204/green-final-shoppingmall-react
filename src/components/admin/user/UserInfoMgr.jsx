@@ -268,7 +268,11 @@ const UserInfoMgr = () => {
       </div>
 
       {/* 결과 테이블 */}
-      <UserInfoResultTable users={users} onSort={(value) => setSort(value)} />
+      <UserInfoResultTable
+        users={users}
+        setUsers={setUsers}
+        onSort={(value) => setSort(value)}
+      />
       {pageResponse && (
         <Pagination
           pageResponseDTO={pageResponse}

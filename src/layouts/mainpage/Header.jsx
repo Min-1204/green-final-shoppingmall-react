@@ -79,7 +79,7 @@ export default function Header() {
                     <>
                       <button
                         onClick={() => navigate("/admin/products")}
-                        className="hover:text-[#FF6B9C]"
+                        className="hover:text-[#FF6B9C] cursor-pointer"
                       >
                         관리자페이지
                       </button>
