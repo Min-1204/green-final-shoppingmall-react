@@ -162,20 +162,26 @@ export default function MainPage() {
               </button>
             </div>
           </div>
-          <Swiper {...sliderSettings} ref={newSwiperRef} className="w-full">
-            {newProducts.map((p, i) => (
-              <SwiperSlide key={i}>
-                <div className="cursor-pointer">
-                  <img
-                    onClick={() => goToProductPage(p.id)}
-                    src={p?.mainImages[0].imageUrl}
-                    alt={`NEW ${i}`}
-                    className="rounded-xl w-full h-[300px] object-cover"
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {newProducts.length > 0 ? (
+            <Swiper {...sliderSettings} ref={newSwiperRef} className="w-full">
+              {newProducts.map((p, i) => (
+                <SwiperSlide key={i}>
+                  <div className="cursor-pointer">
+                    <img
+                      onClick={() => goToProductPage(p.id)}
+                      src={p?.mainImages[0].imageUrl}
+                      alt={`NEW ${i}`}
+                      className="rounded-xl w-full h-[300px] object-cover"
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center">
+              로딩 중...
+            </div>
+          )}
         </section>
 
         {/* BEST */}
@@ -197,20 +203,26 @@ export default function MainPage() {
               </button>
             </div>
           </div>
-          <Swiper {...sliderSettings} ref={bestSwiperRef} className="w-full">
-            {bestProducts.map((p, i) => (
-              <SwiperSlide key={i}>
-                <div className="cursor-pointer">
-                  <img
-                    onClick={() => goToProductPage(p.id)}
-                    src={p?.mainImages[0].imageUrl}
-                    alt={`BEST ${i}`}
-                    className="rounded-xl w-full h-[300px] object-cover"
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {bestProducts.length > 0 ? (
+            <Swiper {...sliderSettings} ref={bestSwiperRef} className="w-full">
+              {bestProducts.map((p, i) => (
+                <SwiperSlide key={i}>
+                  <div className="cursor-pointer">
+                    <img
+                      onClick={() => goToProductPage(p.id)}
+                      src={p?.mainImages[0].imageUrl}
+                      alt={`BEST ${i}`}
+                      className="rounded-xl w-full h-[300px] object-cover"
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center">
+              로딩 중...
+            </div>
+          )}
         </section>
       </main>
 
