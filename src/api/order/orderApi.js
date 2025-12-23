@@ -42,9 +42,10 @@ export const confirmOrder = async (orderId) => {
   return res.data;
 };
 
-export const changeOrderProductStatus = async (orderId, newStatus) => {
+export const changeOrderProductStatus = async (orderId, newStatus, reason) => {
   const res = await axiosInstance.put(`${prefix}/${orderId}`, {
     status: newStatus,
+    reason: reason,
   });
   console.log("changeOrderProductStatus => ", res.data);
   return res.data;

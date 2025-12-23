@@ -15,7 +15,7 @@ export default function CancelModal({
 
   // 사유 입력 확인 후 컨펌 호출
   const handleConfirmClick = () => {
-    console.log("handleComfirmClick 호출");
+    // console.log("handleComfirmClick 호출");
     if (selectedReason != "기타") {
       // 선택한 사유가 '기타'가 아니었을 때
       if (!selectedReason.trim()) {

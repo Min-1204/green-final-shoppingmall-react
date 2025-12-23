@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
+  changeOrderProductStatus,
   confirmOrder,
   deleteOneOrder,
   getOrdersBySearch,
@@ -125,7 +126,7 @@ export default function OrderHistoryComponent() {
     ).padStart(2, "0")}`;
 
     const condition = {
-      userId: user.id,
+      userId: user?.id,
       startDate: start,
       endDate: end,
     };
@@ -263,6 +264,32 @@ export default function OrderHistoryComponent() {
 
     // (선택사항) 사용자 피드백
     alert("주문이 성공적으로 취소되었습니다.");
+  };
+
+  const handleChangeStatus = async (orderId, reason) => {
+    try {
+      await changeOrderProductStatus(orderId, "RETURN_REQUESTED", reason);
+      alert("반품/환불 신청이 완료됐습니다.");
+
+      setOrderList((prevList) => {
+        return prevList.map((order) => {
+          if (order.id === orderId) {
+            return {
+              ...order,
+              orderProducts: order.orderProducts.map((op) => ({
+                ...op,
+                orderProductStatus: "RETURN_REQUESTED",
+              })),
+            };
+          } else {
+            return order;
+          }
+        });
+      });
+    } catch (error) {
+      console.error(error);
+      alert("신청 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -558,8 +585,9 @@ export default function OrderHistoryComponent() {
                             <button
                               className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full"
                               onClick={() => {
-                                setReturnModal(!returnModal);
+                                setReturnModal(true);
                                 setSelectedItem(item);
+                                setSelectedOrder(order);
                               }}
                             >
                               반품/환불신청
@@ -607,8 +635,10 @@ export default function OrderHistoryComponent() {
       )}
       {returnModal && selectedItem && (
         <ReturnModal
+          selectedOrder={selectedOrder}
           item={selectedItem}
           closeModal={() => setReturnModal(false)}
+          onConfirm={handleChangeStatus}
         />
       )}
       {cancleModal && selectedOrder && selectedItem && (
