@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import Header from "../../layouts/mainpage/Header";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
@@ -10,6 +11,7 @@ import {
   fetchNewProducts,
 } from "../../api/admin/product/productApi";
 import { useNavigate } from "react-router-dom";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 const mainImages = [
   "https://www.theskinfood.com/shopimages/skinfood/main_rolling2_364.jpg?1762732886",
@@ -150,13 +152,13 @@ export default function MainPage() {
                 onClick={() => handlePrevClick(newSwiperRef)}
                 className="text-2xl font-bold cursor-pointer text-gray-700"
               >
-                {"<"}
+                <ChevronLeftIcon />
               </button>
               <button
                 onClick={() => handleNextClick(newSwiperRef)}
                 className="text-2xl font-bold cursor-pointer text-gray-700"
               >
-                {">"}
+                <ChevronRightIcon />
               </button>
             </div>
           </div>
@@ -185,13 +187,13 @@ export default function MainPage() {
                 onClick={() => handlePrevClick(bestSwiperRef)}
                 className="text-2xl font-bold cursor-pointer text-gray-700"
               >
-                {"<"}
+                <ChevronLeftIcon />
               </button>
               <button
                 onClick={() => handleNextClick(bestSwiperRef)}
                 className="text-2xl font-bold cursor-pointer text-gray-700"
               >
-                {">"}
+                <ChevronRightIcon />
               </button>
             </div>
           </div>
