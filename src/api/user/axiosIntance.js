@@ -4,7 +4,7 @@ export const API_SERVER = "http://localhost:8080";
 
 export const axiosInstance = axios.create({
   baseURL: API_SERVER,
-  withCredentials: true,
+  withCredentials: true
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -23,34 +23,62 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
-    const originalRequest = error.config; // 실패한 원래 요청의 모든 설정(URL, 파라미터 등)을 보관
+    const originalRequest = error.config;
     const isCurrentUser = originalRequest?.url?.includes("/currentUser");
     const isRefreshRequest = originalRequest?.url?.includes("/refresh");
 
-    if (isCurrentUser && error.response?.status === 401) {
-      return Promise.reject(error);
-    }
+    // 401 에러 처리 (인증 실패)
+    if (error.response?.status === 401) {
+      if (isCurrentUser) {
+        return Promise.reject(error);
+      }
 
-    if (
-      error.response?.status === 401 &&
-      !isRefreshRequest &&
-      !originalRequest._retry // 재시도중이라는
-    ) {
-      originalRequest._retry = true; // 무한루프 방지. 여기서 재시도 플래그 설정
+      // refresh 요청 실패 시 로그인 페이지
+      if (isRefreshRequest) {
+        console.error("토큰 갱신 실패 - 재로그인 필요");
+        window.location.href = "/login";
+        return Promise.reject(error);
+      }
 
-      try {
-        await axiosInstance.post("/api/user/refresh");
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
 
-        // 성공 시 재시도
-        return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        console.error("토큰 갱신 실패 - 재 로그인이 필요합니다");
-        if (!isCurrentUser) {
+        try {
+          await axiosInstance.post("/api/user/refresh");
+          return axiosInstance(originalRequest); // 원래 요청 재시도
+        } catch (refreshError) {
+          console.error("토큰 갱신 실패 - 재로그인 필요");
           window.location.href = "/login";
+          return Promise.reject(refreshError);
         }
-        return Promise.reject(refreshError);
       }
     }
-    return Promise.reject(error);
+
+    // 403 에러 처리 (권한 없음)
+    if (error.response?.status === 403) {
+      const errorMessage =
+        error.response.data?.message || "접근 권한이 없습니다.";
+      console.error("403 권한 없음:", errorMessage);
+      alert(errorMessage);
+    }
+
+    if (error.response?.data) {
+      const { status, message } = error.response.data;
+
+      const unifiedError = {
+        status: status || error.response.status,
+        message: message || "오류가 발생했습니다.",
+        originalError: error
+      };
+
+      return Promise.reject(unifiedError);
+    }
+
+    // 네트워크 에러
+    return Promise.reject({
+      status: 0,
+      message: "네트워크 오류가 발생했습니다.",
+      originalError: error
+    });
   }
 );

@@ -54,7 +54,7 @@ export default function UserWithdrawForm() {
         }
       }
     } catch (error) {
-      alert(error.response.data?.message);
+      alert(error.message);
     }
   };
 

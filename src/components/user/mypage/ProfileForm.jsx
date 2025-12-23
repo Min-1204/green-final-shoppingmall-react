@@ -23,7 +23,7 @@ export default function ProfileForm() {
     addressDetail: profileData?.addressDetail || "",
     smsAgreement: profileData?.smsAgreement || false,
     emailAgreement: profileData?.emailAgreement || false,
-    password: "",
+    password: ""
   });
 
   // prettier-ignore
@@ -49,7 +49,7 @@ export default function ProfileForm() {
     const { name, value, type, checked } = e.target;
     setModifyForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : value
     }));
   };
 
@@ -69,7 +69,7 @@ export default function ProfileForm() {
     const finalModifyData = {
       ...modifyForm,
       loginId: user.loginId,
-      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber),
+      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber)
     };
 
     try {
@@ -86,7 +86,7 @@ export default function ProfileForm() {
         setModifyForm((prev) => ({ ...prev, password: "" }));
       }
     } catch (error) {
-      alert(error.message);
+      alert(error);
     }
   };
 
@@ -96,7 +96,7 @@ export default function ProfileForm() {
         ...modifyForm,
         postalCode: data.zonecode,
         address: data.address,
-        addressDetail: "",
+        addressDetail: ""
       });
     });
   };

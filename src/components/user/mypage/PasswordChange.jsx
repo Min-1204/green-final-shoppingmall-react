@@ -14,7 +14,7 @@ export default function PasswordChange() {
   const [pwForm, setPwForm] = useState({
     password: "",
     newPassword: "",
-    newPasswordConfirm: "",
+    newPasswordConfirm: ""
   });
 
   const handleChange = (e) => {
@@ -69,7 +69,7 @@ export default function PasswordChange() {
         });
       }
     } catch (error) {
-      alert(error.message);
+      alert(error);
     }
   };
 
