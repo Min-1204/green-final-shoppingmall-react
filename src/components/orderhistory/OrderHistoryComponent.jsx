@@ -297,7 +297,7 @@ export default function OrderHistoryComponent() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-10 py-10 bg-white border border-gray-200 rounded-2xl shadow-sm text-[#333]">
+    <div className="max-w-7xl mx-auto px-10 py-10 bg-white border border-gray-400 rounded-2xl shadow-sm text-[#333]">
       {/* 헤더 */}
       <div className="mb-8 ml-2">
         <h1 className="text-2xl font-medium mb-1">Order History</h1>
@@ -310,7 +310,7 @@ export default function OrderHistoryComponent() {
           (label, idx) => (
             <div
               key={label}
-              className="bg-white border border-gray-200 p-5 text-center rounded-xl"
+              className="bg-white border border-gray-400 p-5 text-center rounded-xl"
             >
               <p className="text-3xl font-normal mb-2 text-[#333]">
                 {countStatus[label]}
@@ -322,7 +322,7 @@ export default function OrderHistoryComponent() {
       </div>
 
       {/* 구매기간 필터 */}
-      <div className="bg-white border border-gray-100 p-6 mb-6 rounded-xl">
+      <div className="bg-white border border-gray-400 p-6 mb-6 rounded-xl">
         <p className="text-xs text-gray-600 mb-3 uppercase tracking-wide">
           PURCHASE PERIOD
         </p>
@@ -334,7 +334,7 @@ export default function OrderHistoryComponent() {
               className={`px-5 py-2 text-sm transition-all ${
                 selectedPeriod === `${m}개월`
                   ? "bg-black text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:border-gray-400"
+                  : "bg-white text-gray-700 border border-gray-400 hover:border-gray-500"
               }`}
             >
               {`${m}개월`}
@@ -347,7 +347,7 @@ export default function OrderHistoryComponent() {
       </div>
 
       {/* 날짜 직접 입력 */}
-      <div className="bg-white border border-gray-100 p-6 mb-6 rounded-xl">
+      <div className="bg-white border border-gray-400 p-6 mb-6 rounded-xl">
         <p className="text-xs text-gray-600 mb-3 uppercase tracking-wide">
           DATE RANGE
         </p>
@@ -355,7 +355,7 @@ export default function OrderHistoryComponent() {
           {/* 시작 날짜 */}
           <div className="flex items-center gap-2">
             <select
-              className="px-3 py-2 border border-gray-300 text-sm bg-white hover:border-gray-400"
+              className="px-3 py-2 border border-gray-400 text-sm bg-white hover:border-gray-500"
               value={startYear}
               onChange={(e) => setStartYear(e.target.value)}
             >
@@ -366,7 +366,7 @@ export default function OrderHistoryComponent() {
             <span className="text-sm text-gray-500">년</span>
 
             <select
-              className="px-3 py-2 border border-gray-300 text-sm bg-white hover:border-gray-400"
+              className="px-3 py-2 border border-gray-400 text-sm bg-white hover:border-gray-500"
               value={startMonth}
               onChange={(e) => setStartMonth(e.target.value)}
             >
@@ -379,7 +379,7 @@ export default function OrderHistoryComponent() {
             <span className="text-sm text-gray-500">월</span>
 
             <select
-              className="px-3 py-2 border border-gray-300 text-sm bg-white hover:border-gray-400"
+              className="px-3 py-2 border border-gray-400 text-sm bg-white hover:border-gray-500"
               value={startDay}
               onChange={(e) => setStartDay(e.target.value)}
             >
@@ -397,7 +397,7 @@ export default function OrderHistoryComponent() {
           {/* 종료 날짜 */}
           <div className="flex items-center gap-2">
             <select
-              className="px-3 py-2 border border-gray-300 text-sm bg-white hover:border-gray-400"
+              className="px-3 py-2 border border-gray-400 text-sm bg-white hover:border-gray-500"
               value={endYear}
               onChange={(e) => setEndYear(e.target.value)}
             >
@@ -408,7 +408,7 @@ export default function OrderHistoryComponent() {
             <span className="text-sm text-gray-500">년</span>
 
             <select
-              className="px-3 py-2 border border-gray-300 text-sm bg-white hover:border-gray-400"
+              className="px-3 py-2 border border-gray-400 text-sm bg-white hover:border-gray-500"
               value={endMonth}
               onChange={(e) => setEndMonth(e.target.value)}
             >
@@ -421,7 +421,7 @@ export default function OrderHistoryComponent() {
             <span className="text-sm text-gray-500">월</span>
 
             <select
-              className="px-3 py-2 border border-gray-300 text-sm bg-white hover:border-gray-400"
+              className="px-3 py-2 border border-gray-400 text-sm bg-white hover:border-gray-500"
               value={endDay}
               onChange={(e) => setEndDay(e.target.value)}
             >
@@ -445,9 +445,9 @@ export default function OrderHistoryComponent() {
       </div>
 
       {/* 주문 목록 테이블 */}
-      <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
+      <div className="bg-white border border-gray-400 rounded-xl overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-white border-b border-gray-200">
+          <thead className="bg-white border-b border-gray-400">
             <tr className="h-12">
               <th className="w-40 text-xs uppercase tracking-wide text-gray-500 font-normal">
                 ORDER DATE
@@ -471,7 +471,7 @@ export default function OrderHistoryComponent() {
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-400">
             {/* 주문 내역이 있는 경우 */}
             {orderList && orderList.length > 0 ? (
               orderList.map((order) => (
@@ -479,12 +479,12 @@ export default function OrderHistoryComponent() {
                   {order.orderProducts.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-gray-100 transition-colors"
                     >
                       {index === 0 && (
                         <td
                           rowSpan={order.orderProducts.length}
-                          className="text-center align-top p-5 border-r border-gray-100 bg-white"
+                          className="text-center align-top p-5 border-r border-gray-400 bg-white"
                         >
                           <div className="text-sm mb-1">{order.orderDate}</div>
                           <div className="text-xs text-gray-400">
