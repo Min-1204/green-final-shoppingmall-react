@@ -64,21 +64,21 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
 
   // 메인 메뉴 스타일링을 위한 기본 클래스
   const baseMainMenuClass =
-    "flex items-center justify-between px-6 py-3 cursor-pointer transition-colors duration-200 text-gray-200 hover:bg-gray-700 hover:text-white";
+    "flex items-center justify-between px-6 py-3 cursor-pointer transition-colors duration-200 text-gray-100 hover:bg-[#1e3358]";
   // 서브 메뉴 스타일링을 위한 기본 클래스
   const baseSubMenuClass =
-    "block w-full text-left py-2 px-10 text-sm transition-colors duration-200 text-gray-300 hover:bg-gray-700 hover:text-white";
+    "block w-full text-left py-2 px-10 text-sm transition-colors duration-200 text-gray-200 hover:bg-[#1a2d4d]";
   // 활성화된 서브 메뉴 클래스
-  const activeSubMenuClass = "bg-blue-500 text-white font-medium";
+  const activeSubMenuClass = "bg-[#3d5a80] text-white font-medium";
 
   return (
-    <aside className="w-48 bg-gray-800 text-white overflow-y-auto min-h-screen">
+    <aside className="w-48 bg-[#2A4474] text-white overflow-y-auto min-h-screen">
       <nav className="sidebar-nav">
         <ul className="py-2">
           {/* === 1. 상품 관리 (products) === */}
           <li className="border-l-4 border-transparent">
             <div
-              className={`${baseMainMenuClass} border-l-4 border-blue-400`}
+              className={`${baseMainMenuClass}  `}
               onClick={() => toggleMenu("products")}
             >
               <div className="flex items-center">상품 관리</div>
@@ -92,7 +92,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
             </div>
 
             {isMenuExpanded("products") && (
-              <ul className="bg-gray-900 border-l-4 border-blue-400">
+              <ul className="bg-[#22385F]  ">
                 <li>
                   <button
                     className={`${baseSubMenuClass} ${
@@ -142,7 +142,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
           {/* === 2. 거래내역 관리 (transactions) === */}
           <li className="border-l-4 border-transparent">
             <div
-              className={`${baseMainMenuClass} border-l-4 border-blue-400`}
+              className={`${baseMainMenuClass}  `}
               onClick={() => toggleMenu("transactions")}
             >
               <div className="flex items-center">거래내역 관리</div>
@@ -155,7 +155,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
               </span>
             </div>
             {isMenuExpanded("transactions") && (
-              <ul className="bg-gray-900 border-l-4 border-blue-400">
+              <ul className="bg-[#22385F]  ">
                 <li>
                   <button
                     className={`${baseSubMenuClass} ${
@@ -179,7 +179,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
           {/* === 3. 회원 관리 (user-management) === */}
           <li className="border-l-4 border-transparent">
             <div
-              className={`${baseMainMenuClass} border-l-4 border-blue-400`}
+              className={`${baseMainMenuClass}  `}
               onClick={() => toggleMenu("user-management")}
             >
               <div className="flex items-center">회원 관리</div>
@@ -192,7 +192,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
               </span>
             </div>
             {isMenuExpanded("user-management") && (
-              <ul className="bg-gray-900 border-l-4 border-blue-400">
+              <ul className="bg-[#22385F]  ">
                 <li>
                   <button
                     className={`${baseSubMenuClass} ${
@@ -212,7 +212,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
           {/* === 4. 쿠폰 관리 (coupon-management) === */}
           <li className="border-l-4 border-transparent">
             <div
-              className={`${baseMainMenuClass} border-l-4 border-blue-400`}
+              className={`${baseMainMenuClass}  `}
               onClick={() => toggleMenu("coupon-management")}
             >
               <div className="flex items-center">쿠폰 관리</div>
@@ -225,7 +225,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
               </span>
             </div>
             {isMenuExpanded("coupon-management") && (
-              <ul className="bg-gray-900 border-l-4 border-blue-400">
+              <ul className="bg-[#22385F]  ">
                 <li>
                   <button
                     className={`${baseSubMenuClass} ${
@@ -265,7 +265,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
           {/* === 5. 통계 (statistics) === */}
           {/* <li className="border-l-4 border-transparent">
             <div
-              className={`${baseMainMenuClass} border-l-4 border-blue-400`}
+              className={`${baseMainMenuClass}  `}
               onClick={() => toggleMenu("statistics")}
             >
               <div className="flex items-center">통계</div>
@@ -278,7 +278,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
               </span>
             </div>
             {isMenuExpanded("statistics") && (
-              <ul className="bg-gray-900 border-l-4 border-blue-400">
+              <ul className="bg-[#22385F]  ">
                 <li>
                   <button
                     className={`${baseSubMenuClass} ${
