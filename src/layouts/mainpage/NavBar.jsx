@@ -58,7 +58,7 @@ const NavBar = memo(() => {
                 className="inline-flex items-center gap-1 text-gray-700 hover:text-white whitespace-nowrap transition-colors cursor-pointer"
                 aria-disabled
               >
-                <span className="text-gray-700 font-semibold text-[16px]">
+                <span className="text-gray-700 font-semibold text-[16px] relative after:absolute after:left-0 after:-bottom-1 after:h-[1px] after:w-0 after:bg-gray-400 after:transition-all after:duration-200 hover:after:w-full">
                   {menu.name}
                 </span>
               </button>

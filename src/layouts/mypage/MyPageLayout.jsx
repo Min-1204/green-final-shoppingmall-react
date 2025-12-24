@@ -1,7 +1,6 @@
-import React from "react";
+import { useSelector } from "react-redux";
 import { NavLink, Outlet } from "react-router-dom";
 import Header from "../mainpage/Header";
-import { useSelector } from "react-redux";
 
 const menuGroups = [
   {
@@ -71,11 +70,12 @@ export default function MyPageLayout() {
         </div>
 
         <aside className="hidden lg:block w-64 shrink-0">
-          <div className="bg-slate-900 rounded-2xl shadow-sm overflow-hidden text-slate-100">
+          <div className="bg-slate-800 rounded-2xl shadow-sm overflow-hidden text-slate-100">
             <div className="px-6 py-5 border-b border-slate-800">
-              <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">
+              <p className="text-lg uppercase tracking-wide text-white mb-1">
                 MY PAGE
               </p>
+
               {/* <h2 className="text-lg font-bold">{user.name} 님</h2> */}
               <p className="text-xs text-slate-400 mt-2">
                 {/* {user.user_level} 🔹 최근 주문 1건 */}
@@ -86,35 +86,23 @@ export default function MyPageLayout() {
             <nav className="py-3 text-sm">
               {menuGroups.map((group) => (
                 <div key={group.title} className="mb-3">
-                  <p className="px-6 py-2 text-[0.7rem] tracking-wide uppercase text-slate-400/80">
+                  <p className="px-6 py-2 text-lg tracking-wide uppercase text-white">
                     {group.title}
                   </p>
+
+                  {/* 구분선 */}
+                  <div className="mx-6 mb-2 border-b border-slate-600" />
+
                   <div className="flex flex-col">
                     {group.items.map((item) => (
                       <NavLink
                         key={item.to}
                         to={item.to}
-                        className={({ isActive }) =>
-                          `px-6 py-2 flex items-center justify-between transition ${
-                            isActive
-                              ? item.danger
-                                ? "bg-red-500 text-white"
-                                : "bg-slate-100 text-slate-900"
-                              : "text-slate-100/80 hover:bg-slate-800"
-                          }`
-                        }
+                        className="px-6 py-2 flex items-center justify-between text-slate-100/80"
                       >
-                        {({ isActive }) => (
-                          <>
-                            <span
-                              className={`${
-                                item.danger && !isActive ? "text-red-300" : ""
-                              }`}
-                            >
-                              {item.label}
-                            </span>
-                          </>
-                        )}
+                        <span className={item.danger ? "text-red-300" : ""}>
+                          {item.label}
+                        </span>
                       </NavLink>
                     ))}
                   </div>
