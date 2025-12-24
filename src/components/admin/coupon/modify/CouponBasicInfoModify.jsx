@@ -32,6 +32,26 @@ export default function CouponBasicInfoModify({ basicInfo, onChangeForm }) {
             </div>
           </div>
 
+          {/* 쿠폰 설명 */}
+          <div className="flex border-b border-gray-300 items-stretch">
+            <div className="w-40 bg-gray-50 border-r border-gray-300 text-gray-700 font-semibold flex items-center justify-center p-2">
+              쿠폰 설명
+              <span className="text-red-500 ml-1">*</span>
+            </div>
+            <div className="flex items-center flex-grow p-2 gap-2">
+              <input
+                type="text"
+                name="couponDescription"
+                onChange={onChangeHandler}
+                value={
+                  basicInfo.couponDescription ? basicInfo.couponDescription : ""
+                }
+                className="border border-gray-300 p-1 w-full max-w-lg rounded-md"
+                placeholder="쿠폰에 대한 간략 설명입니다. 예시) 30,000이상 구매시 5,000원 할인"
+              />
+            </div>
+          </div>
+
           {/* 쿠폰 사용 가능 여부 */}
           <div className="flex items-stretch">
             <div className="w-40 bg-gray-50 border-r border-gray-300 text-gray-700 font-semibold flex items-center justify-center p-2">

@@ -3,11 +3,13 @@ import SmsModal from "./SmsModal";
 import { sendSmsMessage } from "../../../api/admin/message/messageApi";
 import UserRoleModal from "./UserRoleModal";
 import { userRoleChange } from "../../../api/admin/user/adminUserSearchApi";
+import CouponIssueModal from "./CouponIssueModal";
 
 const UserInfoResultTable = ({ users, setUsers, onSort }) => {
   const [sort, setSort] = useState("recent");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [isSmsModalOpen, setIsSmsModalOpen] = useState(false);
+  const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRoleUser, setSelectedRoleUser] = useState(null);
 
@@ -99,6 +101,24 @@ const UserInfoResultTable = ({ users, setUsers, onSort }) => {
     setSelectedRoleUser(null);
   };
 
+  const validateSmsAgreement = () => {
+    const disAgreeUsers = selectedUsers.filter((u) => u.smsAgreement === false);
+    if (disAgreeUsers.length === 0) {
+      setIsSmsModalOpen(true);
+    } else {
+      const loginIds = disAgreeUsers.map((u) => u.loginId).join(", ");
+      alert(`${loginIds}는 SMS 수신 비동의 유저입니다.`);
+    }
+  };
+
+  const validateSelectedUsers = () => {
+    if (selectedUsers.length === 0) {
+      alert(`선택된 유저가 없습니다.`);
+    } else {
+      setIsCouponModalOpen(true);
+    }
+  };
+
   return (
     <>
       <div className="w-full mt-6">
@@ -108,11 +128,16 @@ const UserInfoResultTable = ({ users, setUsers, onSort }) => {
           </span>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* <button className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm">
-              이메일 발송
-            </button> */}
             <button
-              onClick={() => setIsSmsModalOpen(true)}
+              onClick={validateSelectedUsers}
+              className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm"
+            >
+              쿠폰 발급
+            </button>
+            <button
+              onClick={() => {
+                validateSmsAgreement();
+              }}
               className="bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1 rounded-md border border-green-200 cursor-pointer transition shadow-sm"
             >
               SMS 발송
@@ -175,7 +200,7 @@ const UserInfoResultTable = ({ users, setUsers, onSort }) => {
                         type="checkbox"
                         checked={selectedUsers.includes(user)}
                         onChange={(e) => handleSelectUser(e, user)}
-                        disabled={!user.smsAgreement}
+                        // disabled={!user.smsAgreement}
                         className="w-3.5 h-3.5 accent-blue-600 cursor-pointer"
                       />
                     </td>
@@ -257,6 +282,12 @@ const UserInfoResultTable = ({ users, setUsers, onSort }) => {
         user={selectedRoleUser}
         onClose={() => setIsRoleModalOpen(false)}
         onConfirm={userRoleChangeHandler}
+      />
+      {/* 쿠폰 발급 모달 */}
+      <CouponIssueModal
+        isOpen={isCouponModalOpen}
+        onClose={() => setIsCouponModalOpen(false)}
+        selectedUsers={selectedUsers}
       />
     </>
   );

@@ -7,7 +7,7 @@ import { registerCoupon } from "../../../api/admin/coupon/couponApi";
 import { useNavigate } from "react-router-dom";
 
 const initState = {
-  basicInfo: { couponName: "", availability: "USABLE" },
+  basicInfo: { couponName: "", couponDescription: "", availability: "USABLE" },
   discountSetting: {
     discountType: "PERCENTAGE",
     fixedDiscountAmount: 0,
