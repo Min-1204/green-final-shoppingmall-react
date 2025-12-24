@@ -12,11 +12,18 @@ export default function CancelModal({
   const [customReason, setCustomReason] = useState("");
   const totalItemsCount = selectedOrder.orderProducts?.length || 1;
   const isMultiple = totalItemsCount > 1;
+  const orderStatus = item.orderProductStatus;
 
   // 사유 입력 확인 후 컨펌 호출
   const handleConfirmClick = () => {
-    // console.log("handleComfirmClick 호출");
-    if (selectedReason != "기타") {
+    // 1. 주문 접수(미결제) 상태면 사유 없이 바로 취소
+    if (orderStatus === "PENDING_PAYMENT") {
+      onConfirm(selectedOrder.id, "결제 전 취소");
+      return;
+    }
+
+    // 2. 결제 완료 상태일 때 사유 검증
+    if (selectedReason !== "기타") {
       // 선택한 사유가 '기타'가 아니었을 때
       if (!selectedReason.trim()) {
         alert("취소 사유를 입력하거나 선택해 주세요.");
@@ -65,63 +72,81 @@ export default function CancelModal({
 
         {/* 본문 내용 */}
         <div className="p-6">
-          <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-            고객님, 본 주문은 묶음 결제된 상품으로{" "}
-            <span className="font-bold text-red-600">부분 취소가 불가능</span>
-            합니다. 취소 시 아래 상품을 포함한 주문 건 전체가 취소됩니다.
-          </p>
+          {orderStatus === "PENDING_PAYMENT" ? (
+            // [주문 접수 상태일 때]
+            <div className="py-4 text-center">
+              <p className="text-gray-700 font-medium">
+                아직 결제가 완료되지 않은 주문입니다.
+              </p>
+              <p className="text-gray-500 text-sm mt-1">
+                취소 시 해당 주문 건이 즉시 삭제됩니다.
+              </p>
+            </div>
+          ) : (
+            // [결제 완료 상태일 때]
+            <>
+              <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                고객님, 본 주문은 묶음 결제된 상품으로{" "}
+                <span className="font-bold text-red-600">
+                  부분 취소가 불가능
+                </span>
+                합니다. 취소 시 아래 상품을 포함한 주문 건 전체가 취소됩니다.
+              </p>
 
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-            <div className="flex items-start gap-3">
-              <img
-                src={item.imageUrl}
-                alt={item.productName}
-                className="w-12 h-12 rounded object-cover border"
-              />
-              <div>
-                <p className="text-sm font-medium text-gray-800 line-clamp-1">
-                  {item.productName} - {item.productOptionName}
-                </p>
-                {isMultiple && (
-                  <p className="text-xs text-blue-600 mt-1 font-semibold">
-                    외 {totalItemsCount - 1}건의 상품이 함께 취소됩니다.
-                  </p>
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                <div className="flex items-start gap-3">
+                  <img
+                    src={item.imageUrl}
+                    alt={item.productName}
+                    className="w-12 h-12 rounded object-cover border"
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-gray-800 line-clamp-1">
+                      {item.productName} - {item.productOptionName}
+                    </p>
+                    {isMultiple && (
+                      <p className="text-xs text-blue-600 mt-1 font-semibold">
+                        외 {totalItemsCount - 1}건의 상품이 함께 취소됩니다.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* 취소 사유 입력 */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">
+                  취소 사유
+                </label>
+                <select
+                  className="w-full p-3 border rounded-xl text-sm focus:ring-2 focus:ring-black outline-none"
+                  value={selectedReason}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedReason(val);
+                    // 선택한 사유가 기타가 아니면 직접 입력한 사유는 초기화
+                    if (val !== "기타") setCustomReason("");
+                  }}
+                >
+                  <option value="">사유를 선택해주세요</option>
+                  <option value="단순 변심">단순 변심</option>
+                  <option value="주문 정보 실수">
+                    주문 정보 실수 (옵션/배송지 등)
+                  </option>
+                  <option value="재결제 예정">취소 후 재결제</option>
+                  <option value="기타">기타 (직접 입력)</option>
+                </select>
+
+                {selectedReason === "기타" && (
+                  <textarea
+                    className="w-full p-3 border rounded-xl text-sm mt-2 outline-none focus:ring-2 focus:ring-black"
+                    placeholder="상세한 취소 사유를 입력해주세요."
+                    onChange={(e) => setCustomReason(e.target.value)}
+                  />
                 )}
               </div>
-            </div>
-          </div>
-
-          {/* 취소 사유 입력 */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              취소 사유
-            </label>
-            <select
-              className="w-full p-3 border rounded-xl text-sm focus:ring-2 focus:ring-black outline-none"
-              value={selectedReason}
-              onChange={(e) => {
-                setSelectedReason(e.target.value);
-                // 선택한 사유가 기타가 아니면 직접 입력한 사유는 초기화
-                if (selectedReason != "기타") setCustomReason("");
-              }}
-            >
-              <option value="">사유를 선택해주세요</option>
-              <option value="단순 변심">단순 변심</option>
-              <option value="주문 정보 실수">
-                주문 정보 실수 (옵션/배송지 등)
-              </option>
-              <option value="재결제 예정">취소 후 재결제</option>
-              <option value="기타">기타 (직접 입력)</option>
-            </select>
-
-            {selectedReason === "기타" && (
-              <textarea
-                className="w-full p-3 border rounded-xl text-sm mt-2 outline-none focus:ring-2 focus:ring-black"
-                placeholder="상세한 취소 사유를 입력해주세요."
-                onChange={(e) => setCustomReason(e.target.value)}
-              />
-            )}
-          </div>
+            </>
+          )}
         </div>
 
         {/* 하단 버튼 */}
