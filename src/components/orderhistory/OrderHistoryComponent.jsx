@@ -178,7 +178,7 @@ export default function OrderHistoryComponent() {
       }
     };
     fetchOrderStatusSummary();
-  }, [pageResponseDTO]);
+  }, [orderList]);
 
   const handleSelectPeriod = (month) => {
     const now = new Date();
@@ -252,8 +252,12 @@ export default function OrderHistoryComponent() {
   };
 
   const handleConfirmCancel = async (orderId, reason) => {
-    const result = await refundPayment(orderId, reason);
-    console.log("refundPayment 호출 결과 =>", result);
+    if (reason === "결제 전 취소") {
+      await deleteOneOrder(orderId);
+    } else {
+      const result = await refundPayment(orderId, reason);
+      console.log("refundPayment 호출 결과 =>", result);
+    }
     // 서버 요청이 성공적이라면 (보통 result가 존재하거나 성공 코드를 반환할 때)
     // 화면의 orderList 상태에서 방금 취소한 orderId를 가진 주문만 제외시킵니다.
     setOrderList((prevList) =>
