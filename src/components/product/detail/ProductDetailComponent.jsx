@@ -68,7 +68,24 @@ export default function ProductDetailComponent() {
     { key: "qna", label: "Q&A" },
   ];
 
+  // 로그인했는지 체크하는 함수
+  const checkLogin = () => {
+    if (!user || !user.id) {
+      if (
+        window.confirm(
+          "로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?"
+        )
+      ) {
+        // 현재 URL을 redirect 인자로 전달
+        navigate("/login");
+      }
+      return false;
+    }
+    return true;
+  };
+
   const handleClickOrderOption = () => {
+    if (!checkLogin()) return;
     if (
       product?.options &&
       product?.options?.length > 0 &&
@@ -98,6 +115,7 @@ export default function ProductDetailComponent() {
   };
 
   const handleClickOrder = () => {
+    if (!checkLogin()) return;
     navigate("/order", {
       state: {
         items: [
@@ -120,6 +138,7 @@ export default function ProductDetailComponent() {
   };
 
   const handleAddCartOption = (selectedItems) => {
+    if (!checkLogin()) return;
     if (
       product.options &&
       product.options.length > 0 &&
@@ -144,6 +163,7 @@ export default function ProductDetailComponent() {
   };
 
   const handleAddCart = (product) => {
+    if (!checkLogin()) return;
     // console.log("product", product);
     const cartProductDTO = {
       userId: user?.id,
