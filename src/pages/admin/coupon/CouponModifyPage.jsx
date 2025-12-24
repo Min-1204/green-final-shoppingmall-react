@@ -10,7 +10,7 @@ import IssueSettingModify from "../../../components/admin/coupon/modify/IssueSet
 import PeriodSettingModify from "../../../components/admin/coupon/modify/PeriodSettingModify";
 
 const initState = {
-  basicInfo: { couponName: "", availability: "USABLE" },
+  basicInfo: { couponName: "", couponDescription: "", availability: "USABLE" },
   discountSetting: {
     discountType: "PERCENTAGE",
     fixedDiscountAmount: 0,
@@ -95,6 +95,7 @@ const CouponModifyPage = () => {
         <CouponBasicInfoModify
           basicInfo={{
             couponName: couponModifyForm.couponName,
+            couponDescription: couponModifyForm.couponDescription,
             availability: couponModifyForm.availability,
           }}
           onChangeForm={(data) =>
