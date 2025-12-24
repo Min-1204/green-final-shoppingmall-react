@@ -37,6 +37,9 @@ const AdminOrderMgrComponent = () => {
     "계좌이체",
   ]); //주문결제 state
 
+  // 검색 버튼을 눌렀는지 여부
+  const [hasSearched, setHasSearched] = useState(false);
+
   // console.log("selectedOrderStatuses", selectedOrderStatuses);
   // console.log("selectedPayment", selectedPayment);
 
@@ -65,7 +68,9 @@ const AdminOrderMgrComponent = () => {
 
   useEffect(() => {
     // console.log("useEffect 실행(searchParams 의존성 배열이 변경됨)");
-    fetchOrdersBySearch();
+    if (hasSearched) {
+      fetchOrdersBySearch();
+    }
   }, [searchParams]);
 
   const allOrderStatuses = [
@@ -161,6 +166,7 @@ const AdminOrderMgrComponent = () => {
       prev.set("t", Date.now().toString());
       return prev;
     });
+    setHasSearched(true);
   };
 
   const resetFiltersHandler = () => {
