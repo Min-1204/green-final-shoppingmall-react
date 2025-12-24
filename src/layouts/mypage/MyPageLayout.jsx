@@ -7,7 +7,7 @@ const menuGroups = [
     title: "쇼핑정보",
     items: [
       { to: "/mypage/orders", label: "주문내역" },
-      { to: "/mypage/wish", label: "찜목록" },
+      // { to: "/mypage/wish", label: "찜목록" },
     ],
   },
   {
@@ -29,7 +29,7 @@ const menuGroups = [
     title: "나의 게시글",
     items: [
       { to: "/mypage/inquiries", label: "1:1 문의내역" },
-      { to: "/mypage/productqna", label: "상품 문의내역" },
+      // { to: "/mypage/productqna", label: "상품 문의내역" },
       { to: "/mypage/reviews", label: "나의 리뷰내역" },
       { to: "/helpcenter", label: "고객 센터" },
     ],

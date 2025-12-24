@@ -4,7 +4,7 @@ import PasswordChange from "../../components/user/mypage/PasswordChange";
 
 export default function MyPagePasswordPage() {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-400">
       {/* 🔹 줄(borde-b) 없앰 */}
       <div className="px-8 pt-7">
         <h1 className="text-xl font-bold mb-2">비밀번호 변경</h1>

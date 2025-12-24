@@ -177,6 +177,28 @@ export default function ProductDetailComponent() {
     alert("장바구니에 담았습니다.");
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const navbar = document.querySelector("nav");
+      if (navbar) {
+        if (window.scrollY > 900) {
+          // 탭이 고정되는 스크롤 위치
+          navbar.style.display = "none";
+        } else {
+          navbar.style.display = "";
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      // 컴포넌트 언마운트 시 navbar 복원
+      const navbar = document.querySelector("nav");
+      if (navbar) navbar.style.display = "";
+    };
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 mt-8 md:mt-12 pb-32">
       {/* 🔹 개선된 경로 (Breadcrumb) */}
@@ -373,7 +395,7 @@ export default function ProductDetailComponent() {
       </div>
 
       {/* 탭 메뉴 */}
-      <div className="sticky top-0 bg-white z-10 border-b-2 border-gray-200 shadow-sm">
+      <div className="sticky top-0 bg-white z-60 border-b-2 border-gray-200 shadow-sm">
         <div className="flex gap-0 overflow-x-auto">
           {tabs.map((t) => (
             <button

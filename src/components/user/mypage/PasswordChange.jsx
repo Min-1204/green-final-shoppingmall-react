@@ -80,7 +80,7 @@ export default function PasswordChange() {
         <input
           type="password"
           name="password"
-          className="w-full h-10 px-3 border rounded-lg"
+          className="w-full h-10 px-3 border border-gray-400 rounded-lg"
           value={pwForm.password}
           onChange={handleChange}
         />
@@ -90,7 +90,7 @@ export default function PasswordChange() {
         <input
           type="password"
           name="newPassword"
-          className="w-full h-10 px-3 border rounded-lg"
+          className="w-full h-10 px-3 border border-gray-400 rounded-lg"
           value={pwForm.newPassword}
           onChange={handleChange}
         />
@@ -102,7 +102,7 @@ export default function PasswordChange() {
         <input
           type="password"
           name="newPasswordConfirm"
-          className="w-full h-10 px-3 border rounded-lg"
+          className="w-full h-10 px-3 border border-gray-400 rounded-lg"
           value={pwForm.newPasswordConfirm}
           onChange={handleChange}
         />

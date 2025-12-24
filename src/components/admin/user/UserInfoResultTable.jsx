@@ -184,9 +184,7 @@ const UserInfoResultTable = ({ users, setUsers, onSort }) => {
                     <td>{user.id}</td>
 
                     {/* 아이디 */}
-                    <td className="truncate text-blue-600 cursor-pointer hover:underline">
-                      {user.loginId}
-                    </td>
+                    <td>{user.loginId}</td>
 
                     {/* 이메일 */}
                     <td>{user.email}</td>
@@ -201,7 +199,8 @@ const UserInfoResultTable = ({ users, setUsers, onSort }) => {
                           setSelectedRoleUser(user);
                           setIsRoleModalOpen(true);
                         }}
-                        className="w-[100px] text-ms py-1 border border-gray-200 rounded-md text-blue-800 hover:bg-blue-100 cursor-pointer bg-transparent text-center"
+                        className="w-[100px] h-[32px] inline-flex items-center justify-center bg-indigo-50 text-indigo-700
+                      hover:bg-indigo-100 border border-indigo-200 rounded-md text-sm leading-none cursor-pointer transition shadow-sm"
                       >
                         {user.userRole}
                       </button>

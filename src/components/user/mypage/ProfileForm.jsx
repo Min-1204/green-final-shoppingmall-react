@@ -109,7 +109,7 @@ export default function ProfileForm() {
           <label className="block text-sm font-medium mb-1">이름</label>
           <input
             name="name"
-            className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+            className="w-full border border-gray-400 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
             value={modifyForm.name}
             readOnly
           />
@@ -119,7 +119,7 @@ export default function ProfileForm() {
           <input
             name="email"
             type="email"
-            className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+            className="w-full border border-gray-400 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
             value={modifyForm.email}
             onChange={handleChange}
           />
@@ -129,7 +129,7 @@ export default function ProfileForm() {
           <input
             name="phoneNumber"
             maxLength={11}
-            className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+            className="w-full border border-gray-400 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
             value={formatPhoneNumber(modifyForm.phoneNumber)}
             onChange={handleChange}
             readOnly
@@ -142,7 +142,7 @@ export default function ProfileForm() {
           <input
             name="birthDate"
             maxLength={8}
-            className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+            className="w-full border border-gray-400 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
             value={modifyForm.birthDate}
             readOnly
           />
@@ -150,14 +150,14 @@ export default function ProfileForm() {
       </div>
 
       {/* 주소 */}
-      <div className="pt-1 border-t border-dashed border-zinc-200"></div>
+      <div className="pt-1 border-t border-dashed border-gray-400"></div>
       <div>
         <p className="text-sm font-semibold mb-3 text-zinc-800">거주지 주소</p>
         <div className="flex flex-col sm:flex-row gap-2 mb-3">
           <input
             name="postalCode"
             placeholder="우편번호"
-            className="sm:w-48 border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+            className="sm:w-48 border border-gray-400 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
             value={modifyForm.postalCode}
             readOnly
           />
@@ -173,7 +173,7 @@ export default function ProfileForm() {
           <input
             name="address"
             placeholder="도로명주소"
-            className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+            className="w-full border border-gray-400 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
             value={modifyForm.address}
             readOnly
           />
@@ -182,7 +182,7 @@ export default function ProfileForm() {
           <input
             name="addressDetail"
             placeholder="상세주소"
-            className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+            className="w-full border border-gray-400 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
             value={modifyForm.addressDetail}
             onChange={handleChange}
           />
@@ -222,7 +222,7 @@ export default function ProfileForm() {
           type="password"
           name="password"
           placeholder="정보를 수정하려면 현재 비밀번호를 입력하세요."
-          className="w-full border border-zinc-200 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-red-400/30"
+          className="w-full border border-gray-400 rounded-lg h-11 px-3 focus:outline-none focus:ring-2 focus:ring-red-400/30"
           value={modifyForm.password}
           onChange={handleChange}
         />
