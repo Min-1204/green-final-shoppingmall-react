@@ -163,6 +163,8 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
       alert("처리 중 오류가 발생했습니다.");
     } finally {
       setIsReturnModalOpen(false); // 모달 닫기
+      alert("반품/환불 처리가 완료됐습니다.");
+      searchHandler();
     }
   };
 
