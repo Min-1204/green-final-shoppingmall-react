@@ -297,9 +297,9 @@ export default function OrderHistoryComponent() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 text-[#333]">
+    <div className="max-w-7xl mx-auto px-10 py-10 bg-white border border-gray-200 rounded-2xl shadow-sm text-[#333]">
       {/* 헤더 */}
-      <div className="mb-8">
+      <div className="mb-8 ml-2">
         <h1 className="text-2xl font-medium mb-1">Order History</h1>
         <p className="text-sm text-gray-500">주문 / 배송 조회</p>
       </div>
@@ -310,7 +310,7 @@ export default function OrderHistoryComponent() {
           (label, idx) => (
             <div
               key={label}
-              className="bg-white border border-gray-200 p-5 text-center"
+              className="bg-white border border-gray-200 p-5 text-center rounded-xl"
             >
               <p className="text-3xl font-normal mb-2 text-[#333]">
                 {countStatus[label]}
@@ -322,7 +322,7 @@ export default function OrderHistoryComponent() {
       </div>
 
       {/* 구매기간 필터 */}
-      <div className="bg-white border border-gray-200 p-6 mb-6">
+      <div className="bg-white border border-gray-100 p-6 mb-6 rounded-xl">
         <p className="text-xs text-gray-600 mb-3 uppercase tracking-wide">
           PURCHASE PERIOD
         </p>
@@ -347,7 +347,7 @@ export default function OrderHistoryComponent() {
       </div>
 
       {/* 날짜 직접 입력 */}
-      <div className="bg-white border border-gray-200 p-6 mb-6">
+      <div className="bg-white border border-gray-100 p-6 mb-6 rounded-xl">
         <p className="text-xs text-gray-600 mb-3 uppercase tracking-wide">
           DATE RANGE
         </p>
@@ -445,7 +445,7 @@ export default function OrderHistoryComponent() {
       </div>
 
       {/* 주문 목록 테이블 */}
-      <div className="bg-white border border-gray-200">
+      <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-white border-b border-gray-200">
             <tr className="h-12">
