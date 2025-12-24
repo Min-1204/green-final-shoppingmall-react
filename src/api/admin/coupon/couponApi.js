@@ -27,3 +27,16 @@ export const deleteCoupon = async (couponId) => {
   const res = await axiosInstance.delete(`${prefix}/delete/${couponId}`);
   return res.data;
 };
+
+export const fetchManualCoupons = async () => {
+  const res = await axiosInstance.get(`${prefix}/manual`);
+  return res.data;
+};
+
+export const issueManualCoupons = async (userIds, couponIds) => {
+  const res = await axiosInstance.post(`/api/usercoupon/manual`, {
+    userIds,
+    couponIds,
+  });
+  return res.data;
+};
