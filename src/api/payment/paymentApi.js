@@ -14,7 +14,9 @@ export const verifyPaymentAndCompleteOrder = async (impUid, merchantUid) => {
 }
 
 export const refundPayment = async (orderId, reason) => {
-  const res = await axiosInstance.post(`${prefix}/refund/${orderId}`, reason);
+  const res = await axiosInstance.post(`${prefix}/refund/${orderId}`, {
+    reason: reason
+  });
   console.log("refundPayment =>", res.data);
   return res.data;
 };

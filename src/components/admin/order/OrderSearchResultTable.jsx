@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { changeOrderProductStatus } from "../../../api/order/orderApi";
+import {
+  changeOrderProductStatus,
+  deleteOneOrder,
+} from "../../../api/order/orderApi";
 import ConfirmModal from "./ConfirmModal";
 import DeliveryConfirmModal from "./DeliveryConfirmModal";
 
+import { refundPayment } from "../../../api/payment/paymentApi";
+import ReturnModal from "./ReturnModal";
+
 const OrderSearchResultTable = ({ orders, searchHandler }) => {
-  // console.log("orders", orders);
+  console.log("orders", orders);
 
   // 상태 변경 모달창
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -19,6 +25,9 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
 
   // 선택 상품 출고 모달
   const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
+
+  // 반품/환불 처리 모달
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
 
   // orders가 유효한 객체인지 확인하고, 아니면 기본값(빈 객체)을 사용
   const data = orders || {};
@@ -45,7 +54,18 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
     });
   });
 
+  // 선택한 상품의 주문들
+  const selectedOrder = orderList.filter((order) =>
+    selectedItem.some((item) => item.orderId == order.id)
+  );
+
+  console.log("selectedOrder", selectedOrder);
+
   // console.log("flatOrders", flatOrders);
+
+  useEffect(() => {
+    setSelectedItem([]);
+  }, [orders]);
 
   const handleChangeStatus = async (item, value) => {
     if (value == "CONFIRMED")
@@ -113,7 +133,40 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
     }
   };
 
-  // console.log("selectedItem", selectedItem);
+  const handleOpenReturnModal = () => {
+    if (
+      selectedItem.some((item) => item.orderProductStatus != "RETURN_REQUESTED")
+    ) {
+      return alert("반품/환불 신청한 상품만 반품/환불 처리가 가능합니다.");
+    }
+
+    setIsReturnModalOpen(true);
+  };
+
+  const handleConfirmReturn = async () => {
+    try {
+      // 선택된 아이템들의 orderId를 중복 제거하여 수집
+      const uniqueOrderIds = [
+        ...new Set(selectedItem.map((item) => item.orderId)),
+      ];
+
+      for (const orderId of uniqueOrderIds) {
+        // "RETURNED" 상태로 변경 API 호출
+        const item = selectedItem.filter((item) => item.orderId == orderId);
+        // console.log("item", item);
+        await refundPayment(orderId, item.returnReason);
+        await changeOrderProductStatus(orderId, "RETURNED");
+        await deleteOneOrder(orderId);
+      }
+    } catch (error) {
+      console.error("반품 처리 중 오류 발생:", error);
+      alert("처리 중 오류가 발생했습니다.");
+    } finally {
+      setIsReturnModalOpen(false); // 모달 닫기
+    }
+  };
+
+  console.log("selectedItem", selectedItem);
 
   return (
     <div className="w-full mt-8">
@@ -128,7 +181,10 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
           >
             선택 상품 출고
           </button>
-          <button className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm">
+          <button
+            className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 cursor-pointer transition shadow-sm"
+            onClick={handleOpenReturnModal}
+          >
             반품/환불 처리
           </button>
         </div>
@@ -254,6 +310,14 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
           selectedCount={selectedItem.length}
           onConfirm={handleChangeSelectedItemStatus}
           onClose={() => setIsDeliveryModalOpen(false)}
+        />
+      )}
+      {isReturnModalOpen && (
+        <ReturnModal
+          selectedOrder={selectedOrder}
+          selectedItem={selectedItem}
+          onConfirm={handleConfirmReturn}
+          onClose={() => setIsReturnModalOpen(false)}
         />
       )}
     </div>
