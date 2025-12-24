@@ -67,16 +67,16 @@ const AdminLayout = ({ children }) => {
   return (
     <div className="flex flex-col h-screen">
       {/* 네비게이션 바 */}
-      <nav className="flex justify-between items-center px-8 h-16 bg-gray-800 text-white shadow-md">
+      <nav className="flex justify-between items-center px-8 h-18 bg-[#22385F] text-white shadow-md">
         <div className="navbar-brand">
-          <h1 className="text-xl font-semibold">관리자 페이지</h1>
+          <h1 className="text-xl font-semibold">MOISTURE VILLAGE</h1>
         </div>
         <div className="flex items-center gap-4">
-          <div className="navbar-user text-sm">{profile?.loginId}</div>
+          <div className="navbar-user">{profile?.loginId} 관리자님</div>
           {user?.loginId ? (
             <>
               <button
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200"
+                className="px-3 py-1 bg-[#8399C5] rounded text-white hover:bg-[#6A82B0] transition-colors duration-200"
                 onClick={handleLogoutClick}
               >
                 로그아웃
@@ -84,7 +84,7 @@ const AdminLayout = ({ children }) => {
             </>
           ) : (
             <button
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200"
+              className="px-3 py-1 bg-blue-500  rounded hover:bg-blue-600 transition-colors duration-200"
               onClick={handleLoginClick}
             >
               로그인
@@ -98,9 +98,7 @@ const AdminLayout = ({ children }) => {
         <AdminSideBar activeTab={activeTab} onTabClick={handleTabClick} />
 
         {/* 메인 콘텐츠 영역 */}
-        <main className="flex-1 p-8 bg-gray-100 overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-1 p-4 bg-white overflow-y-auto">{children}</main>
       </div>
     </div>
   );

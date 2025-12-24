@@ -144,7 +144,7 @@ export default function MyPageLayout() {
             </div>
           </div> */}
 
-          <div className="w-full">
+          <div className="w-full p-4">
             <Outlet />
           </div>
         </main>

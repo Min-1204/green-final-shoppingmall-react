@@ -73,8 +73,15 @@ export default function Header() {
                   {user?.userRole === "ADMIN" && (
                     <>
                       <button
-                        onClick={() => navigate("/admin/products")}
-                        className="hover:text-[#FF6B9C] cursor-pointer"
+                        onClick={() => {
+                          const newWindow = window.open(
+                            "/admin/products",
+                            "_blank"
+                          );
+                          // 보안을 위해 opener 접근 차단
+                          if (newWindow) newWindow.opener = null;
+                        }}
+                        className="hover:text-[#52a3ff] cursor-pointer"
                       >
                         관리자페이지
                       </button>
