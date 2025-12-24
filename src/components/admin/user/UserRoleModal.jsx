@@ -27,8 +27,8 @@ const UserRoleModal = ({ isOpen, onClose, user, onConfirm }) => {
               className={`border border-gray-300 rounded-md py-2 text-sm transition cursor-pointer
                 ${
                   user.userRole === role
-                    ? "bg-gray-200 cursor-not-allowed"
-                    : "hover:bg-blue-50 hover:border-blue-300"
+                    ? "bg-indigo-200 cursor-not-allowed"
+                    : "hover:bg-indigo-50 hover:border-indigo-300"
                 }
               `}
               disabled={user.userRole === role}
