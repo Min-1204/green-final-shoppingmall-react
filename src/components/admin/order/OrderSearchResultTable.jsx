@@ -68,10 +68,15 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
   }, [orders]);
 
   const handleChangeStatus = async (item, value) => {
+    console.log("item", item);
+    if (value == "PENDING_PAYMENT")
+      return alert("주문 접수 상태로는 변경이 불가합니다.");
     if (value == "CONFIRMED")
       return alert("구매확정은 사용자가 할 수 있습니다.");
     if (value == "RETURN_REQUESTED")
       return alert("반품/환불 신청은 사용자가 할 수 있습니다.");
+    if (value == "RETURNED")
+      return alert("반품/환불 처리는 반품/환불 처리 버튼을 눌러주세요.");
     setConfirmModalData(item);
     setRequestStatus(value);
     setIsConfirmModalOpen(true);
@@ -271,17 +276,31 @@ const OrderSearchResultTable = ({ orders, searchHandler }) => {
                 <td className="px-3 py-3">
                   <select
                     value={item.orderProductStatus}
+                    disabled={[
+                      "PENDING_PAYMENT",
+                      "CONFIRMED",
+                      "RETURN_REQUESTED",
+                      "RETURNED",
+                    ].includes(item.orderProductStatus)}
                     className="border border-gray-300 px-2 py-[2px] text-sm bg-white cursor-pointer rounded-md"
                     onChange={(e) => handleChangeStatus(item, e.target.value)}
                   >
-                    <option value="PENDING_PAYMENT">주문접수</option>
+                    <option value="PENDING_PAYMENT" disabled>
+                      주문접수
+                    </option>
                     <option value="PAID">결제완료</option>
                     <option value="PREPARING">배송준비중</option>
                     <option value="SHIPPING">배송중</option>
                     <option value="DELIVERED">배송완료</option>
-                    <option value="CONFIRMED">구매확정</option>
-                    <option value="RETURN_REQUESTED">반품/환불신청</option>
-                    <option value="RETURNED">반품/환불완료</option>
+                    <option value="CONFIRMED" disabled>
+                      구매확정
+                    </option>
+                    <option value="RETURN_REQUESTED" disabled>
+                      반품/환불신청
+                    </option>
+                    <option value="RETURNED" disabled>
+                      반품/환불완료
+                    </option>
                   </select>
                 </td>
               </tr>
