@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { checkLoginIdApi, signUpApi } from "../../../../api/user/userApi";
+import { checkLoginIdApi, signUpApi } from "../../../../api/user/userapi";
 
 //prettier-ignore
 export const signUpThunk = createAsyncThunk("signup/signup", async(signUpForm, {rejectWithValue})=> {
@@ -44,7 +44,7 @@ const signUpSlice = createSlice({
     loginIdCheckResult: null,
     loginIdCheckError: null,
     message: null,
-    coupon: null
+    coupon: null,
   },
   reducers: {
     // 회원가입 성공 상태 초기화
@@ -60,7 +60,7 @@ const signUpSlice = createSlice({
     resetLoginIdCheck: (state) => {
       state.loginIdCheckResult = null;
       state.loginIdCheckError = null;
-    }
+    },
   },
 
   extraReducers: (builder) => {
@@ -100,7 +100,7 @@ const signUpSlice = createSlice({
         state.loginIdCheckResult = null;
         console.log("SignUpSlice 아이디 중복 확인 실패", action.payload);
       });
-  }
+  },
 });
 
 export const { resetSignUpSuccess, clearError, resetLoginIdCheck } =
