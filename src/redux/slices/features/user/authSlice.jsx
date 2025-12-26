@@ -103,7 +103,7 @@ const initialState = {
   // 기본 State
   user: null, // 로그인한 사용자의 정보
   isLoggedIn: false, // 로그인 상태!
-  //Todo : token : null, JWT + Security 추가 후 진행 할 예정
+  isAdmin: null,
   profile: null,
   error: null, // 에러 상태
   loading: false, // 로딩 상태
@@ -172,6 +172,7 @@ export const authSlice = createSlice({// Slice 생성
       })
       .addCase(logoutAsyncThunk.fulfilled, (state, action) => {
         state.user = null;
+        state.profile = null;
         state.isLoggedIn = false;
         state.error = null;
         state.loading = false;

@@ -25,6 +25,10 @@ const UserInfoMgr = lazy(() => import("../components/admin/user/UserInfoMgr"));
 const OrderMgr = lazy(() =>
   import("../components/admin/order/AdminOrderMgrComponent")
 );
+const FaqMgr = lazy(() => import("../pages/admin/posts/FaqManagementPage"));
+const InquiryMgr = lazy(() =>
+  import("../pages/admin/posts/InquiryManagementPage")
+);
 
 const adminRouter = () => {
   return [
@@ -105,6 +109,22 @@ const adminRouter = () => {
       element: (
         <Suspense fallback={Loading}>
           <OrderMgr />
+        </Suspense>
+      ),
+    },
+    {
+      path: "posts/faq",
+      element: (
+        <Suspense fallback={Loading}>
+          <FaqMgr />
+        </Suspense>
+      ),
+    },
+    {
+      path: "posts/inquiry",
+      element: (
+        <Suspense fallback={Loading}>
+          <InquiryMgr />
         </Suspense>
       ),
     },
