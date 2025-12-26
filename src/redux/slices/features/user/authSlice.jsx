@@ -5,8 +5,8 @@ import {
   getProfileApi,
   loginApi,
   logoutApi,
-  modifyProfileApi
-} from "../../../../api/user/userApi";
+  modifyProfileApi,
+} from "../../../../api/user/userapi";
 
 export const loginAsyncThunk = createAsyncThunk(
   "auth/login",
@@ -106,7 +106,7 @@ const initialState = {
   //Todo : token : null, JWT + Security 추가 후 진행 할 예정
   profile: null,
   error: null, // 에러 상태
-  loading: false // 로딩 상태
+  loading: false, // 로딩 상태
 };
 
 // prettier-ignore
