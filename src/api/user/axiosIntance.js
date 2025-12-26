@@ -1,10 +1,14 @@
 import axios from "axios";
 
-export const API_SERVER = "http://localhost:8080";
+// 로컬 개발 api 요청 경로
+// export const API_SERVER = "http://localhost:8080";
+// aws 로드밸런서 api 요청 경로
+export const API_SERVER =
+  "http://moonlight-village-server-elb-35723689.ap-northeast-2.elb.amazonaws.com";
 
 export const axiosInstance = axios.create({
   baseURL: API_SERVER,
-  withCredentials: true
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -68,7 +72,7 @@ axiosInstance.interceptors.response.use(
       const unifiedError = {
         status: status || error.response.status,
         message: message || "오류가 발생했습니다.",
-        originalError: error
+        originalError: error,
       };
 
       return Promise.reject(unifiedError);
@@ -78,7 +82,7 @@ axiosInstance.interceptors.response.use(
     return Promise.reject({
       status: 0,
       message: "네트워크 오류가 발생했습니다.",
-      originalError: error
+      originalError: error,
     });
   }
 );
