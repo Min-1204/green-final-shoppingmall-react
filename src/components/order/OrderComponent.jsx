@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getOneOrder, registerOrder } from "../../api/order/orderApi";
-import { verifyPaymentAndCompleteOrder } from "../../api/payment/paymentApi";
+import {
+  completeOrder,
+  getOneOrder,
+  registerOrder,
+} from "../../api/order/orderApi";
 import { getActivePoints } from "../../api/point/pointApi";
 import CouponModal from "./CouponModal";
+import { getUserProfileThunk } from "../../redux/slices/features/user/authSlice";
 
 // Helper function to format price with commas and '원'
 const formatPrice = (price) => {
@@ -18,6 +22,7 @@ const OrderComponent = () => {
   const passedItems = location.state?.items || [];
 
   const { user, profile } = useSelector((state) => state.authSlice);
+  const dispatch = useDispatch();
 
   console.log("user", user);
   console.log("profile", profile);
@@ -82,6 +87,13 @@ const OrderComponent = () => {
     name: null,
     phone: null,
   });
+
+  useEffect(() => {
+    //로그인 유저는 있는데 프로필이 null이라면 다시 요청
+    if (user && !profile) {
+      dispatch(getUserProfileThunk(user.loginId));
+    }
+  }, [user, profile, dispatch]);
 
   // 약관 전체 동의 상태 업데이트
   useEffect(() => {
@@ -158,6 +170,11 @@ const OrderComponent = () => {
       return;
     }
 
+    if (selectedPayment !== "kakao") {
+      alert("해당 결제 수단은 실제 금액이 빠져나가는 이유로 미구현합니다. ");
+      return;
+    }
+
     if (
       !receiverName ||
       !receiverPhone ||
@@ -202,9 +219,9 @@ const OrderComponent = () => {
       console.log("백엔드로부터 받은 주문", resultOrder);
 
       // 🛑 수정 핵심: 서버에서 계산한 finalAmount를 결제 금액으로 사용
-      const serverFinalAmount = resultOrder.finalAmount; // 💡 서버가 계산한 정확한 금액!
+      // const serverFinalAmount = resultOrder.finalAmount; // 💡 서버가 계산한 정확한 금액!
 
-      console.log("serverFinalAmount", serverFinalAmount);
+      // console.log("serverFinalAmount", serverFinalAmount);
 
       // 2. 결제 진행
       // 아임포트 객체 destructuring
@@ -251,7 +268,7 @@ const OrderComponent = () => {
               ? `${cartItems[0].productName} 외 ${cartItems.length - 1}건`
               : cartItems[0].productName,
 
-          amount: serverFinalAmount, // 최종 결제 금액
+          amount: 1, // 최종 결제 금액
           buyer_email: "user@example.com", //실제 사용자 이메일로 변경 필요
           buyer_name: receiverName,
           buyer_tel: receiverPhone,
@@ -272,33 +289,37 @@ const OrderComponent = () => {
           }
           if (response.success) {
             console.log("결제 성공(검증 전)! imp_uid:", response.imp_uid);
-            try {
-              const verificationResponse = await verifyPaymentAndCompleteOrder(
-                response.imp_uid,
-                response.merchant_uid
-              );
-              if (verificationResponse.status === 200) {
-                //서버 검증까지 최종 성공 시 페이지 이동
-                console.log("결제 및 서버 검증이 완료되었습니다.");
-                navigate("/order/complete", {
-                  state: { orderId: resultOrderId },
-                });
-              }
-            } catch (error) {
-              alert("서버 검증 실패:", error);
-              if (error.response) {
-                // 서버가 응답을 보냈지만 에러 상태 (400,500 등)
-                alert(
-                  `결제는 성공했지만 서버 검증 실패: ${error.response.data}`
-                );
-              } else if (error.request) {
-                //요청은 보냈지만 응답이 없음 (네트워크 오류)
-                alert("서버와 통신할 수 없습니다. 네트워크를 확인해주세요.");
-              } else {
-                //요청 설정 중 오류
-                alert("요청 중 오류가 발생했습니다: " + error.message);
-              }
-            }
+            completeOrder(response.imp_uid, response.merchant_uid);
+            navigate("/order/complete", {
+              state: { orderId: resultOrderId },
+            });
+            // try {
+            //   const verificationResponse = await verifyPaymentAndCompleteOrder(
+            //     response.imp_uid,
+            //     response.merchant_uid
+            //   );
+            //   if (verificationResponse.status === 200) {
+            //     //서버 검증까지 최종 성공 시 페이지 이동
+            //     console.log("결제 및 서버 검증이 완료되었습니다.");
+            //     navigate("/order/complete", {
+            //       state: { orderId: resultOrderId },
+            //     });
+            //   }
+            // } catch (error) {
+            //   alert("서버 검증 실패:", error);
+            //   if (error.response) {
+            //     // 서버가 응답을 보냈지만 에러 상태 (400,500 등)
+            //     alert(
+            //       `결제는 성공했지만 서버 검증 실패: ${error.response.data}`
+            //     );
+            //   } else if (error.request) {
+            //     //요청은 보냈지만 응답이 없음 (네트워크 오류)
+            //     alert("서버와 통신할 수 없습니다. 네트워크를 확인해주세요.");
+            //   } else {
+            //     //요청 설정 중 오류
+            //     alert("요청 중 오류가 발생했습니다: " + error.message);
+            //   }
+            // }
           }
         }
       );
@@ -445,11 +466,11 @@ const OrderComponent = () => {
                     className="px-5 py-2.5 border border-[#d5d5d5] bg-white text-[#111] text-[13px] font-medium hover:border-[#111] transition-colors"
                     onClick={() => {
                       setAddressName("집");
-                      setReceiverName(profile?.name);
-                      setReceiverPhone(profile?.phoneNumber);
-                      setPostalCode(profile?.postalCode);
-                      setStreetAddress(profile?.address);
-                      setDetailedAddress(profile?.addressDetail);
+                      setReceiverName(profile?.name || "");
+                      setReceiverPhone(profile?.phoneNumber || "");
+                      setPostalCode(profile?.postalCode || "");
+                      setStreetAddress(profile?.address || "");
+                      setDetailedAddress(profile?.addressDetail || "");
                     }}
                   >
                     기본 배송지
