@@ -4,7 +4,7 @@ import axios from "axios";
 // export const API_SERVER = "http://localhost:8080";
 // aws 로드밸런서 api 요청 경로
 export const API_SERVER =
-  "http://moonlight-village-server-elb-35723689.ap-northeast-2.elb.amazonaws.com:80";
+  "https://moonlight-village-server-elb-35723689.ap-northeast-2.elb.amazonaws.com";
 
 export const axiosInstance = axios.create({
   baseURL: API_SERVER,
