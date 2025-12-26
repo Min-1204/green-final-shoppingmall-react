@@ -62,3 +62,11 @@ export const getOrderStatusSummary = async (userId, startDate, endDate) => {
   console.log("getOrderStatusSummary => ", res.data);
   return res.data;
 };
+
+export const completeOrder = async (impUid, merchantUid) => {
+  const res = await axiosInstance.put(`${prefix}/complete`, {
+    imp_uid: impUid,
+    merchant_uid: merchantUid,
+  });
+  console.log("completeOrder => ", res.data);
+};
