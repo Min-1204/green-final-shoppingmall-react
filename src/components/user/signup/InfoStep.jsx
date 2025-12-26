@@ -54,7 +54,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
         ...signUpForm,
         postalCode: data.zonecode,
         address: data.address,
-        addressDetail: "",
+        addressDetail: ""
       });
     });
   };
@@ -243,7 +243,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
               onChange={(e) =>
                 onChange({
                   ...signUpForm,
-                  phoneNumber: e.target.value.replace(/\D/g, ""),
+                  phoneNumber: e.target.value.replace(/\D/g, "")
                 })
               }
               placeholder="01012345678"
@@ -281,7 +281,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...signUpForm,
-                    birthY: e.target.value.replace(/\D/g, ""),
+                    birthY: e.target.value.replace(/\D/g, "")
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
@@ -294,7 +294,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...signUpForm,
-                    birthM: e.target.value.replace(/\D/g, ""),
+                    birthM: e.target.value.replace(/\D/g, "")
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
@@ -307,7 +307,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...signUpForm,
-                    birthD: e.target.value.replace(/\D/g, ""),
+                    birthD: e.target.value.replace(/\D/g, "")
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
