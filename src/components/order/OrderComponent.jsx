@@ -33,8 +33,6 @@ const OrderComponent = () => {
 
   // console.log("cartItems", cartItems);
 
-  // const [showAddressModal, setShowAddressModal] = useState(false);
-
   // 쿠폰모달
   const [showCouponModal, setShowCouponModal] = useState(false);
   // 선택한 쿠폰
@@ -159,7 +157,6 @@ const OrderComponent = () => {
   const couponName = selectedCoupon ? selectedCoupon.coupon.couponName : null;
 
   const handleOrderCompleteClick = async () => {
-    // 필수 약관 동의 확인 (디자인 변경이지만, 결제 로직에 필수적이므로 유지)
     if (!(agreePurchase && agreePersonal && agreeDelegate)) {
       alert("필수 동의 항목에 동의해 주세요.");
       return;
@@ -218,11 +215,6 @@ const OrderComponent = () => {
       const resultOrder = await getOneOrder(resultOrderId);
       console.log("백엔드로부터 받은 주문", resultOrder);
 
-      // 🛑 수정 핵심: 서버에서 계산한 finalAmount를 결제 금액으로 사용
-      // const serverFinalAmount = resultOrder.finalAmount; // 💡 서버가 계산한 정확한 금액!
-
-      // console.log("serverFinalAmount", serverFinalAmount);
-
       // 2. 결제 진행
       // 아임포트 객체 destructuring
       const { IMP } = window;
@@ -233,29 +225,6 @@ const OrderComponent = () => {
 
       // SDK 초기화
       IMP.init("imp62835818");
-
-      // 결제 수단에 따른 PG 및 pay_method 매핑
-      const getPgCode = (method) => {
-        const pgMap = {
-          card: "html5_inicis.INIpayTest", // KG이니시스 테스트 (자동취소)
-          kakao: "kakaopay.TC0ONETIME", // 카카오페이 테스트
-          payco: "payco.PARTNERTEST", // 페이코 테스트
-          phone: "danal.A010002002", // 다날 테스트 (자동취소)
-          bank: "html5_inicis.INIpayTest", // 계좌이체 테스트
-        };
-        return pgMap[method];
-      };
-
-      const getPayMethod = (method) => {
-        const payMethodMap = {
-          card: "card",
-          bank: "trans",
-          phone: "phone",
-          kakao: "kakaopay",
-          payco: "payco",
-        };
-        return payMethodMap[method];
-      };
 
       IMP.request_pay(
         {
@@ -293,33 +262,6 @@ const OrderComponent = () => {
             navigate("/order/complete", {
               state: { orderId: resultOrderId },
             });
-            // try {
-            //   const verificationResponse = await verifyPaymentAndCompleteOrder(
-            //     response.imp_uid,
-            //     response.merchant_uid
-            //   );
-            //   if (verificationResponse.status === 200) {
-            //     //서버 검증까지 최종 성공 시 페이지 이동
-            //     console.log("결제 및 서버 검증이 완료되었습니다.");
-            //     navigate("/order/complete", {
-            //       state: { orderId: resultOrderId },
-            //     });
-            //   }
-            // } catch (error) {
-            //   alert("서버 검증 실패:", error);
-            //   if (error.response) {
-            //     // 서버가 응답을 보냈지만 에러 상태 (400,500 등)
-            //     alert(
-            //       `결제는 성공했지만 서버 검증 실패: ${error.response.data}`
-            //     );
-            //   } else if (error.request) {
-            //     //요청은 보냈지만 응답이 없음 (네트워크 오류)
-            //     alert("서버와 통신할 수 없습니다. 네트워크를 확인해주세요.");
-            //   } else {
-            //     //요청 설정 중 오류
-            //     alert("요청 중 오류가 발생했습니다: " + error.message);
-            //   }
-            // }
           }
         }
       );
