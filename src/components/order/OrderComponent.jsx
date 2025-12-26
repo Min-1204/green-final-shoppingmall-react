@@ -205,7 +205,7 @@ const OrderComponent = () => {
             ? customDeliveryRequest
             : deliveryRequest,
         userId: user?.id,
-        userCouponId: selectedCoupon ? selectedCoupon?.coupon?.id : null,
+        userCouponId: selectedCoupon ? selectedCoupon?.id : null,
         usedPoints: usePoint,
         earnedPoints: earnedPoints,
         orderProducts: orderProducts,
@@ -259,8 +259,8 @@ const OrderComponent = () => {
 
       IMP.request_pay(
         {
-          pg: getPgCode(selectedPayment), // PG사 설정 추가
-          pay_method: getPayMethod(selectedPayment), //선택한 결제 수단 반영
+          pg: "kakaopay.TC0ONETIME", // PG사 설정 추가 // 카카오페이 테스트
+          pay_method: "kakaopay", //선택한 결제 수단 반영
           merchant_uid: resultOrder.orderNumber, // 주문 고유 번호
           digital: true,
           name:
@@ -600,36 +600,73 @@ const OrderComponent = () => {
             </section>
 
             {/* 4. 쿠폰 할인 */}
-            <section className="bg-white rounded-none shadow-sm border border-[#e5e5e5]">
-              <div className="border-b border-[#e5e5e5] px-6 py-4">
-                <h2 className="text-[18px] font-bold text-[#111]">쿠폰 할인</h2>
+            <section className="bg-white shadow-sm border border-[#e5e5e5] overflow-hidden">
+              <div className="border-b border-[#e5e5e5] px-6 py-4 bg-gray-50/50">
+                <h2 className="text-[17px] font-bold text-[#111] flex items-center gap-2">
+                  쿠폰 할인
+                </h2>
               </div>
 
               <div className="px-6 py-6">
-                <div className="flex items-center justify-between bg-[#fafafa] border border-[#e5e5e5] px-5 py-4">
-                  <span className="text-[13px] text-[#111]">
-                    {selectedCoupon ? (
-                      <span className="font-medium">
-                        적용된 쿠폰: {couponName}
+                <div
+                  className={`relative transition-all duration-200 rounded-lg border-2 p-5 ${
+                    selectedCoupon
+                      ? "border-orange-500 bg-orange-50/30"
+                      : "border-dashed border-gray-300 bg-gray-50"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[12px] text-gray-500 font-medium">
+                        {selectedCoupon ? "적용된 혜택" : "쿠폰 적용"}
                       </span>
+                      <span className="text-[15px] text-[#111] font-bold">
+                        {selectedCoupon ? (
+                          <span className="flex items-center gap-2">
+                            <span className="text-orange-600">
+                              [{couponName}]
+                            </span>
+                          </span>
+                        ) : (
+                          "사용 가능한 쿠폰이 있습니다"
+                        )}
+                      </span>
+                    </div>
+
+                    {selectedCoupon ? (
+                      <button
+                        onClick={() => setSelectedCoupon(null)}
+                        className="px-3 py-1.5 text-[12px] font-semibold text-gray-500 hover:text-red-500 border border-gray-300 rounded bg-white transition-colors"
+                      >
+                        해제
+                      </button>
                     ) : (
-                      "사용 가능한 쿠폰 "
+                      <button
+                        onClick={() => setShowCouponModal(true)}
+                        className="px-4 py-2 text-[13px] font-bold text-white bg-[#111] rounded hover:bg-gray-800 transition-all shadow-sm"
+                      >
+                        쿠폰 선택
+                      </button>
                     )}
-                  </span>
-                  <button
-                    className="text-[13px] text-[#111] underline font-medium hover:text-[#ff6e18] transition-colors"
-                    onClick={() => setShowCouponModal(true)}
-                  >
-                    쿠폰 선택
-                  </button>
+                  </div>
+
+                  {/* 할인 금액 표시부 */}
+                  {selectedCoupon && (
+                    <div className="mt-4 pt-4 border-t border-orange-200 flex justify-between items-center">
+                      <span className="text-[13px] text-gray-600 font-medium">
+                        할인 금액
+                      </span>
+                      <span className="text-[18px] text-[#ff6e18] font-black">
+                        - {formatPrice(couponDiscount)}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
-                {selectedCoupon && (
-                  <div className="mt-4 text-right">
-                    <span className="text-[15px] text-[#ff6e18] font-bold">
-                      - {formatPrice(couponDiscount)}
-                    </span>
-                  </div>
+                {!selectedCoupon && (
+                  <p className="mt-3 text-[12px] text-gray-400">
+                    * 쿠폰은 주문당 1개만 사용 가능합니다.
+                  </p>
                 )}
               </div>
             </section>
