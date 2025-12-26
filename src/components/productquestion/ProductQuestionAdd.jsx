@@ -41,7 +41,7 @@ export default function ProductQuestionAdd({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/40 p-4">
       <div className="bg-white p-6 rounded-xl shadow-2xl max-w-lg w-full space-y-4">
         <h2 className="text-2xl font-bold text-gray-800 border-b pb-3 flex justify-between items-center">
           문의 작성
