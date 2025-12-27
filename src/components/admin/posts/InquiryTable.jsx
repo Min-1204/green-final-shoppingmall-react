@@ -5,8 +5,9 @@ export default function InquiryTable({
   loading,
   onOpenModal,
   onDelete,
-  INQUIRY_TYPES,
+  INQUIRY_TYPES
 }) {
+  console.log(inquiries);
   return (
     <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
@@ -68,7 +69,7 @@ export default function InquiryTable({
                     {inquiry.id}
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-block px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-[11px] font-bold border border-indigo-100">
+                    <span className="inline-flex items-center justify-center px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-[11px] font-bold border border-indigo-100 whitespace-nowrap min-w-[70px]">
                       {INQUIRY_TYPES[inquiry.inquiryType]}
                     </span>
                   </td>
@@ -107,10 +108,10 @@ export default function InquiryTable({
                   <td className="px-6 py-4">
                     <div className="flex flex-col text-sm">
                       <span className="font-semibold text-gray-700">
-                        {inquiry.user.name}
+                        {inquiry.userName}
                       </span>
                       <span className="text-xs text-gray-400">
-                        {inquiry.user.loginId}
+                        {inquiry.loginId}
                       </span>
                     </div>
                   </td>
@@ -133,7 +134,7 @@ export default function InquiryTable({
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${
+                      className={`inline-block w-[65px] py-1 rounded-full text-[11px] font-bold border whitespace-nowrap text-center ${
                         inquiry.answered
                           ? "bg-green-50 text-green-700 border-green-200"
                           : "bg-red-50 text-red-600 border-red-200"
