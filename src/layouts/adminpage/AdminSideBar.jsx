@@ -35,6 +35,8 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
       "/admin/coupon/register": "coupon-management",
       "/admin/coupon/search": "coupon-management",
       "/admin/statistics": "statistics",
+      "/admin/posts/faq": "post-management",
+      "/admin/posts/inquiry": "post-management",
     };
     return pathMap[path] || "products";
   };
@@ -256,6 +258,61 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
                     }
                   >
                     쿠폰 등록
+                  </button>
+                </li>
+              </ul>
+            )}
+          </li>
+
+          {/* === 5. 게시글 관리 (post-management) === */}
+          <li className="border-l-4 border-transparent">
+            <div
+              className={`${baseMainMenuClass}`}
+              onClick={() => toggleMenu("post-management")}
+            >
+              <div className="flex items-center">게시글 관리</div>
+              <span
+                className={`${iconClass} ${
+                  isMenuExpanded("post-management") ? "rotate-180" : ""
+                }`}
+              >
+                ▲
+              </span>
+            </div>
+            {isMenuExpanded("post-management") && (
+              <ul className="bg-[#22385F]">
+                <li>
+                  <button
+                    className={`${baseSubMenuClass} ${
+                      activeTab === "faq-management" ? activeSubMenuClass : ""
+                    }`}
+                    onClick={(e) =>
+                      handleSubItemClick(
+                        e,
+                        "faq-management",
+                        "/admin/posts/faq"
+                      )
+                    }
+                  >
+                    자주 묻는 질문
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className={`${baseSubMenuClass} ${
+                      activeTab === "inquiry-management"
+                        ? activeSubMenuClass
+                        : ""
+                    }`}
+                    onClick={(e) =>
+                      handleSubItemClick(
+                        e,
+                        "inquiry-management",
+                        "/admin/posts/inquiry"
+                      )
+                    }
+                  >
+                    1:1 문의 내역
                   </button>
                 </li>
               </ul>
