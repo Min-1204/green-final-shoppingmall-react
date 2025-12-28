@@ -6,10 +6,6 @@ export default function PasswordChange() {
   const { user } = useSelector((state) => state.authSlice);
   const dispatch = useDispatch();
 
-  // if (!user) {
-  //   return <div> Loading . . .</div>;
-  // }
-
   console.log("여기는 비밀번호 수정 페이지 로그인한 사용자 : ", user?.loginId);
   const [pwForm, setPwForm] = useState({
     password: "",
@@ -45,6 +41,16 @@ export default function PasswordChange() {
     }
     if (pwForm.newPassword !== pwForm.newPasswordConfirm) {
       alert("새 비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    if (pwForm.newPassword.length <= 8) {
+      alert("비밀번호는 8자 이상 입력해주세요")
+      return;
+    }
+
+    if (pwForm.newPasswordConfirm.length <= 8) {
+      alert("비밀번호는 8자 이상 입력해주세요")
       return;
     }
 

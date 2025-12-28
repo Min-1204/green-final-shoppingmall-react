@@ -72,27 +72,18 @@ export default function SignUpPage() {
     console.log("회원 정보", signUpForm);
     console.log("=================");
 
-    dispatch(signUpThunk(signUpForm)); // 함수실행
+    try {
+      const result = await dispatch(signUpThunk(signUpForm)).unwrap();
+
+      if (result.success) {
+        alert(`${result.message}\n${result.coupon}`);
+        dispatch(resetSignUpSuccess());
+        setStep(3);
+      }
+    } catch (error) {
+      alert(error.message || error || "회원가입에 실패하였습니다.");
+    }
   };
-
-  useEffect(() => {
-    if (signUpSuccess && message && coupon) {
-      console.log("✅ 회원가입 성공 : 메세지 , 쿠폰", { message, coupon });
-      alert(message);
-      alert(coupon);
-      dispatch(resetSignUpSuccess());
-      console.log("✅ SignUpPage 콘솔 회원가입 성공! SuccessStep으로 이동완료");
-      setStep(3);
-    }
-  }, [signUpSuccess, message, coupon, dispatch]);
-
-  // 에러처리 로직
-  useEffect(() => {
-    if (error) {
-      alert(`회원가입 실패: ${error}`);
-      dispatch(clearError());
-    }
-  }, [error, dispatch]);
 
   const page = useMemo(() => {
     //prettier-ignore

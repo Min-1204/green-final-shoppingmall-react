@@ -1,4 +1,3 @@
-// src/pages/member/FindPasswordPage.jsx
 import React, { useState } from "react";
 import HomeBar from "../../layouts/mainpage/HomeBar";
 import AuthCardLayout from "../../layouts/auth/AuthCardLayout";
@@ -7,17 +6,46 @@ import StepAccount from "../../components/user/find-password/StepAccount";
 import StepMethodSelect from "../../components/user/find-password/StepMethodSelect";
 import StepVerifyCode from "../../components/user/find-password/StepVerifyCode";
 import StepResetPassword from "../../components/user/find-password/StepResetPassword";
+import { authApi } from "../../api/user/authApi";
 
 const FindPasswordPage = () => {
-  const [step, setStep] = useState(1); // 1~4
+  const [step, setStep] = useState(1);
   const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState(""); // 추가: 인증을 진행할 이메일
   const [method, setMethod] = useState("email");
   const [code, setCode] = useState("");
+
+  console.log("현재 step:", step);
+  console.log("현재 userId:", userId);
+
+  // Step 2: 아이디/이메일 확인 후 인증번호 발송
+  const handleSendCode = async (inputEmail) => {
+    try {
+      await authApi.sendFindPwCode(userId, inputEmail);
+      setEmail(inputEmail);
+      alert("인증번호가 발송되었습니다.");
+      setStep(3);
+    } catch (err) {
+      alert(err.response?.data?.message || "정보가 일치하지 않습니다.");
+    }
+  };
+
+  // Step 3: 인증번호 검증
+  const handleVerifyCode = async (inputCode) => {
+    try {
+      const res = await authApi.verifyFindPw(email, inputCode); // ← authApi 사용
+      if (res.data.success) {
+        setCode(inputCode);
+        setStep(4);
+      }
+    } catch (err) {
+      alert("인증번호가 틀렸습니다.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <HomeBar />
-
       <div className="flex justify-center px-4 py-10">
         <AuthCardLayout
           title="비밀번호 찾기"
@@ -38,16 +66,14 @@ const FindPasswordPage = () => {
               method={method}
               setMethod={setMethod}
               userId={userId}
-              onNext={() => setStep(3)}
+              onNext={handleSendCode} // 함수 전달
             />
           )}
 
           {step === 3 && (
             <StepVerifyCode
               method={method}
-              code={code}
-              setCode={setCode}
-              onNext={() => setStep(4)}
+              onNext={handleVerifyCode} // 함수 전달
             />
           )}
 

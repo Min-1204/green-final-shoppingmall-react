@@ -34,9 +34,8 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
   console.log(signUpForm); // 회원가입 폼 출력
 
   // 유효성 검사 함수
-  const validation = () => {
+  const validation = async () => {
     const validError = validate(signUpForm); // 회원가입 State 전달
-    setErrors(validError);
 
     if (Object.keys(validError).length > 0) {
       const firstErrorKey = Object.keys(validError)[0];
@@ -44,6 +43,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
       alert(`입력 오류 입니다: ${firstMessage}`);
       return false;
     }
+    setErrors({});
     return true;
   };
 
@@ -60,9 +60,12 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
   };
 
   // prettier-ignore
-  const handleSubmit = (e) => { // 회원가입 Form 전송
+  const handleSubmit = async (e) => { // 회원가입 Form 전송
     e.preventDefault();
-    if (validation()) onSubmit();
+    const isValid = await validation();
+    if (isValid) {
+      onSubmit();
+    }
   };
 
   // prettier-ignore
@@ -238,6 +241,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
           <div>
             <Input
               label="휴대전화 입력 (숫자만)"
+              maxLength={11}
               required
               value={signUpForm.phoneNumber || ""}
               onChange={(e) =>
