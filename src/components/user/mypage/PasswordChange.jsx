@@ -5,12 +5,14 @@ import { changePasswordThunk } from "../../../redux/slices/features/user/authSli
 export default function PasswordChange() {
   const { user } = useSelector((state) => state.authSlice);
   const dispatch = useDispatch();
+  const passwordRegex =
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\];'/+=`~])[A-Za-z\d!@#$%^&*(),.?":{}|<>_\-\\[\];'/+=`~]{8,}$/;
 
   console.log("여기는 비밀번호 수정 페이지 로그인한 사용자 : ", user?.loginId);
   const [pwForm, setPwForm] = useState({
     password: "",
     newPassword: "",
-    newPasswordConfirm: ""
+    newPasswordConfirm: "",
   });
 
   const handleChange = (e) => {
@@ -44,15 +46,22 @@ export default function PasswordChange() {
       return;
     }
 
-    if (pwForm.newPassword.length <= 8) {
+    if (pwForm.newPassword.length < 8) {
       alert("비밀번호는 8자 이상 입력해주세요")
       return;
     }
 
-    if (pwForm.newPasswordConfirm.length <= 8) {
+    if (pwForm.newPasswordConfirm.length < 8) {
       alert("비밀번호는 8자 이상 입력해주세요")
       return;
     }
+
+
+
+if (!passwordRegex.test(pwForm.newPassword)) {
+    alert("영문, 숫자, 특수문자를 포함하여 8자 이상 입력해주세요.");
+    return;
+}
 
     // Thunk 처리 반환 값 활용
     try {

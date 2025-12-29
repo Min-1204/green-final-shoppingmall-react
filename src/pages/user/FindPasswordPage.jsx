@@ -26,7 +26,10 @@ const FindPasswordPage = () => {
       alert("인증번호가 발송되었습니다.");
       setStep(3);
     } catch (err) {
-      alert(err.response?.data?.message || "정보가 일치하지 않습니다.");
+      alert(
+        err.response?.data?.message ||
+          "입력하신 이메일이 일치하는 회원이 없습니다."
+      );
     }
   };
 
