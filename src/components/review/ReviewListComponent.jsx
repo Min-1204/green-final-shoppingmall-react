@@ -175,7 +175,7 @@ const ReviewListComponent = ({ productId }) => {
                   </div>
 
                   <div className="mb-2 text-sm text-gray-500">
-                    <p>{review.option || "구매 옵션"}</p>
+                    <p className="text-xs text-gray-500">{review.optionName}</p>
                   </div>
 
                   <p className="text-sm text-gray-700 leading-relaxed mb-6">

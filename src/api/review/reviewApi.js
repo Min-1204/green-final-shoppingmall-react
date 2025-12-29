@@ -21,7 +21,6 @@ export const getMyReviews = async (page = 1, size = 10) => {
 };
 
 export const reviewAdd = async (review) => {
-  console.log("리뷰 등록 => ", review);
   const formData = new FormData();
   formData.append(
     "review",
@@ -30,8 +29,7 @@ export const reviewAdd = async (review) => {
         JSON.stringify({
           content: review?.content,
           rating: review?.rating,
-          productId: review?.productId,
-          orderId: review?.orderId,
+          orderProductId: review?.orderProductId,
         }),
       ],
       { type: "application/json" }

@@ -5,14 +5,13 @@ import { useSelector } from "react-redux";
 const ReviewAddComponent = ({ closeModal, orderItem }) => {
   const [currentRating, setCurrentRating] = useState(0);
   //주문 아이템에서 필요한 데이터 추출
-  const { productId, orderId, productName, imageUrl, totalAmount } = orderItem;
+  const { productName, imageUrl, totalAmount, orderProductId } = orderItem;
   //서버 전송용 파일 객체
   const [review, setReview] = useState({
     content: "",
     rating: 0,
+    orderProductId: orderProductId,
     images: [],
-    productId: productId,
-    orderId: orderId,
   });
 
   const [images, setImages] = useState([]); //이미지 미리보기용
@@ -21,6 +20,11 @@ const ReviewAddComponent = ({ closeModal, orderItem }) => {
   const reviewAddHandler = async () => {
     if (!review.content.trim()) {
       alert("리뷰 내용을 입력해주세요");
+      return;
+    }
+
+    if (review.rating < 1) {
+      alert("별점을 선택해주세요");
       return;
     }
 
@@ -136,7 +140,7 @@ const ReviewAddComponent = ({ closeModal, orderItem }) => {
                   }`}
                   onClick={() => {
                     setCurrentRating(star);
-                    setReview({ ...review, rating: star });
+                    setReview((prev) => ({ ...prev, rating: star }));
                   }}
                 >
                   ★
