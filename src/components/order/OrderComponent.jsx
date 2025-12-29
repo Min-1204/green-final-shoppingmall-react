@@ -33,8 +33,6 @@ const OrderComponent = () => {
 
   // console.log("cartItems", cartItems);
 
-  // const [showAddressModal, setShowAddressModal] = useState(false);
-
   // 쿠폰모달
   const [showCouponModal, setShowCouponModal] = useState(false);
   // 선택한 쿠폰
@@ -159,7 +157,6 @@ const OrderComponent = () => {
   const couponName = selectedCoupon ? selectedCoupon.coupon.couponName : null;
 
   const handleOrderCompleteClick = async () => {
-    // 필수 약관 동의 확인 (디자인 변경이지만, 결제 로직에 필수적이므로 유지)
     if (!(agreePurchase && agreePersonal && agreeDelegate)) {
       alert("필수 동의 항목에 동의해 주세요.");
       return;
@@ -218,11 +215,6 @@ const OrderComponent = () => {
       const resultOrder = await getOneOrder(resultOrderId);
       console.log("백엔드로부터 받은 주문", resultOrder);
 
-      // 🛑 수정 핵심: 서버에서 계산한 finalAmount를 결제 금액으로 사용
-      // const serverFinalAmount = resultOrder.finalAmount; // 💡 서버가 계산한 정확한 금액!
-
-      // console.log("serverFinalAmount", serverFinalAmount);
-
       // 2. 결제 진행
       // 아임포트 객체 destructuring
       const { IMP } = window;
@@ -233,29 +225,6 @@ const OrderComponent = () => {
 
       // SDK 초기화
       IMP.init("imp62835818");
-
-      // 결제 수단에 따른 PG 및 pay_method 매핑
-      const getPgCode = (method) => {
-        const pgMap = {
-          card: "html5_inicis.INIpayTest", // KG이니시스 테스트 (자동취소)
-          kakao: "kakaopay.TC0ONETIME", // 카카오페이 테스트
-          payco: "payco.PARTNERTEST", // 페이코 테스트
-          phone: "danal.A010002002", // 다날 테스트 (자동취소)
-          bank: "html5_inicis.INIpayTest", // 계좌이체 테스트
-        };
-        return pgMap[method];
-      };
-
-      const getPayMethod = (method) => {
-        const payMethodMap = {
-          card: "card",
-          bank: "trans",
-          phone: "phone",
-          kakao: "kakaopay",
-          payco: "payco",
-        };
-        return payMethodMap[method];
-      };
 
       IMP.request_pay(
         {
@@ -293,33 +262,6 @@ const OrderComponent = () => {
             navigate("/order/complete", {
               state: { orderId: resultOrderId },
             });
-            // try {
-            //   const verificationResponse = await verifyPaymentAndCompleteOrder(
-            //     response.imp_uid,
-            //     response.merchant_uid
-            //   );
-            //   if (verificationResponse.status === 200) {
-            //     //서버 검증까지 최종 성공 시 페이지 이동
-            //     console.log("결제 및 서버 검증이 완료되었습니다.");
-            //     navigate("/order/complete", {
-            //       state: { orderId: resultOrderId },
-            //     });
-            //   }
-            // } catch (error) {
-            //   alert("서버 검증 실패:", error);
-            //   if (error.response) {
-            //     // 서버가 응답을 보냈지만 에러 상태 (400,500 등)
-            //     alert(
-            //       `결제는 성공했지만 서버 검증 실패: ${error.response.data}`
-            //     );
-            //   } else if (error.request) {
-            //     //요청은 보냈지만 응답이 없음 (네트워크 오류)
-            //     alert("서버와 통신할 수 없습니다. 네트워크를 확인해주세요.");
-            //   } else {
-            //     //요청 설정 중 오류
-            //     alert("요청 중 오류가 발생했습니다: " + error.message);
-            //   }
-            // }
           }
         }
       );
@@ -355,22 +297,26 @@ const OrderComponent = () => {
   };
 
   return (
-    <div className="bg-[#fafafa] min-h-screen">
-      <div className="max-w-[1200px] mx-auto py-10 px-4">
+    <div className="bg-[#f0f7ff] min-h-screen font-sans pb-20">
+      <div className="w-full h-32 bg-gradient-to-b from-[#d0e7ff] to-[#f0f7ff] flex flex-col items-center justify-center">
         {/* 헤더 */}
-        <div className="mb-8">
-          <h1 className="text-[32px] font-bold text-[#111] tracking-tight">
-            주문/결제
-          </h1>
-        </div>
+        <h1 className="text-[32px] font-bold text-[#4a7ab5] tracking-tight flex items-center gap-2">
+          <span className="text-2xl">🌙</span> 주문/결제
+        </h1>
+        <p className="text-[14px] text-[#7da0ca] mt-1">촉촉한 달빛을 담아 안전하게 배송해드릴게요</p>
+      </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="max-w-[1100px] mx-auto -mt-6 px-4">
+          <div className="flex flex-col lg:flex-row gap-8">
+          
           {/* 좌측 메인 콘텐츠 */}
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-8">
+
             {/* 1. 주문 상품 정보 */}
-            <section className="bg-white rounded-none shadow-sm border border-[#e5e5e5]">
-              <div className="border-b border-[#e5e5e5] px-6 py-4">
-                <h2 className="text-[18px] font-bold text-[#111]">
+            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-[#e1efff]">
+              <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
+                <h2 className="text-[18px] font-bold text-[#4a6b9d] flex items-center gap-2">
+                  <span className="w-2 h-2 bg-[#99c8ff] rounded-full"></span>
                   주문상품 정보
                 </h2>
               </div>
@@ -384,66 +330,51 @@ const OrderComponent = () => {
                     <col style={{ width: "120px" }} />
                   </colgroup>
                   <thead>
-                    <tr className="border-b border-[#e5e5e5] bg-[#fafafa]">
-                      <th className="text-left px-6 py-3 text-[13px] font-medium text-[#666]">
-                        상품정보
-                      </th>
-                      <th className="text-center px-3 py-3 text-[13px] font-medium text-[#666]">
-                        수량
-                      </th>
-                      <th className="text-center px-3 py-3 text-[13px] font-medium text-[#666]">
-                        판매금액
-                      </th>
-                      <th className="text-center px-6 py-3 text-[13px] font-medium text-[#666]">
-                        적립예정
-                      </th>
+                    <tr className="bg-[#fcfdff] border-b border-[#f0f7ff]">
+                      <th className="text-left px-8 py-4 text-[13px] font-semibold text-[#8ba4c7]">상품정보</th>
+                      <th className="text-center px-4 py-4 text-[13px] font-semibold text-[#8ba4c7]">수량</th>
+                      <th className="text-center px-4 py-4 text-[13px] font-semibold text-[#8ba4c7]">판매금액</th>
+                      <th className="text-center px-8 py-4 text-[13px] font-semibold text-[#8ba4c7]">적립예정</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-[#f5f9ff]">
                     {cartItems.map((item) => (
                       <tr
                         key={item.id}
-                        className="border-b border-[#f0f0f0] last:border-b-0"
+                        className="hover:bg-[#fafcfe] transition-colors"
                       >
-                        <td className="px-6 py-5">
-                          <div className="flex items-start gap-4">
-                            <div className="w-[80px] h-[80px] flex-shrink-0 bg-[#f8f8f8] rounded overflow-hidden">
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-5">
+                            <div className="w-[90px] h-[90px] flex-shrink-0 bg-white rounded-[15px] border border-[#f0f7ff] overflow-hidden shadow-sm">
                               <img
                                 src={item.imageUrl}
                                 alt={item.productName}
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                            <div className="flex-1 space-y-1 pt-1">
-                              <p className="text-[11px] text-[#999] font-medium tracking-wide">
+                            <div className="flex-1 space-y-1">
+                              <p className="text-[12px] text-[#9db7db] font-bold tracking-wide">
                                 [{item.brandName}]
                               </p>
-                              <p className="text-[14px] text-[#111] font-medium leading-snug">
-                                {item.productName}{" "}
-                                {item.optionName &&
-                                item.optionName != item.productName
-                                  ? `- ${item.optionName}`
-                                  : null}
+                              <p className="text-[15px] text-[#44526b] font-semibold leading-snug">
+                                {item.productName}
                               </p>
+                              {item.optionName && item.optionName !== item.productName && (
+                                <p className="text-[13px] text-[#869ab8] bg-[#f1f7ff] inline-block px-2 py-0.5 rounded-md mt-1">
+                                  옵션: {item.optionName}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </td>
-                        <td className="px-3 py-5 text-center text-[14px] text-[#111]">
-                          {item.quantity}
+                        <td className="px-4 py-6 text-center text-[15px] text-[#5c6d8a] font-medium">
+                          {item.quantity}개
                         </td>
-                        <td className="px-3 py-5 text-center text-[15px] font-bold text-[#111]">
-                          {formatPrice(
-                            Number(item.sellingPrice) * Number(item.quantity)
-                          )}
+                        <td className="px-4 py-6 text-center text-[16px] font-bold text-[#4a6b9d]">
+                          {formatPrice(Number(item.sellingPrice) * Number(item.quantity))}
                         </td>
-
-                        <td className="px-6 py-5 text-center text-[14px] font-medium text-[#ff6e18]">
-                          {Math.floor(
-                            Number(item.sellingPrice) *
-                              Number(item.quantity) *
-                              0.01
-                          )}
-                          P
+                        <td className="px-8 py-6 text-center text-[14px] font-semibold text-[#9bbfe7]">
+                          +{Math.floor(Number(item.sellingPrice) * Number(item.quantity) * 0.01).toLocaleString()}P
                         </td>
                       </tr>
                     ))}
@@ -453,88 +384,93 @@ const OrderComponent = () => {
             </section>
 
             {/* 2. 배송지 정보 */}
-            <section className="bg-white rounded-none shadow-sm border border-[#e5e5e5]">
-              <div className="border-b border-[#e5e5e5] px-6 py-4">
-                <h2 className="text-[18px] font-bold text-[#111]">
+            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-[#e1efff]">
+              <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
+                <h2 className="text-[18px] font-bold text-[#4a6b9d] flex items-center gap-2">
+                  <span className="w-2 h-2 bg-[#99c8ff] rounded-full"></span>
                   배송지 정보
                 </h2>
               </div>
 
-              <div className="px-6 py-6 space-y-4">
-                <div className="flex gap-2 items-center">
-                  <button
-                    className="px-5 py-2.5 border border-[#d5d5d5] bg-white text-[#111] text-[13px] font-medium hover:border-[#111] transition-colors"
-                    onClick={() => {
-                      setAddressName("집");
-                      setReceiverName(profile?.name || "");
-                      setReceiverPhone(profile?.phoneNumber || "");
-                      setPostalCode(profile?.postalCode || "");
-                      setStreetAddress(profile?.address || "");
-                      setDetailedAddress(profile?.addressDetail || "");
-                    }}
-                  >
-                    기본 배송지
-                  </button>
-                  <button
-                    className="px-5 py-2.5 border border-[#d5d5d5] bg-white text-[#111] text-[13px] font-medium hover:border-[#111] transition-colors"
-                    onClick={() => {
-                      setAddressName("");
-                      setReceiverName("");
-                      setReceiverPhone("");
-                      setPostalCode("");
-                      setStreetAddress("");
-                      setDetailedAddress("");
-                    }}
-                  >
-                    신규 배송지
-                  </button>
+              <div className="px-8 py-8 space-y-6">
+                <div className="flex gap-3">
+                  {['기본 배송지','신규 배송지'].map((label,idx)=>(
+                    <button key={label} className={`px-6 py-2.5 rounded-full text-[13px] font-bold transition-all ${
+                      (idx === 0 && addressName === "집") || (idx === 1 && addressName !== "집")
+                       ? "bg-[#9bcafc] text-white shadow-md shadow-blue-100" 
+                       : "bg-white border border-[#e1efff] text-[#8ba4c7] hover:bg-[#f8fbff]"
+                      }`}
+                      onClick={() => {
+                        if(idx === 0) {
+                          setAddressName("집");
+                          setReceiverName(profile?.name || "");
+                          setReceiverPhone(profile?.phoneNumber || "");
+                          setPostalCode(profile?.postalCode || "");
+                          setStreetAddress(profile?.address || "");
+                          setDetailedAddress(profile?.addressDetail || "");
+                        } else {
+                          setAddressName(""); setReceiverName(""); setReceiverPhone("");
+                          setPostalCode(""); setStreetAddress(""); setDetailedAddress("");
+                        }
+                      }}
+                      >
+                        {label}
+                      </button>
+                  ))}
                 </div>
 
-                <div className="space-y-3 pt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
                   <input
-                    className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
+                    className="w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px] text-[14px]
+                    focus:outline-none focus:ring-2 focus:ring-[#c2dfff] transition-all placeholder-[#c0d0e6]"
                     placeholder="배송지명 (예: 우리집)"
                     value={addressName}
                     onChange={(e) => setAddressName(e.target.value)}
                   />
+                  </div>
 
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 cursor-pointer">
+                  <div className="md:col-span-2 flex items-center gap-2 px-1">
                       <input
                         type="checkbox"
+                        id="sameAsOrderer"
                         checked={useOrdererInfo}
                         onChange={(e) => handleOrdererInfoChange(e)}
-                        className="w-4 h-4"
+                        className="w-4 h-4 rounded border-[#c2dfff] text-[#9bcafc] focus:ring-[#9bcafc]"
                       />
-                      <span className="text-[13px] text-[#111]">
+                      <label  htmlFor="sameAsOrderer" className="text-[13px] text-[#7da0ca] font-medium cursor-
+                      pointer">
                         주문자 정보와 동일
-                      </span>
-                    </label>
+                      </label>
                   </div>
 
                   <input
-                    className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
+                    className="w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px] text-[14px]
+                    focus:outline-none focus:ring-2 focus:ring-[#c2dfff] transition-all placeholder-[#c0d0e6]"
                     placeholder="받는 사람"
                     value={receiverName}
                     onChange={(e) => setReceiverName(e.target.value)}
                   />
 
                   <input
-                    className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
+                    className="w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px] text-[14px]
+                    focus:outline-none focus:ring-2 focus:ring-[#c2dfff] transition-all placeholder-[#c0d0e6]"
                     placeholder="연락처 (- 제외)"
                     value={receiverPhone}
                     onChange={(e) => setReceiverPhone(e.target.value)}
                   />
 
-                  <div className="flex gap-2">
+                  <div className="md:col-span-2 flex gap-3">
                     <input
-                      className="flex-1 px-4 py-3 border border-[#d5d5d5] bg-[#f8f8f8] text-[13px] text-[#111]"
+                      className="flex-1 px-5 py-3.5 bg-[#f3f8ff] border border-[#e8f2ff] rounded-[12px] text-[14px]
+                      text-[#4a6b9d]"
                       placeholder="우편번호"
                       value={postalCode}
                       readOnly
                     />
                     <button
-                      className="px-6 py-3 bg-white border border-[#111] text-[#111] text-[13px] font-medium hover:bg-[#111] hover:text-white transition-colors"
+                      className="px-6 py-3.5 bg-[#ebf4ff] text-[#4a89d7] rounded-[12px] text-[13px] font-bold
+                      hover:bg-[#d9e9ff] transition-colors border border-[#d3e5ff]"
                       onClick={() => execDaumPostcode()}
                     >
                       우편번호 찾기
@@ -542,14 +478,16 @@ const OrderComponent = () => {
                   </div>
 
                   <input
-                    className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
+                    className="md:col-span-2 w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px]
+                    text-[14px] focus:outline-none focus:ring-2 focus:ring-[#c2dfff] transition-all placeholder-[#c0d0e6]"
                     placeholder="기본 주소"
                     value={streetAddress}
                     onChange={(e) => setStreetAddress(e.target.value)}
                   />
 
                   <input
-                    className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
+                    className="md:col-span-2 w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px]
+                    text-[14px] focus:outline-none focus:ring-2 focus:ring-[#c2dfff] transition-all placeholder-[#c0d0e6]"
                     placeholder="상세 주소"
                     value={detailedAddress}
                     onChange={(e) => setDetailedAddress(e.target.value)}
@@ -559,131 +497,96 @@ const OrderComponent = () => {
             </section>
 
             {/* 3. 배송 요청사항 */}
-            <section className="bg-white rounded-none shadow-sm border border-[#e5e5e5]">
-              <div className="border-b border-[#e5e5e5] px-6 py-4">
-                <h2 className="text-[18px] font-bold text-[#111]">
-                  배송 요청사항
-                </h2>
-              </div>
+            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-[#e1efff]">
+            <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
+              <h2 className="text-[18px] font-bold text-[#4a6b9d]">배송 요청사항</h2>
+            </div>
 
-              <div className="px-6 py-6 space-y-3">
+            <div className="px-8 py-8 space-y-6">
+              <div className="relative">
                 <select
-                  className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] bg-white focus:outline-none focus:border-[#111] transition-colors"
+                  className="w-full px-5 py-4 rounded-[15px] border-2 border-[#dce9f9] bg-white text-[14px] text-[#44526b] appearance-none focus:outline-none focus:border-[#9bcafc] focus:bg-[#f8fbff] transition-all cursor-pointer"
                   value={deliveryRequest}
                   onChange={(e) => setDeliveryRequest(e.target.value)}
                 >
                   <option value="">배송 요청사항을 선택해주세요</option>
-                  <option value="문 앞에 놓아주세요.">
-                    문 앞에 놓아주세요.
-                  </option>
-                  <option value="배송 전에 미리 연락 바랍니다.">
-                    배송 전에 미리 연락 바랍니다.
-                  </option>
-                  <option value="부재 시 경비실에 맡겨주세요.">
-                    부재 시 경비실에 맡겨주세요.
-                  </option>
-                  <option value="부재 시 전화/문자 남겨 주세요.">
-                    부재 시 전화/문자 남겨 주세요.
-                  </option>
+                  <option value="문 앞에 놓아주세요.">문 앞에 놓아주세요.</option>
+                  <option value="배송 전에 미리 연락 바랍니다.">배송 전에 미리 연락 바랍니다.</option>
+                  <option value="부재 시 경비실에 맡겨주세요.">부재 시 경비실에 맡겨주세요.</option>
+                  <option value="부재 시 전화/문자 남겨 주세요.">부재 시 전화/문자 남겨 주세요.</option>
                   <option value="직접입력">직접입력</option>
                 </select>
-
-                {deliveryRequest === "직접입력" && (
-                  <input
-                    className="w-full px-4 py-3 border border-[#d5d5d5] text-[13px] placeholder-[#999] focus:outline-none focus:border-[#111] transition-colors"
-                    placeholder="배송 요청사항을 입력해주세요"
-                    value={customDeliveryRequest}
-                    onChange={(e) => setCustomDeliveryRequest(e.target.value)}
-                  />
-                )}
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#9bcafc]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
-            </section>
+
+              {deliveryRequest === "직접입력" && (
+                <input
+                  className="w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#c2dfff] transition-all placeholder-[#c0d0e6]"
+                  placeholder="배송 요청사항을 입력해주세요"
+                  value={customDeliveryRequest}
+                  onChange={(e) => setCustomDeliveryRequest(e.target.value)}
+                />
+              )}
+            </div>
+          </section>
 
             {/* 4. 쿠폰 할인 */}
-            <section className="bg-white shadow-sm border border-[#e5e5e5] overflow-hidden">
-              <div className="border-b border-[#e5e5e5] px-6 py-4 bg-gray-50/50">
-                <h2 className="text-[17px] font-bold text-[#111] flex items-center gap-2">
+            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden
+            border border-[#e1efff]">
+              <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
+                <h2 className="text-[18px] font-bold text-[#4a6b9d]">
                   쿠폰 할인
                 </h2>
               </div>
 
-              <div className="px-6 py-6">
-                <div
-                  className={`relative transition-all duration-200 rounded-lg border-2 p-5 ${
-                    selectedCoupon
-                      ? "border-orange-500 bg-orange-50/30"
-                      : "border-dashed border-gray-300 bg-gray-50"
-                  }`}
-                >
+              <div className="px-8 py-8 space-y-6">
+                <div className={`p-6 rounded-[18px] border-2 transition-all ${selectedCoupon ? "border-[#9bcafc] bg-[#f0f7ff]"
+                    : "border-dashed border-[#dce9f9] bg-[#fbfdff]"}`}>
                   <div className="flex items-center justify-between">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[12px] text-gray-500 font-medium">
-                        {selectedCoupon ? "적용된 혜택" : "쿠폰 적용"}
-                      </span>
-                      <span className="text-[15px] text-[#111] font-bold">
-                        {selectedCoupon ? (
-                          <span className="flex items-center gap-2">
-                            <span className="text-orange-600">
-                              [{couponName}]
-                            </span>
-                          </span>
-                        ) : (
-                          "사용 가능한 쿠폰이 있습니다"
-                        )}
-                      </span>
+                    <div>
+                      <p className="text-[12px] text-[#9db7db] font-bold mb-1">COUPON</p>
+                        <p className="text-[15px] font-bold text-[#44526b]">
+                        {selectedCoupon ? `[${couponName}]`:"사용 가능한 쿠폰이 있어요"}
+                      </p>
                     </div>
-
-                    {selectedCoupon ? (
-                      <button
-                        onClick={() => setSelectedCoupon(null)}
-                        className="px-3 py-1.5 text-[12px] font-semibold text-gray-500 hover:text-red-500 border border-gray-300 rounded bg-white transition-colors"
-                      >
-                        해제
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setShowCouponModal(true)}
-                        className="px-4 py-2 text-[13px] font-bold text-white bg-[#111] rounded hover:bg-gray-800 transition-all shadow-sm"
-                      >
-                        쿠폰 선택
-                      </button>
-                    )}
+                    <button
+                    onClick={() => selectedCoupon ? setSelectedCoupon(null) : setShowCouponModal(true)}
+                    className={`px-5 py-2 rounded-full text-[13px] font-bold transition-all ${selectedCoupon ? "bg-white text-[#ff8080] border border-[#ffdada]" : "bg-[#4a89d7] text-white shadow-md shadow-blue-100"}`}
+                    >
+                      {selectedCoupon ? "해제하기":"쿠폰 선택"}
+                    </button>
                   </div>
 
                   {/* 할인 금액 표시부 */}
                   {selectedCoupon && (
-                    <div className="mt-4 pt-4 border-t border-orange-200 flex justify-between items-center">
-                      <span className="text-[13px] text-gray-600 font-medium">
-                        할인 금액
-                      </span>
-                      <span className="text-[18px] text-[#ff6e18] font-black">
-                        - {formatPrice(couponDiscount)}
+                    <div className="mt-4 pt-4 border-t border-[#dce9f9] flex justify-between items-center">
+                      <span className="text-[13px] text-[#7da0ca]">할인 혜택</span>
+                      <span className="text-[18px] text-[#4a89d7] font-black">-{formatPrice(couponDiscount)}
                       </span>
                     </div>
                   )}
                 </div>
-
-                {!selectedCoupon && (
-                  <p className="mt-3 text-[12px] text-gray-400">
-                    * 쿠폰은 주문당 1개만 사용 가능합니다.
-                  </p>
-                )}
               </div>
             </section>
 
             {/* 5. 포인트 */}
-            <section className="bg-white rounded-none shadow-sm border border-[#e5e5e5]">
-              <div className="border-b border-[#e5e5e5] px-6 py-4">
-                <h2 className="text-[18px] font-bold text-[#111]">포인트</h2>
+            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden
+            border border-[#e1efff]">
+              <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
+                <h2 className="text-[18px] font-bold text-[#4a6b9d]">포인트</h2>
               </div>
 
-              <div className="px-6 py-6 space-y-3">
-                <div className="flex items-center gap-3">
+              <div className="px-8 py-8 space-y-6">
+                <div className="flex flex-wrap items-center gap-4 bg-[#f8fbff] p-5 rounded-[18px] border border-[#e8f2ff]">
                   <div className="relative">
                     <input
                       type="number"
-                      className="w-[140px] px-4 py-3 border border-[#d5d5d5] text-[13px] text-right pr-8 focus:outline-none focus:border-[#111] transition-colors"
-                      placeholder="0"
+                      className="w-[140px] px-4 py-3 bg-white border border-[#e1efff] rounded-[10px] text-[14px]
+                      text-right pr-8 focus:outline-none"
                       value={usePoint}
                       onChange={(e) => {
                         const value = Math.floor(Number(e.target.value));
@@ -695,45 +598,42 @@ const OrderComponent = () => {
                           setUsePoint(pointBalance);
                         }
                       }}
-                      min="0"
-                      max={pointBalance}
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-[#999]">
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] text-[#9db7db] font-bold">
                       P
                     </span>
                   </div>
-                  <span className="text-[13px] text-[#666]">
-                    보유 {pointBalance.toLocaleString()}P
-                  </span>
+                  <div className="text-[14px]">
+                    <span className="text-[#8ba4c7]">보유 포인트 </span>
+                    <span className="font-bold text-[#4a6b9d] ml-1">{pointBalance.toLocaleString()}P</span>
+                  </div>
                   <button
-                    className="ml-auto px-5 py-2.5 border border-[#d5d5d5] bg-white text-[#111] text-[13px] font-medium hover:border-[#111] transition-colors"
+                    className="ml-auto px-4 py-2 bg-white border border-[#c2dfff] text-[#4a89d7] text-[12px] font-bold rounded-lg hover:bg-[#ebf4ff]"
                     onClick={() => setUsePoint(pointBalance)}
                   >
-                    전액사용
+                    전액 사용
                   </button>
                 </div>
-                <p className="text-[12px] text-[#999]">
-                  ※ 최소 사용 포인트 제한 없음 (최종 결제금액 1원 이상)
-                </p>
               </div>
             </section>
 
             {/* 6. 결제수단 */}
-            <section className="bg-white rounded-none shadow-sm border border-[#e5e5e5]">
-              <div className="border-b border-[#e5e5e5] px-6 py-4">
-                <h2 className="text-[18px] font-bold text-[#111]">결제수단</h2>
+            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden
+            border border-[#e1efff]">
+              <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
+                <h2 className="text-[18px] font-bold text-[#4a6b9d]">결제수단 선택</h2>
               </div>
 
-              <div className="px-6 py-6">
-                <div className="grid grid-cols-3 gap-2">
+              <div className="px-8 py-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {paymentMethods.map((m) => (
                     <button
                       key={m.id}
                       onClick={() => setSelectedPayment(m.id)}
-                      className={`px-4 py-3.5 text-[13px] font-medium border transition-colors ${
+                      className={`px-4 py-4 rounded-[15px] text-[14px] font-bold border-2 transition-all ${
                         selectedPayment === m.id
-                          ? "bg-[#ff6e18] text-white border-[#ff6e18]"
-                          : "bg-white text-[#111] border-[#d5d5d5] hover:border-[#111]"
+                          ? "bg-[#ebf4ff] border-[#9bcafc] text-[#4a89d7]"
+                          : "bg-white border-[#f0f7ff] text-[#8ba4c7] hover:border-[#e1efff]"
                       }`}
                     >
                       {m.label}
@@ -744,12 +644,12 @@ const OrderComponent = () => {
             </section>
 
             {/* 7. 약관 동의 */}
-            <section className="bg-white rounded-none shadow-sm border border-[#e5e5e5]">
-              <div className="border-b border-[#e5e5e5] px-6 py-4">
-                <h2 className="text-[18px] font-bold text-[#111]">주문 동의</h2>
+            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-[#e1efff]">
+              <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
+                <h2 className="text-[18px] font-bold text-[#4a6b9d]">주문 동의</h2>
               </div>
 
-              <div className="px-6 py-6 space-y-4">
+              <div className="px-8 py-8 space-y-6">
                 <label className="flex items-center gap-3 pb-4 border-b border-[#e5e5e5] cursor-pointer">
                   <input
                     type="checkbox"
@@ -810,77 +710,84 @@ const OrderComponent = () => {
           </div>
 
           {/* 우측 결제 정보 박스 */}
-          <div className="lg:w-[360px]">
-            <div className="sticky top-6 bg-white border border-[#e5e5e5] shadow-sm">
-              <div className="bg-[#111] px-6 py-4">
-                <h3 className="text-[18px] font-bold text-white">결제정보</h3>
-              </div>
+          <div className="lg:w-[380px]">
+  <div className="sticky top-10">
+    {/* 상단 파란색 헤더 영역 */}
+    <div className="bg-[#4a89d7] rounded-t-[24px] px-8 py-7 shadow-lg">
+      <h3 className="text-[22px] font-bold text-white flex items-center justify-between">
+        결제정보
+      </h3>
+    </div>
 
-              <div className="px-6 py-6 space-y-4">
-                <div className="space-y-3 pb-4 border-b border-[#e5e5e5]">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[13px] text-[#666]">주문금액</span>
-                    <span className="text-[14px] text-[#111] font-medium">
-                      {formatPrice(totalPrice)}
-                    </span>
-                  </div>
+    {/* 상세 내역 영역 */}
+    <div className="bg-white rounded-b-[24px] px-8 py-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-x border-b border-[#e1efff] space-y-5">
+      <div className="space-y-4 pb-6 border-b border-[#f0f7ff]">
+        <div className="flex justify-between items-center">
+          <span className="text-[15px] text-[#8ba4c7] font-medium">주문금액</span>
+          <span className="text-[16px] text-[#44526b] font-bold">
+            {formatPrice(totalPrice)}
+          </span>
+        </div>
 
-                  <div className="flex justify-between items-center">
-                    <span className="text-[13px] text-[#666]">배송비</span>
-                    <span className="text-[14px] text-[#111] font-medium">
-                      {shippingFee > 0
-                        ? `+ ${formatPrice(shippingFee)}`
-                        : "무료"}
-                    </span>
-                  </div>
+        <div className="flex justify-between items-center">
+          <span className="text-[15px] text-[#8ba4c7] font-medium">배송비</span>
+          <span className="text-[16px] text-[#44526b] font-bold">
+            {shippingFee > 0 ? `+ ${formatPrice(shippingFee)}` : "무료"}
+          </span>
+        </div>
 
-                  {couponDiscount > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-[13px] text-[#666]">쿠폰 할인</span>
-                      <span className="text-[14px] text-[#ff6e18] font-medium">
-                        - {formatPrice(couponDiscount)}
-                      </span>
-                    </div>
-                  )}
+        {couponDiscount > 0 && (
+          <div className="flex justify-between items-center">
+            <span className="text-[15px] text-[#8ba4c7] font-medium">쿠폰 할인</span>
+            <span className="text-[16px] text-[#ff8080] font-bold">
+              - {formatPrice(couponDiscount)}
+            </span>
+          </div>
+        )}
 
-                  {usePoint > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-[13px] text-[#666]">
-                        포인트 사용
-                      </span>
-                      <span className="text-[14px] text-[#ff6e18] font-medium">
-                        - {formatPrice(usePoint)}
-                      </span>
-                    </div>
-                  )}
-                </div>
+        {usePoint > 0 && (
+          <div className="flex justify-between items-center">
+            <span className="text-[15px] text-[#8ba4c7] font-medium">포인트 사용</span>
+            <span className="text-[16px] text-[#ff8080] font-bold">
+              - {formatPrice(usePoint)}
+            </span>
+          </div>
+        )}
+      </div>
 
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-[16px] font-bold text-[#111]">
-                    총 결제금액
-                  </span>
-                  <span className="text-[24px] font-bold text-[#ff6e18]">
-                    {formatPrice(finalPrice)}
-                  </span>
-                </div>
+      <div className="flex justify-between items-center py-2">
+        <span className="text-[18px] font-bold text-[#44526b]">총 결제금액</span>
+        <span className="text-[28px] font-black text-[#4a89d7]">
+          {formatPrice(finalPrice)}
+        </span>
+      </div>
 
-                <div className="pt-2 space-y-1 text-[12px] text-[#999]">
-                  <p>• 결제금액 {formatPrice(finalPrice)} (VAT 포함)</p>
-                  <p>• 결제수단: {paymentMethod}</p>
-                  <p>• 적립 예정 포인트: {earnedPoints}P</p>
-                </div>
+      <div className="bg-[#f8fbff] rounded-[15px] p-5 space-y-2">
+        <p className="text-[13px] text-[#7da0ca] flex justify-between">
+          <span>• 결제금액</span>
+          <span className="font-semibold">{formatPrice(finalPrice)}</span>
+        </p>
+        <p className="text-[13px] text-[#7da0ca] flex justify-between">
+          <span>• 결제수단</span>
+          <span className="font-semibold">{paymentMethod}</span>
+        </p>
+        <p className="text-[13px] text-[#7da0ca] flex justify-between">
+          <span>• 적립 예정 포인트</span>
+          <span className="font-bold text-[#99c8ff]">{earnedPoints}P</span>
+        </p>
+      </div>
 
-                <button
-                  className={`w-full py-4 text-[15px] font-bold transition-colors mt-4 ${
-                    agreePurchase && agreePersonal && agreeDelegate
-                      ? "bg-[#ff6e18] text-white hover:bg-[#e55d0f]"
-                      : "bg-[#e5e5e5] text-[#999] cursor-not-allowed"
-                  }`}
-                  disabled={!(agreePurchase && agreePersonal && agreeDelegate)}
-                  onClick={handleOrderCompleteClick}
-                >
-                  {formatPrice(finalPrice)} 결제하기
-                </button>
+      <button
+        className={`w-full py-5 rounded-[18px] text-[17px] font-bold transition-all shadow-lg ${
+          agreePurchase && agreePersonal && agreeDelegate
+            ? "bg-[#4a89d7] text-white hover:bg-[#3d76bc] shadow-blue-100"
+            : "bg-[#e1efff] text-[#8ba4c7] cursor-not-allowed shadow-none"
+        }`}
+        disabled={!(agreePurchase && agreePersonal && agreeDelegate)}
+        onClick={handleOrderCompleteClick}
+      >
+        {formatPrice(finalPrice)} 결제하기
+      </button>
               </div>
             </div>
           </div>
