@@ -9,6 +9,7 @@ import ProductMainImages from "../../../components/admin/product/ProductMainImag
 import ProductSaleInfo from "../../../components/admin/product/ProductSaleInfo";
 import ProductDetailImages from "../../../components/admin/product/ProductDetailImages";
 import ProductDetailInfo from "../../../components/admin/product/ProductDetailInfo";
+import { useNavigate } from "react-router-dom";
 
 const initForm = {
   category: {},
@@ -65,6 +66,7 @@ const initForm = {
 
 const ProductAddPage = () => {
   const [productForm, setProductForm] = useState(initForm);
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log(productForm);
@@ -123,7 +125,10 @@ const ProductAddPage = () => {
 
         console.log("응답 data :", data);
 
-        alert("상품이 등록되었습니다.");
+        if (data === "ok") {
+          alert("상품이 등록되었습니다.");
+          navigate("/admin/products");
+        }
       } catch (error) {
         console.error("등록 실패:", error);
         alert("상품 등록에 실패했습니다.");
