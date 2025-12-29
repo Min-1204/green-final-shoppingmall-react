@@ -1,4 +1,3 @@
-// src/pages/member/FindIdPage.jsx
 import React, { useState } from "react";
 import HomeBar from "../../layouts/mainpage/HomeBar";
 import AuthCardLayout from "../../layouts/auth/AuthCardLayout";
@@ -6,13 +5,15 @@ import FindIdResult from "../../components/user/find-id/FindIdResult";
 import FindIdForm from "../../components/user/find-id/FindIdForm";
 
 const FindIdPage = () => {
-  // 아이디를 찾았는지 여부 (없으면 폼, 있으면 결과)
   const [foundId, setFoundId] = useState(null);
+
+  const handleIdFound = (userId) => {
+    setFoundId(userId);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <HomeBar />
-
       <div className="flex justify-center px-4 py-10">
         <AuthCardLayout
           title="아이디 찾기"
@@ -21,7 +22,7 @@ const FindIdPage = () => {
           {foundId ? (
             <FindIdResult idValue={foundId} onReset={() => setFoundId(null)} />
           ) : (
-            <FindIdForm onSuccess={(id) => setFoundId(id)} />
+            <FindIdForm onSuccess={handleIdFound} />
           )}
         </AuthCardLayout>
       </div>

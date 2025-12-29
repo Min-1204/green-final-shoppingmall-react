@@ -32,9 +32,9 @@ const mypageRouter = () => {
       index: true,
       element: (
         <Suspense fallback={Loading}>
-          <MyPageProfilePage />
+          <OrderHistory />
         </Suspense>
-      ),
+      )
     },
     {
       path: "profile",
@@ -42,7 +42,7 @@ const mypageRouter = () => {
         <Suspense fallback={Loading}>
           <MyPageProfilePage />
         </Suspense>
-      ),
+      )
     },
     {
       path: "password",
@@ -50,7 +50,7 @@ const mypageRouter = () => {
         <Suspense fallback={Loading}>
           <MyPagePasswordPage />
         </Suspense>
-      ),
+      )
     },
     {
       path: "inquiries",
@@ -58,7 +58,7 @@ const mypageRouter = () => {
         <Suspense fallback={Loading}>
           <MyPageInquiriesPage />
         </Suspense>
-      ),
+      )
     },
     {
       path: "wish",
@@ -66,7 +66,7 @@ const mypageRouter = () => {
         <Suspense fallback={Loading}>
           <MyPageWishPage />
         </Suspense>
-      ),
+      )
     },
     {
       path: "coupons",
@@ -74,7 +74,7 @@ const mypageRouter = () => {
         <Suspense fallback={Loading}>
           <MyPageCouponsPage />
         </Suspense>
-      ),
+      )
     },
     {
       path: "withdraw",
@@ -82,7 +82,7 @@ const mypageRouter = () => {
         <Suspense fallback={Loading}>
           <MyPageWithdrawPage />
         </Suspense>
-      ),
+      )
     },
     {
       path: "orders",
@@ -90,7 +90,7 @@ const mypageRouter = () => {
         <Suspense fallback={Loading}>
           <OrderHistory />
         </Suspense>
-      ),
+      )
     },
     {
       path: "productqna",
@@ -98,7 +98,7 @@ const mypageRouter = () => {
         <Suspense fallback={Loading}>
           <MyProductPageQnA />
         </Suspense>
-      ),
+      )
     },
     {
       path: "reviews",
@@ -106,8 +106,8 @@ const mypageRouter = () => {
         <Suspense fallback={Loading}>
           <MyPageReviewPage />
         </Suspense>
-      ),
-    },
+      )
+    }
   ];
 };
 

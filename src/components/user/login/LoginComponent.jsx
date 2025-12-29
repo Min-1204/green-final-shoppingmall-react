@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   loginAsyncThunk,
   getUserProfileThunk,
-  clearError,
+  clearError
 } from "../../../redux/slices/features/user/authSlice";
 
 // prettier-ignore

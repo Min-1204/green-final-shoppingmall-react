@@ -14,7 +14,7 @@ export default function Header() {
   const notices = [
     "[WELCOME] 공지/이벤트",
     "1월 신규가입 3,000원 쿠폰 지급 이벤트",
-    "배송지연 지역 안내 (제주도 일부 지역)",
+    "배송지연 지역 안내 (제주도 일부 지역)"
   ];
   const [current, setCurrent] = useState(0);
 
@@ -59,6 +59,27 @@ export default function Header() {
             <ProductSearchBar />
           </div>
           <div className="flex-shrink-0 flex flex-col items-end gap-4">
+            {user?.loginId && (
+              <div className="flex items-center gap-2 text-[13px]">
+                <span className="font-bold text-gray-700">{user.name}</span>
+                <span className="text-gray-400">님</span>
+                {user.userRole === "ADMIN" ? (
+                  <span className="px-2 py-0.5 bg-red-500 text-white text-[11px] font-semibold rounded">
+                    관리자
+                  </span>
+                ) : (
+                  <>
+                    <span className="px-2 py-0.5 bg-blue-500 text-white text-[11px] font-semibold rounded">
+                      {user.userGrade}
+                    </span>
+                    <span className="px-2 py-0.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[11px] font-semibold rounded">
+                      {user.activePoint?.toLocaleString() || 0}P
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
+
             <div className="flex items-center gap-4 text-[13px] font-semibold text-gray-500">
               {user?.loginId ? (
                 <>
@@ -135,7 +156,7 @@ export default function Header() {
                 { label: "오특", color: "bg-orange-400" },
                 { label: "랭킹", color: "bg-[#FF8FAB]" },
                 { label: "신상", color: "bg-purple-400" },
-                { label: "이벤트", color: "bg-red-400", pulse: true },
+                { label: "이벤트", color: "bg-red-400", pulse: true }
               ].map((tag) => (
                 <button
                   key={tag.label}
