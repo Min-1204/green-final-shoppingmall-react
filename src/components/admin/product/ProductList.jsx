@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { restockOption } from "../../../api/admin/product/productApi";
+import {
+  deleteProduct,
+  restockOption,
+} from "../../../api/admin/product/productApi";
 import RestockModal from "./RestockModal";
+import { ProductDeleteModal } from "./ProductDeleteModal";
 
 const saleStatusObj = {
   ON_SALE: "정상판매",
@@ -41,7 +45,8 @@ const getOutOfStock = (product) => {
 
 const ProductList = ({ pageResponse, search }) => {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const tableHeaders = [
@@ -58,7 +63,7 @@ const ProductList = ({ pageResponse, search }) => {
 
   const restockClick = (product) => {
     setSelectedProduct(product);
-    setIsModalOpen(true);
+    setIsRestockModalOpen(true);
   };
 
   const restockConfirm = async (updatedOptions) => {
@@ -71,6 +76,20 @@ const ProductList = ({ pageResponse, search }) => {
 
   const goToModifyPage = (id) => {
     navigate(`/admin/product/modify/${id}`);
+  };
+
+  const clickDeleteProduct = (product) => {
+    setSelectedProduct(product);
+    setIsDeleteModalOpen(true);
+  };
+
+  const deleteConfirm = async (product) => {
+    try {
+      await deleteProduct(product.id);
+      search();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -212,6 +231,12 @@ const ProductList = ({ pageResponse, search }) => {
                     >
                       상품 수정
                     </button>
+                    <button
+                      onClick={() => clickDeleteProduct(product)}
+                      className="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1 rounded-md border border-red-200 cursor-pointer transition shadow-sm"
+                    >
+                      상품 삭제
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -220,10 +245,16 @@ const ProductList = ({ pageResponse, search }) => {
         </table>
       </div>
       <RestockModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isRestockModalOpen}
+        onClose={() => setIsRestockModalOpen(false)}
         product={selectedProduct}
         onConfirm={restockConfirm}
+      />
+      <ProductDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        product={selectedProduct}
+        onConfirm={deleteConfirm}
       />
     </div>
   );

@@ -18,6 +18,7 @@ export default function CouponSearchList({
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [selectedCoupons, setSelectedCoupons] = useState([]);
+  const [selectedCoupon, setSelectedCoupon] = useState({});
 
   const handleSelectAll = (e) => {
     setSelectedCoupons(e.target.checked ? coupons.map((c) => c.id) : []);
@@ -31,6 +32,11 @@ export default function CouponSearchList({
 
   const goToModifyPage = (id) => {
     navigate(`/admin/coupon/modify/${id}`);
+  };
+
+  const deleteClick = (coupon) => {
+    setSelectedCoupon(coupon);
+    setOpenDeleteModal(true);
   };
 
   return (
@@ -123,17 +129,10 @@ export default function CouponSearchList({
                     </button>
                     <button
                       className="bg-red-50 text-red-700 hover:bg-red-100 px-2 py-1 rounded-md border border-red-200 cursor-pointer transition shadow-sm"
-                      onClick={() => setOpenDeleteModal(true)}
+                      onClick={() => deleteClick(coupon)}
                     >
                       삭제
                     </button>
-                    {openDeleteModal && (
-                      <CouponConfirmModal
-                        onClose={() => setOpenDeleteModal(false)}
-                        onConfirm={handleDeleteCoupon}
-                        coupon={coupon}
-                      />
-                    )}
                   </div>
                 </td>
                 <td className="px-4 py-3 text-sm text-center border-r border-gray-200 whitespace-nowrap">
@@ -227,6 +226,14 @@ export default function CouponSearchList({
           <ChevronsRight size={16} className="text-gray-600" />
         </button>
       </div>
+
+      {openDeleteModal && (
+        <CouponConfirmModal
+          onClose={() => setOpenDeleteModal(false)}
+          onConfirm={handleDeleteCoupon}
+          coupon={selectedCoupon}
+        />
+      )}
     </div>
   );
 }

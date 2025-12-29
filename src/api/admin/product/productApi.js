@@ -208,3 +208,8 @@ export const fetchBestProducts = async () => {
   const res = await axiosInstance.get(`${prefix}/best`);
   return res.data;
 };
+
+export const deleteProduct = async (id) => {
+  const res = await axiosInstance.delete(`${prefix}/${id}`);
+  return res.data;
+};
