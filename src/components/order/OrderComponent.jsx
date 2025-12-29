@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   completeOrder,
+  deleteOneOrder,
   getOneOrder,
   registerOrder,
 } from "../../api/order/orderApi";
@@ -247,14 +248,18 @@ const OrderComponent = () => {
         async (response) => {
           console.log("결제 응답:", response);
           if (response.success === false) {
-            setSelectedCoupon(null);
-            setUsePoint(0);
-
-            await fetchPoints(user.id);
-
-            return alert(
-              `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
-            );
+            try {
+              // 주문 삭제 요청
+              await deleteOneOrder(resultOrderId);
+              // 포인트 다시 조회
+              await fetchPoints(user.id);
+              return alert(
+                `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
+              );
+            } catch (error) {
+              console.error("주문 취소 처리 중 오류:", error);
+              alert("결제 취소 처리 중 문제가 발생했습니다.");
+            }
           }
           if (response.success) {
             console.log("결제 성공(검증 전)! imp_uid:", response.imp_uid);
