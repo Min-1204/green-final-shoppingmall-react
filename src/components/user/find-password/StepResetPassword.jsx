@@ -45,24 +45,26 @@ const StepResetPassword = ({ userId }) => {
   };
 
   return (
-    <div className="mt-8 space-y-4">
+    <div className="space-y-6">
       <div>
-        <label className="text-xs text-gray-500 font-medium">새 비밀번호</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          새 비밀번호
+        </label>
         <input
           type="password"
-          className="mt-1 w-full h-10 px-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
           placeholder="영문+숫자+특수문자 8자 이상"
           value={pw1}
           onChange={(e) => setPw1(e.target.value)}
         />
       </div>
       <div>
-        <label className="text-xs text-gray-500 font-medium">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           새 비밀번호 확인
         </label>
         <input
           type="password"
-          className="mt-1 w-full h-10 px-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
           placeholder="비밀번호 다시 입력"
           value={pw2}
           onChange={(e) => setPw2(e.target.value)}
@@ -71,7 +73,7 @@ const StepResetPassword = ({ userId }) => {
       <button
         onClick={handleReset}
         disabled={loading}
-        className="w-full h-11 rounded-md bg-gray-900 text-white text-sm font-semibold hover:bg-black transition disabled:bg-gray-400"
+        className="w-full h-12 rounded-lg bg-gray-900 text-white text-sm font-semibold hover:bg-black transition disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
         {loading ? "변경 중..." : "비밀번호 변경 완료"}
       </button>

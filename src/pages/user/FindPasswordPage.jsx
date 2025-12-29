@@ -11,7 +11,7 @@ import { authApi } from "../../api/user/authApi";
 const FindPasswordPage = () => {
   const [step, setStep] = useState(1);
   const [userId, setUserId] = useState("");
-  const [email, setEmail] = useState(""); // 추가: 인증을 진행할 이메일
+  const [email, setEmail] = useState("");
   const [method, setMethod] = useState("email");
   const [code, setCode] = useState("");
 
@@ -33,13 +33,24 @@ const FindPasswordPage = () => {
   // Step 3: 인증번호 검증
   const handleVerifyCode = async (inputCode) => {
     try {
-      const res = await authApi.verifyFindPw(email, inputCode); // ← authApi 사용
+      const res = await authApi.verifyFindPw(email, inputCode);
       if (res.data.success) {
         setCode(inputCode);
         setStep(4);
       }
     } catch (err) {
       alert("인증번호가 틀렸습니다.");
+      throw err; // StepVerifyCode에서 에러 처리 가능하도록
+    }
+  };
+
+  // Step 3: 인증번호 재전송
+  const handleResendCode = async () => {
+    try {
+      await authApi.sendFindPwCode(userId, email);
+    } catch (err) {
+      alert("재전송에 실패했습니다.");
+      throw err;
     }
   };
 
@@ -66,14 +77,17 @@ const FindPasswordPage = () => {
               method={method}
               setMethod={setMethod}
               userId={userId}
-              onNext={handleSendCode} // 함수 전달
+              onNext={handleSendCode}
             />
           )}
 
           {step === 3 && (
             <StepVerifyCode
               method={method}
-              onNext={handleVerifyCode} // 함수 전달
+              email={email}
+              currentStep={step}
+              onNext={handleVerifyCode}
+              onResend={handleResendCode}
             />
           )}
 
