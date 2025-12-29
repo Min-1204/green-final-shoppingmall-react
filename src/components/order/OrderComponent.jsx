@@ -163,6 +163,34 @@ const OrderComponent = () => {
       return;
     }
 
+    const phoneRegex = /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/; // 하이픈 유무 상관없이 체크용
+
+    if (!addressName.trim()) {
+      alert("배송지명(예: 우리집)을 입력해 주세요.");
+      return;
+    }
+    if (!receiverName.trim()) {
+      alert("받는 사람 이름을 입력해 주세요.");
+      return;
+    }
+    if (!receiverPhone.trim()) {
+      alert("연락처를 입력해 주세요.");
+      return;
+    }
+    // 연락처 숫자 형식 검증 (하이픈 제거 후 숫자만 10~11자리인지 확인)
+    if (!phoneRegex.test(receiverPhone.replace(/-/g, ""))) {
+      alert("올바른 연락처 형식(10~11자리 숫자)을 입력해 주세요.");
+      return;
+    }
+    if (!postalCode || !streetAddress) {
+      alert("우편번호 찾기를 통해 주소를 입력해 주세요.");
+      return;
+    }
+    if (!detailedAddress.trim()) {
+      alert("상세 주소를 입력해 주세요.");
+      return;
+    }
+
     if (selectedPayment === "naver") {
       alert("해당 결제 수단은 사업자 정보가 필요하여 미구현합니다.");
       return;
@@ -170,17 +198,6 @@ const OrderComponent = () => {
 
     if (selectedPayment !== "kakao") {
       alert("해당 결제 수단은 실제 금액이 빠져나가는 이유로 미구현합니다. ");
-      return;
-    }
-
-    if (
-      !receiverName ||
-      !receiverPhone ||
-      !postalCode ||
-      !streetAddress ||
-      !detailedAddress
-    ) {
-      alert("배송지 정보를 모두 입력해 주세요.");
       return;
     }
 
