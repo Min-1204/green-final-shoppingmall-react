@@ -556,7 +556,7 @@ export default function OrderHistoryComponent() {
                               onClick={() => {
                                 setSelectedProduct({
                                   ...item,
-                                  orderId: order.id,
+                                  orderProductId: item.id,
                                 });
                                 setReviewModal(true);
                               }}
