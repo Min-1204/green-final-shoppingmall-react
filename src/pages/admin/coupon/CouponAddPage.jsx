@@ -168,7 +168,7 @@ const CouponAddPage = () => {
               onClick={submitHandler}
               className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
             >
-              상품 등록
+              쿠폰 등록
             </button>
           </div>
         </div>

@@ -168,7 +168,7 @@ const CouponModifyPage = () => {
               onClick={submitHandler}
               className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
             >
-              상품 수정
+              쿠폰 수정
             </button>
           </div>
         </div>
