@@ -193,7 +193,7 @@ const ProductListComponent = () => {
       </aside>
 
       {/* 오른쪽 상품 목록 영역 */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 min-h-screen">
         {/* 브레드크럼  */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6 border-b border-gray-100 pb-4">
           <Link to="/" className="hover:text-gray-700 transition-colors">
