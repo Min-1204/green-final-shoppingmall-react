@@ -143,3 +143,5 @@ export const StepVerifyCode = ({
     </div>
   );
 };
+
+export default StepVerifyCode;
