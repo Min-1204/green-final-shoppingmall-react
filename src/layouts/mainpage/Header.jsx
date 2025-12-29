@@ -75,13 +75,13 @@ export default function Header() {
                       <button
                         onClick={() => {
                           // 새 탭에서 여는 로직
-                          // const newWindow = window.open(
-                          //   "/admin/products",
-                          //   "_blank"
-                          // );
-                          // // 보안을 위해 opener 접근 차단
-                          // if (newWindow) newWindow.opener = null;
-                          navigate("/admin/products");
+                          const newWindow = window.open(
+                            "/admin/products",
+                            "_blank"
+                          );
+                          // 보안을 위해 opener 접근 차단
+                          if (newWindow) newWindow.opener = null;
+                          // navigate("/admin/products");
                         }}
                         className="hover:text-[#52a3ff] cursor-pointer"
                       >
