@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { authApi } from "../../../api/user/authApi";
 
 const StepMethodSelect = ({ method, setMethod, userId, onNext }) => {
   const [email, setEmail] = useState("");
@@ -25,7 +24,7 @@ const StepMethodSelect = ({ method, setMethod, userId, onNext }) => {
   };
 
   return (
-    <div className="mt-8 space-y-4">
+    <div className="space-y-6">
       <p className="text-sm text-gray-500">
         비밀번호를 재설정할 방법을 선택하세요.
       </p>
