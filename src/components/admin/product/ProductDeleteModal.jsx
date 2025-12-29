@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 export const ProductDeleteModal = ({ isOpen, onClose, product, onConfirm }) => {
   if (!isOpen || !product) return null;
@@ -36,7 +36,9 @@ export const ProductDeleteModal = ({ isOpen, onClose, product, onConfirm }) => {
 
             <div className="mb-4 p-3 bg-gray-50 rounded-md border border-gray-200">
               <p className="text-sm font-medium text-gray-700 mb-1">상품명</p>
-              <p className="text-gray-900 font-medium">{product.productName}</p>
+              <p className="text-gray-900 font-medium">
+                {product.basicInfo.productName}
+              </p>
             </div>
 
             <p className="text-gray-600 mb-6">

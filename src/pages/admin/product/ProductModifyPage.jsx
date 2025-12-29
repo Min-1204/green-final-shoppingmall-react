@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   fetchProductById,
   modifyProduct,
@@ -57,6 +57,7 @@ const initForm = {
 
 const ProductModifyPage = () => {
   const [productForm, setProductForm] = useState(initForm);
+  const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -109,7 +110,10 @@ const ProductModifyPage = () => {
 
         console.log("응답 data :", data);
 
-        alert("상품이 수정되었습니다.");
+        if (data === "ok") {
+          alert("상품이 수정되었습니다.");
+          navigate("/admin/products");
+        }
       } catch (error) {
         console.error("등록 실패:", error);
         alert("상품 수정에 실패했습니다.");
