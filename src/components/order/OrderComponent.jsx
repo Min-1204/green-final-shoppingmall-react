@@ -303,15 +303,15 @@ const OrderComponent = () => {
         <h1 className="text-[32px] font-bold text-[#4a7ab5] tracking-tight flex items-center gap-2">
           <span className="text-2xl">🌙</span> 주문/결제
         </h1>
-        <p className="text-[14px] text-[#7da0ca] mt-1">촉촉한 달빛을 담아 안전하게 배송해드릴게요</p>
+        <p className="text-[14px] text-[#7da0ca] mt-1">
+          촉촉한 달빛을 담아 안전하게 배송해드릴게요
+        </p>
       </div>
 
-        <div className="max-w-[1100px] mx-auto -mt-6 px-4">
-          <div className="flex flex-col lg:flex-row gap-8">
-          
+      <div className="max-w-[1100px] mx-auto -mt-6 px-4">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* 좌측 메인 콘텐츠 */}
           <div className="flex-1 space-y-8">
-
             {/* 1. 주문 상품 정보 */}
             <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-[#e1efff]">
               <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
@@ -331,10 +331,18 @@ const OrderComponent = () => {
                   </colgroup>
                   <thead>
                     <tr className="bg-[#fcfdff] border-b border-[#f0f7ff]">
-                      <th className="text-left px-8 py-4 text-[13px] font-semibold text-[#8ba4c7]">상품정보</th>
-                      <th className="text-center px-4 py-4 text-[13px] font-semibold text-[#8ba4c7]">수량</th>
-                      <th className="text-center px-4 py-4 text-[13px] font-semibold text-[#8ba4c7]">판매금액</th>
-                      <th className="text-center px-8 py-4 text-[13px] font-semibold text-[#8ba4c7]">적립예정</th>
+                      <th className="text-left px-8 py-4 text-[13px] font-semibold text-[#8ba4c7]">
+                        상품정보
+                      </th>
+                      <th className="text-center px-4 py-4 text-[13px] font-semibold text-[#8ba4c7]">
+                        수량
+                      </th>
+                      <th className="text-center px-4 py-4 text-[13px] font-semibold text-[#8ba4c7]">
+                        판매금액
+                      </th>
+                      <th className="text-center px-8 py-4 text-[13px] font-semibold text-[#8ba4c7]">
+                        적립예정
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#f5f9ff]">
@@ -359,11 +367,12 @@ const OrderComponent = () => {
                               <p className="text-[15px] text-[#44526b] font-semibold leading-snug">
                                 {item.productName}
                               </p>
-                              {item.optionName && item.optionName !== item.productName && (
-                                <p className="text-[13px] text-[#869ab8] bg-[#f1f7ff] inline-block px-2 py-0.5 rounded-md mt-1">
-                                  옵션: {item.optionName}
-                                </p>
-                              )}
+                              {item.optionName &&
+                                item.optionName !== item.productName && (
+                                  <p className="text-[13px] text-[#869ab8] bg-[#f1f7ff] inline-block px-2 py-0.5 rounded-md mt-1">
+                                    옵션: {item.optionName}
+                                  </p>
+                                )}
                             </div>
                           </div>
                         </td>
@@ -371,10 +380,18 @@ const OrderComponent = () => {
                           {item.quantity}개
                         </td>
                         <td className="px-4 py-6 text-center text-[16px] font-bold text-[#4a6b9d]">
-                          {formatPrice(Number(item.sellingPrice) * Number(item.quantity))}
+                          {formatPrice(
+                            Number(item.sellingPrice) * Number(item.quantity)
+                          )}
                         </td>
                         <td className="px-8 py-6 text-center text-[14px] font-semibold text-[#9bbfe7]">
-                          +{Math.floor(Number(item.sellingPrice) * Number(item.quantity) * 0.01).toLocaleString()}P
+                          +
+                          {Math.floor(
+                            Number(item.sellingPrice) *
+                              Number(item.quantity) *
+                              0.01
+                          ).toLocaleString()}
+                          P
                         </td>
                       </tr>
                     ))}
@@ -394,14 +411,17 @@ const OrderComponent = () => {
 
               <div className="px-8 py-8 space-y-6">
                 <div className="flex gap-3">
-                  {['기본 배송지','신규 배송지'].map((label,idx)=>(
-                    <button key={label} className={`px-6 py-2.5 rounded-full text-[13px] font-bold transition-all ${
-                      (idx === 0 && addressName === "집") || (idx === 1 && addressName !== "집")
-                       ? "bg-[#9bcafc] text-white shadow-md shadow-blue-100" 
-                       : "bg-white border border-[#e1efff] text-[#8ba4c7] hover:bg-[#f8fbff]"
+                  {["기본 배송지", "신규 배송지"].map((label, idx) => (
+                    <button
+                      key={label}
+                      className={`px-6 py-2.5 rounded-full text-[13px] font-bold transition-all ${
+                        (idx === 0 && addressName === "집") ||
+                        (idx === 1 && addressName !== "집")
+                          ? "bg-[#9bcafc] text-white shadow-md shadow-blue-100"
+                          : "bg-white border border-[#e1efff] text-[#8ba4c7] hover:bg-[#f8fbff]"
                       }`}
                       onClick={() => {
-                        if(idx === 0) {
+                        if (idx === 0) {
                           setAddressName("집");
                           setReceiverName(profile?.name || "");
                           setReceiverPhone(profile?.phoneNumber || "");
@@ -409,39 +429,46 @@ const OrderComponent = () => {
                           setStreetAddress(profile?.address || "");
                           setDetailedAddress(profile?.addressDetail || "");
                         } else {
-                          setAddressName(""); setReceiverName(""); setReceiverPhone("");
-                          setPostalCode(""); setStreetAddress(""); setDetailedAddress("");
+                          setAddressName("");
+                          setReceiverName("");
+                          setReceiverPhone("");
+                          setPostalCode("");
+                          setStreetAddress("");
+                          setDetailedAddress("");
                         }
                       }}
-                      >
-                        {label}
-                      </button>
+                    >
+                      {label}
+                    </button>
                   ))}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                  <input
-                    className="w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px] text-[14px]
+                    <input
+                      className="w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px] text-[14px]
                     focus:outline-none focus:ring-2 focus:ring-[#c2dfff] transition-all placeholder-[#c0d0e6]"
-                    placeholder="배송지명 (예: 우리집)"
-                    value={addressName}
-                    onChange={(e) => setAddressName(e.target.value)}
-                  />
+                      placeholder="배송지명 (예: 우리집)"
+                      value={addressName}
+                      onChange={(e) => setAddressName(e.target.value)}
+                    />
                   </div>
 
                   <div className="md:col-span-2 flex items-center gap-2 px-1">
-                      <input
-                        type="checkbox"
-                        id="sameAsOrderer"
-                        checked={useOrdererInfo}
-                        onChange={(e) => handleOrdererInfoChange(e)}
-                        className="w-4 h-4 rounded border-[#c2dfff] text-[#9bcafc] focus:ring-[#9bcafc]"
-                      />
-                      <label  htmlFor="sameAsOrderer" className="text-[13px] text-[#7da0ca] font-medium cursor-
-                      pointer">
-                        주문자 정보와 동일
-                      </label>
+                    <input
+                      type="checkbox"
+                      id="sameAsOrderer"
+                      checked={useOrdererInfo}
+                      onChange={(e) => handleOrdererInfoChange(e)}
+                      className="w-4 h-4 rounded border-[#c2dfff] text-[#9bcafc] focus:ring-[#9bcafc]"
+                    />
+                    <label
+                      htmlFor="sameAsOrderer"
+                      className="text-[13px] text-[#7da0ca] font-medium cursor-
+                      pointer"
+                    >
+                      주문자 정보와 동일
+                    </label>
                   </div>
 
                   <input
@@ -498,45 +525,69 @@ const OrderComponent = () => {
 
             {/* 3. 배송 요청사항 */}
             <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-[#e1efff]">
-            <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
-              <h2 className="text-[18px] font-bold text-[#4a6b9d]">배송 요청사항</h2>
-            </div>
-
-            <div className="px-8 py-8 space-y-6">
-              <div className="relative">
-                <select
-                  className="w-full px-5 py-4 rounded-[15px] border-2 border-[#dce9f9] bg-white text-[14px] text-[#44526b] appearance-none focus:outline-none focus:border-[#9bcafc] focus:bg-[#f8fbff] transition-all cursor-pointer"
-                  value={deliveryRequest}
-                  onChange={(e) => setDeliveryRequest(e.target.value)}
-                >
-                  <option value="">배송 요청사항을 선택해주세요</option>
-                  <option value="문 앞에 놓아주세요.">문 앞에 놓아주세요.</option>
-                  <option value="배송 전에 미리 연락 바랍니다.">배송 전에 미리 연락 바랍니다.</option>
-                  <option value="부재 시 경비실에 맡겨주세요.">부재 시 경비실에 맡겨주세요.</option>
-                  <option value="부재 시 전화/문자 남겨 주세요.">부재 시 전화/문자 남겨 주세요.</option>
-                  <option value="직접입력">직접입력</option>
-                </select>
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#9bcafc]">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
+              <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
+                <h2 className="text-[18px] font-bold text-[#4a6b9d]">
+                  배송 요청사항
+                </h2>
               </div>
 
-              {deliveryRequest === "직접입력" && (
-                <input
-                  className="w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#c2dfff] transition-all placeholder-[#c0d0e6]"
-                  placeholder="배송 요청사항을 입력해주세요"
-                  value={customDeliveryRequest}
-                  onChange={(e) => setCustomDeliveryRequest(e.target.value)}
-                />
-              )}
-            </div>
-          </section>
+              <div className="px-8 py-8 space-y-6">
+                <div className="relative">
+                  <select
+                    className="w-full px-5 py-4 rounded-[15px] border-2 border-[#dce9f9] bg-white text-[14px] text-[#44526b] appearance-none focus:outline-none focus:border-[#9bcafc] focus:bg-[#f8fbff] transition-all cursor-pointer"
+                    value={deliveryRequest}
+                    onChange={(e) => setDeliveryRequest(e.target.value)}
+                  >
+                    <option value="">배송 요청사항을 선택해주세요</option>
+                    <option value="문 앞에 놓아주세요.">
+                      문 앞에 놓아주세요.
+                    </option>
+                    <option value="배송 전에 미리 연락 바랍니다.">
+                      배송 전에 미리 연락 바랍니다.
+                    </option>
+                    <option value="부재 시 경비실에 맡겨주세요.">
+                      부재 시 경비실에 맡겨주세요.
+                    </option>
+                    <option value="부재 시 전화/문자 남겨 주세요.">
+                      부재 시 전화/문자 남겨 주세요.
+                    </option>
+                    <option value="직접입력">직접입력</option>
+                  </select>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#9bcafc]">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                {deliveryRequest === "직접입력" && (
+                  <input
+                    className="w-full px-5 py-3.5 bg-[#fbfdff] border border-[#e8f2ff] rounded-[12px] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#c2dfff] transition-all placeholder-[#c0d0e6]"
+                    placeholder="배송 요청사항을 입력해주세요"
+                    value={customDeliveryRequest}
+                    onChange={(e) => setCustomDeliveryRequest(e.target.value)}
+                  />
+                )}
+              </div>
+            </section>
 
             {/* 4. 쿠폰 할인 */}
-            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden
-            border border-[#e1efff]">
+            <section
+              className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden
+            border border-[#e1efff]"
+            >
               <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
                 <h2 className="text-[18px] font-bold text-[#4a6b9d]">
                   쿠폰 할인
@@ -544,28 +595,48 @@ const OrderComponent = () => {
               </div>
 
               <div className="px-8 py-8 space-y-6">
-                <div className={`p-6 rounded-[18px] border-2 transition-all ${selectedCoupon ? "border-[#9bcafc] bg-[#f0f7ff]"
-                    : "border-dashed border-[#dce9f9] bg-[#fbfdff]"}`}>
+                <div
+                  className={`p-6 rounded-[18px] border-2 transition-all ${
+                    selectedCoupon
+                      ? "border-[#9bcafc] bg-[#f0f7ff]"
+                      : "border-dashed border-[#dce9f9] bg-[#fbfdff]"
+                  }`}
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[12px] text-[#9db7db] font-bold mb-1">COUPON</p>
-                        <p className="text-[15px] font-bold text-[#44526b]">
-                        {selectedCoupon ? `[${couponName}]`:"사용 가능한 쿠폰이 있어요"}
+                      <p className="text-[12px] text-[#9db7db] font-bold mb-1">
+                        COUPON
+                      </p>
+                      <p className="text-[15px] font-bold text-[#44526b]">
+                        {selectedCoupon
+                          ? `[${couponName}]`
+                          : "사용 가능한 쿠폰이 있어요"}
                       </p>
                     </div>
                     <button
-                    onClick={() => selectedCoupon ? setSelectedCoupon(null) : setShowCouponModal(true)}
-                    className={`px-5 py-2 rounded-full text-[13px] font-bold transition-all ${selectedCoupon ? "bg-white text-[#ff8080] border border-[#ffdada]" : "bg-[#4a89d7] text-white shadow-md shadow-blue-100"}`}
+                      onClick={() =>
+                        selectedCoupon
+                          ? setSelectedCoupon(null)
+                          : setShowCouponModal(true)
+                      }
+                      className={`px-5 py-2 rounded-full text-[13px] font-bold transition-all ${
+                        selectedCoupon
+                          ? "bg-white text-[#ff8080] border border-[#ffdada]"
+                          : "bg-[#4a89d7] text-white shadow-md shadow-blue-100"
+                      }`}
                     >
-                      {selectedCoupon ? "해제하기":"쿠폰 선택"}
+                      {selectedCoupon ? "해제하기" : "쿠폰 선택"}
                     </button>
                   </div>
 
                   {/* 할인 금액 표시부 */}
                   {selectedCoupon && (
                     <div className="mt-4 pt-4 border-t border-[#dce9f9] flex justify-between items-center">
-                      <span className="text-[13px] text-[#7da0ca]">할인 혜택</span>
-                      <span className="text-[18px] text-[#4a89d7] font-black">-{formatPrice(couponDiscount)}
+                      <span className="text-[13px] text-[#7da0ca]">
+                        할인 혜택
+                      </span>
+                      <span className="text-[18px] text-[#4a89d7] font-black">
+                        -{formatPrice(couponDiscount)}
                       </span>
                     </div>
                   )}
@@ -574,8 +645,10 @@ const OrderComponent = () => {
             </section>
 
             {/* 5. 포인트 */}
-            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden
-            border border-[#e1efff]">
+            <section
+              className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden
+            border border-[#e1efff]"
+            >
               <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
                 <h2 className="text-[18px] font-bold text-[#4a6b9d]">포인트</h2>
               </div>
@@ -605,7 +678,9 @@ const OrderComponent = () => {
                   </div>
                   <div className="text-[14px]">
                     <span className="text-[#8ba4c7]">보유 포인트 </span>
-                    <span className="font-bold text-[#4a6b9d] ml-1">{pointBalance.toLocaleString()}P</span>
+                    <span className="font-bold text-[#4a6b9d] ml-1">
+                      {pointBalance.toLocaleString()}P
+                    </span>
                   </div>
                   <button
                     className="ml-auto px-4 py-2 bg-white border border-[#c2dfff] text-[#4a89d7] text-[12px] font-bold rounded-lg hover:bg-[#ebf4ff]"
@@ -618,10 +693,14 @@ const OrderComponent = () => {
             </section>
 
             {/* 6. 결제수단 */}
-            <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden
-            border border-[#e1efff]">
+            <section
+              className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden
+            border border-[#e1efff]"
+            >
               <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
-                <h2 className="text-[18px] font-bold text-[#4a6b9d]">결제수단 선택</h2>
+                <h2 className="text-[18px] font-bold text-[#4a6b9d]">
+                  결제수단 선택
+                </h2>
               </div>
 
               <div className="px-8 py-8">
@@ -646,7 +725,9 @@ const OrderComponent = () => {
             {/* 7. 약관 동의 */}
             <section className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-[#e1efff]">
               <div className="bg-[#f8fbff] px-8 py-5 border-b border-[#f0f7ff]">
-                <h2 className="text-[18px] font-bold text-[#4a6b9d]">주문 동의</h2>
+                <h2 className="text-[18px] font-bold text-[#4a6b9d]">
+                  주문 동의
+                </h2>
               </div>
 
               <div className="px-8 py-8 space-y-6">
@@ -711,83 +792,99 @@ const OrderComponent = () => {
 
           {/* 우측 결제 정보 박스 */}
           <div className="lg:w-[380px]">
-  <div className="sticky top-10">
-    {/* 상단 파란색 헤더 영역 */}
-    <div className="bg-[#4a89d7] rounded-t-[24px] px-8 py-7 shadow-lg">
-      <h3 className="text-[22px] font-bold text-white flex items-center justify-between">
-        결제정보
-      </h3>
-    </div>
+            <div className="sticky top-10">
+              {/* 상단 파란색 헤더 영역 */}
+              <div className="bg-[#4a89d7] rounded-t-[24px] px-8 py-7 shadow-lg">
+                <h3 className="text-[22px] font-bold text-white flex items-center justify-between">
+                  결제정보
+                </h3>
+              </div>
 
-    {/* 상세 내역 영역 */}
-    <div className="bg-white rounded-b-[24px] px-8 py-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-x border-b border-[#e1efff] space-y-5">
-      <div className="space-y-4 pb-6 border-b border-[#f0f7ff]">
-        <div className="flex justify-between items-center">
-          <span className="text-[15px] text-[#8ba4c7] font-medium">주문금액</span>
-          <span className="text-[16px] text-[#44526b] font-bold">
-            {formatPrice(totalPrice)}
-          </span>
-        </div>
+              {/* 상세 내역 영역 */}
+              <div className="bg-white rounded-b-[24px] px-8 py-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-x border-b border-[#e1efff] space-y-5">
+                <div className="space-y-4 pb-6 border-b border-[#f0f7ff]">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[15px] text-[#8ba4c7] font-medium">
+                      주문금액
+                    </span>
+                    <span className="text-[16px] text-[#44526b] font-bold">
+                      {formatPrice(totalPrice)}
+                    </span>
+                  </div>
 
-        <div className="flex justify-between items-center">
-          <span className="text-[15px] text-[#8ba4c7] font-medium">배송비</span>
-          <span className="text-[16px] text-[#44526b] font-bold">
-            {shippingFee > 0 ? `+ ${formatPrice(shippingFee)}` : "무료"}
-          </span>
-        </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[15px] text-[#8ba4c7] font-medium">
+                      배송비
+                    </span>
+                    <span className="text-[16px] text-[#44526b] font-bold">
+                      {shippingFee > 0
+                        ? `+ ${formatPrice(shippingFee)}`
+                        : "무료"}
+                    </span>
+                  </div>
 
-        {couponDiscount > 0 && (
-          <div className="flex justify-between items-center">
-            <span className="text-[15px] text-[#8ba4c7] font-medium">쿠폰 할인</span>
-            <span className="text-[16px] text-[#ff8080] font-bold">
-              - {formatPrice(couponDiscount)}
-            </span>
-          </div>
-        )}
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-[15px] text-[#8ba4c7] font-medium">
+                        쿠폰 할인
+                      </span>
+                      <span className="text-[16px] text-[#ff8080] font-bold">
+                        - {formatPrice(couponDiscount)}
+                      </span>
+                    </div>
+                  )}
 
-        {usePoint > 0 && (
-          <div className="flex justify-between items-center">
-            <span className="text-[15px] text-[#8ba4c7] font-medium">포인트 사용</span>
-            <span className="text-[16px] text-[#ff8080] font-bold">
-              - {formatPrice(usePoint)}
-            </span>
-          </div>
-        )}
-      </div>
+                  {usePoint > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-[15px] text-[#8ba4c7] font-medium">
+                        포인트 사용
+                      </span>
+                      <span className="text-[16px] text-[#ff8080] font-bold">
+                        - {formatPrice(usePoint)}
+                      </span>
+                    </div>
+                  )}
+                </div>
 
-      <div className="flex justify-between items-center py-2">
-        <span className="text-[18px] font-bold text-[#44526b]">총 결제금액</span>
-        <span className="text-[28px] font-black text-[#4a89d7]">
-          {formatPrice(finalPrice)}
-        </span>
-      </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-[18px] font-bold text-[#44526b]">
+                    총 결제금액
+                  </span>
+                  <span className="text-[28px] font-black text-[#4a89d7]">
+                    {formatPrice(finalPrice)}
+                  </span>
+                </div>
 
-      <div className="bg-[#f8fbff] rounded-[15px] p-5 space-y-2">
-        <p className="text-[13px] text-[#7da0ca] flex justify-between">
-          <span>• 결제금액</span>
-          <span className="font-semibold">{formatPrice(finalPrice)}</span>
-        </p>
-        <p className="text-[13px] text-[#7da0ca] flex justify-between">
-          <span>• 결제수단</span>
-          <span className="font-semibold">{paymentMethod}</span>
-        </p>
-        <p className="text-[13px] text-[#7da0ca] flex justify-between">
-          <span>• 적립 예정 포인트</span>
-          <span className="font-bold text-[#99c8ff]">{earnedPoints}P</span>
-        </p>
-      </div>
+                <div className="bg-[#f8fbff] rounded-[15px] p-5 space-y-2">
+                  <p className="text-[13px] text-[#7da0ca] flex justify-between">
+                    <span>• 결제금액</span>
+                    <span className="font-semibold">
+                      {formatPrice(finalPrice)}
+                    </span>
+                  </p>
+                  <p className="text-[13px] text-[#7da0ca] flex justify-between">
+                    <span>• 결제수단</span>
+                    <span className="font-semibold">{paymentMethod}</span>
+                  </p>
+                  <p className="text-[13px] text-[#7da0ca] flex justify-between">
+                    <span>• 적립 예정 포인트</span>
+                    <span className="font-bold text-[#99c8ff]">
+                      {earnedPoints}P
+                    </span>
+                  </p>
+                </div>
 
-      <button
-        className={`w-full py-5 rounded-[18px] text-[17px] font-bold transition-all shadow-lg ${
-          agreePurchase && agreePersonal && agreeDelegate
-            ? "bg-[#4a89d7] text-white hover:bg-[#3d76bc] shadow-blue-100"
-            : "bg-[#e1efff] text-[#8ba4c7] cursor-not-allowed shadow-none"
-        }`}
-        disabled={!(agreePurchase && agreePersonal && agreeDelegate)}
-        onClick={handleOrderCompleteClick}
-      >
-        {formatPrice(finalPrice)} 결제하기
-      </button>
+                <button
+                  className={`w-full py-5 rounded-[18px] text-[17px] font-bold transition-all shadow-lg ${
+                    agreePurchase && agreePersonal && agreeDelegate
+                      ? "bg-[#4a89d7] text-white hover:bg-[#3d76bc] shadow-blue-100"
+                      : "bg-[#e1efff] text-[#8ba4c7] cursor-not-allowed shadow-none"
+                  }`}
+                  disabled={!(agreePurchase && agreePersonal && agreeDelegate)}
+                  onClick={handleOrderCompleteClick}
+                >
+                  {formatPrice(finalPrice)} 결제하기
+                </button>
               </div>
             </div>
           </div>
