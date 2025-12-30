@@ -7,10 +7,14 @@ import { getCurrentUserThunk } from "./redux/slices/features/user/authSlice";
 
 function App() {
   const dispatch = useDispatch();
+  const { isLoggedId, user } = useSelector((state) => state.authSlice);
 
   // ⭐️ Local Storage에서 로그인 정보 복구하는 기능입니다.
   useEffect(() => {
-    dispatch(getCurrentUserThunk());
+    if (!isLoggedId && !user) {
+      console.log("로그인 정보가 없어 초기 인증을 시도합니다");
+      dispatch(getCurrentUserThunk());
+    }
   }, [dispatch]);
 
   return <RouterProvider router={root} />;

@@ -6,7 +6,7 @@ export const StepVerifyCode = ({
   email,
   onNext,
   currentStep,
-  onResend,
+  onResend
 }) => {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -130,7 +130,7 @@ export const StepVerifyCode = ({
         <button
           onClick={handleResend}
           disabled={!canResend || resending}
-          className="text-sm text-gray-500 hover:text-gray-700 underline disabled:text-gray-300 disabled:no-underline disabled:cursor-not-allowed"
+          className="text-sm text-gray-500 cursor-pointer hover:text-gray-700 underline disabled:text-gray-300 disabled:no-underline disabled:cursor-not-allowed"
         >
           {resending ? "재전송 중..." : "인증번호를 받지 못하셨나요?"}
         </button>
