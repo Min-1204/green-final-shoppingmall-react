@@ -17,7 +17,7 @@ const ProductListComponent = () => {
   const categoryDepth = parseInt(searchParams.get("categoryDepth"));
   const categoryId = parseInt(searchParams.get("categoryId"));
   const page = searchParams.get("page") || 1;
-  const size = searchParams.get("size") || 12;
+  const size = searchParams.get("size") || 24;
   const sort = searchParams.get("sort") || "sales";
   const brandId = searchParams.get("brand") || 0;
 
