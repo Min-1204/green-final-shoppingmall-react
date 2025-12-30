@@ -159,7 +159,9 @@ export default function ProductDetailComponent() {
 
       changeCart(cartProductDTO);
     });
-    alert("장바구니에 담았습니다.");
+    if (window.confirm("장바구니에 담았습니다. 장바구니로 이동하시겠습니까?")) {
+      navigate("/cart");
+    }
   };
 
   const handleAddCart = (product) => {
@@ -174,7 +176,9 @@ export default function ProductDetailComponent() {
     // console.log("cartProductDTO", cartProductDTO);
 
     changeCart(cartProductDTO);
-    alert("장바구니에 담았습니다.");
+    if (window.confirm("장바구니에 담았습니다. 장바구니로 이동하시겠습니까?")) {
+      navigate("/cart");
+    }
   };
 
   useEffect(() => {
