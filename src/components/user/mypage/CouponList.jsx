@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { getUserCoupons } from "../../../api/coupon/couponApi";
-import { useSelector } from "react-redux";
+import React from "react";
 
 export default function CouponList({ coupons }) {
   return (
@@ -12,6 +10,9 @@ export default function CouponList({ coupons }) {
         >
           <div>
             <p className="font-semibold">{c?.coupon?.couponName}</p>
+            <p className="bg-zinc-100 text-sm px-3 py-1 mb-1 mt-1 rounded-full w-fit">
+              {c?.coupon?.couponDescription}
+            </p>
             <p className="text-xs text-zinc-500 mt-1">
               {c?.coupon?.validTo
                 ? `유효기간: ${c.coupon.validTo.split("T")[0]} 까지`
