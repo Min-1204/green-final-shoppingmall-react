@@ -474,7 +474,7 @@ const OrderComponent = () => {
                   {["기본 배송지", "신규 배송지"].map((label, idx) => (
                     <button
                       key={label}
-                      className={`px-6 py-2.5 rounded-full text-[13px] font-bold transition-all ${
+                      className={`px-6 py-2.5 rounded-full text-[13px] font-bold cursor-pointer transition-all ${
                         (idx === 0 && addressName === "집") ||
                         (idx === 1 && addressName !== "집")
                           ? "bg-[#9bcafc] text-white shadow-md shadow-blue-100"
@@ -524,8 +524,7 @@ const OrderComponent = () => {
                     />
                     <label
                       htmlFor="sameAsOrderer"
-                      className="text-[13px] text-[#7da0ca] font-medium cursor-
-                      pointer"
+                      className="text-[13px] text-[#7da0ca] font-medium cursor-pointer"
                     >
                       주문자 정보와 동일
                     </label>
@@ -556,7 +555,7 @@ const OrderComponent = () => {
                       readOnly
                     />
                     <button
-                      className="px-6 py-3.5 bg-[#ebf4ff] text-[#4a89d7] rounded-[12px] text-[13px] font-bold
+                      className="px-6 py-3.5 bg-[#ebf4ff] text-[#4a89d7] rounded-[12px] text-[13px] font-bold cursor-pointer
                       hover:bg-[#d9e9ff] transition-colors border border-[#d3e5ff]"
                       onClick={() => execDaumPostcode()}
                     >
@@ -679,7 +678,7 @@ const OrderComponent = () => {
                           ? setSelectedCoupon(null)
                           : setShowCouponModal(true)
                       }
-                      className={`px-5 py-2 rounded-full text-[13px] font-bold transition-all ${
+                      className={`px-5 py-2 rounded-full text-[13px] font-bold transition-all cursor-pointer ${
                         selectedCoupon
                           ? "bg-white text-[#ff8080] border border-[#ffdada]"
                           : "bg-[#4a89d7] text-white shadow-md shadow-blue-100"
@@ -743,7 +742,7 @@ const OrderComponent = () => {
                     </span>
                   </div>
                   <button
-                    className="ml-auto px-4 py-2 bg-white border border-[#c2dfff] text-[#4a89d7] text-[12px] font-bold rounded-lg hover:bg-[#ebf4ff]"
+                    className="ml-auto px-4 py-2 bg-white border border-[#c2dfff] text-[#4a89d7] text-[12px] font-bold rounded-lg hover:bg-[#ebf4ff] cursor-pointer"
                     onClick={() => setUsePoint(pointBalance)}
                   >
                     전액 사용
@@ -769,7 +768,7 @@ const OrderComponent = () => {
                     <button
                       key={m.id}
                       onClick={() => setSelectedPayment(m.id)}
-                      className={`px-4 py-4 rounded-[15px] text-[14px] font-bold border-2 transition-all ${
+                      className={`px-4 py-4 rounded-[15px] text-[14px] font-bold border-2 transition-all cursor-pointer ${
                         selectedPayment === m.id
                           ? "bg-[#ebf4ff] border-[#9bcafc] text-[#4a89d7]"
                           : "bg-white border-[#f0f7ff] text-[#8ba4c7] hover:border-[#e1efff]"
@@ -935,7 +934,7 @@ const OrderComponent = () => {
                 </div>
 
                 <button
-                  className={`w-full py-5 rounded-[18px] text-[17px] font-bold transition-all shadow-lg ${
+                  className={`w-full py-5 rounded-[18px] text-[17px] font-bold transition-all shadow-lg cursor-pointer ${
                     agreePurchase && agreePersonal && agreeDelegate
                       ? "bg-[#4a89d7] text-white hover:bg-[#3d76bc] shadow-blue-100"
                       : "bg-[#e1efff] text-[#8ba4c7] cursor-not-allowed shadow-none"
