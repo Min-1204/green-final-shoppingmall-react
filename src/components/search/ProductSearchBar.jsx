@@ -9,6 +9,7 @@ import {
   searchKeywordAdd,
 } from "../../api/search/searchApi";
 import { useSelector } from "react-redux";
+import { Eraser, X, XCircle } from "lucide-react";
 
 const ProductSearchBar = memo(() => {
   const [searchText, setSearchText] = useState(""); //검색 입력값
@@ -181,10 +182,10 @@ const ProductSearchBar = memo(() => {
           {searchText && (
             <button
               type="button"
-              className="w-8 h-8 flex items-center justify-center text-pink-300 hover:text-pink-500 transition-colors"
+              className="w-8 h-8 flex items-center justify-center cursor-pointer text-gray-400 hover:text-gray-700"
               onClick={clearSearch}
             >
-              <span className="text-lg">✕</span>
+              <X size={17} strokeWidth={1.5} />
             </button>
           )}
 
