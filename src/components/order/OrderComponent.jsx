@@ -10,6 +10,8 @@ import {
 import { getActivePoints } from "../../api/point/pointApi";
 import CouponModal from "./CouponModal";
 import { getUserProfileThunk } from "../../redux/slices/features/user/authSlice";
+import useCustomCart from "../../hooks/useCustomCart";
+
 
 // Helper function to format price with commas and '원'
 const formatPrice = (price) => {
@@ -40,8 +42,10 @@ const OrderComponent = () => {
   const { user, profile } = useSelector((state) => state.authSlice);
   const dispatch = useDispatch();
 
-  console.log("user", user);
-  console.log("profile", profile);
+  // console.log("user", user);
+  // console.log("profile", profile);
+
+  const {removeAll} = useCustomCart();
 
   const [cartItems, setCartItems] = useState(
     passedItems.length > 0 ? passedItems : []
@@ -299,6 +303,7 @@ const OrderComponent = () => {
             navigate("/order/complete", {
               state: { orderId: resultOrderId },
             });
+            removeAll(user.id);
           }
         }
       );
