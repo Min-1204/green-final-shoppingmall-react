@@ -197,7 +197,10 @@ const ReviewListComponent = ({ productId }) => {
 
                   <div className="flex items-center justify-end space-x-4 text-sm text-gray-500 pt-3">
                     {/* 리뷰 좋아요 컴포넌트 */}
-                    <ReviewLike reviewId={review.id} />
+                    <ReviewLike
+                      reviewId={review.id}
+                      reviewUserId={review.userId}
+                    />
 
                     {/* 댓글 보기 버튼 + 개수 */}
                     <div
