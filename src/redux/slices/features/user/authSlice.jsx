@@ -107,6 +107,8 @@ const initialState = {
   profile: null,
   error: null, // 에러 상태
   loading: false, // 로딩 상태
+  // 초기 인증 확인이 완료되었는지 여부
+  isInitialized: false,
 };
 
 // prettier-ignore
@@ -148,6 +150,7 @@ export const authSlice = createSlice({// Slice 생성
       })
 
       .addCase(loginAsyncThunk.fulfilled, (state, action) => { // fulfiled 처리 로직
+        state.isInitialized = true; // 로그인시 초기화 완료
         state.loading = false; // 로딩상태 false
         state.isLoggedIn = true; // 로그인상태 true
         state.error = null; // 에러상태 null
@@ -171,6 +174,7 @@ export const authSlice = createSlice({// Slice 생성
         console.log("Thunk 로그아웃 요청 진행 중")
       })
       .addCase(logoutAsyncThunk.fulfilled, (state, action) => {
+        state.isInitialized = true;
         state.user = null;
         state.profile = null;
         state.isLoggedIn = false;
@@ -192,11 +196,13 @@ export const authSlice = createSlice({// Slice 생성
         state.error = null;
       })
       .addCase(getCurrentUserThunk.fulfilled, (state, action) => {
+        state.isInitialized = true;
         state.loading = false;
         state.isLoggedIn = true;
         state.user = action.payload;
       })
       .addCase(getCurrentUserThunk.rejected, (state, action) => {
+        state.isInitialized = true;
         if(action.payload === null) {
           state.isLoggedIn = false;
           state.user = null;
