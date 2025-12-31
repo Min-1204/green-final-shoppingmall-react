@@ -45,7 +45,7 @@ const ProductSortBar = ({ sort }) => {
             onClick={() => updateSortParam(opt.eng)}
             className={`
               px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap 
-              transform hover:scale-[1.02]
+              transform cursor-pointer hover:scale-[1.02]
               ${
                 sort === opt.eng
                   ? "bg-gray-600 text-white shadow-md shadow-gray-300/50"

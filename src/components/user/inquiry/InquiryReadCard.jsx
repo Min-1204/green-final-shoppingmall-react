@@ -65,7 +65,7 @@ const InquiryReadCard = ({  inquiry,  isOpened,  onToggle,  onStartEdit,  onDele
                   onClick={(e) => {
                     onStartEdit();
                   }}
-                  className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm hover:bg-slate-50"
+                  className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer"
                 >
                   수정
                 </button>
@@ -74,7 +74,7 @@ const InquiryReadCard = ({  inquiry,  isOpened,  onToggle,  onStartEdit,  onDele
                 onClick={(e) => {
                   onDelete();
                 }}
-                className="px-4 py-2 bg-white border border-red-200 text-red-600 rounded-lg text-sm hover:bg-red-50"
+                className="px-4 py-2 bg-white border border-red-200 text-red-600 rounded-lg text-sm hover:bg-red-50 cursor-pointer"
               >
                 삭제
               </button>

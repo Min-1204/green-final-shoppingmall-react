@@ -204,7 +204,7 @@ const InquiriesList = () => {
           </div>
           <button
             onClick={newInquiry}
-            className="px-6 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 flex items-center gap-2"
+            className="px-6 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 flex items-center gap-2 cursor-pointer"
           >
             <svg
               className="w-5 h-5"
@@ -249,7 +249,7 @@ const InquiriesList = () => {
             </p>
             <button
               onClick={newInquiry}
-              className="px-6 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-all"
+              className="px-6 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-all cursor-pointer"
             >
               첫 문의 작성하기
             </button>
@@ -287,7 +287,7 @@ const InquiriesList = () => {
         {inquiryList.length > 0 && (
           <div className="flex justify-center mt-10 gap-2">
             {/* 이전 페이지 버튼 */}
-            <button className="w-10 h-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center">
+            <button className="w-10 h-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center cursor-pointer">
               <svg
                 className="w-5 h-5 text-slate-600"
                 fill="none"
@@ -302,16 +302,16 @@ const InquiriesList = () => {
                 />
               </svg>
             </button>
-            <button className="w-10 h-10 rounded-lg bg-slate-900 text-white font-semibold shadow-lg">
+            <button className="w-10 h-10 rounded-lg bg-slate-900 text-white font-semibold shadow-lg cursor-pointer">
               1
             </button>
-            <button className="w-10 h-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-all">
+            <button className="w-10 h-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-all cursor-pointer">
               2
             </button>
-            <button className="w-10 h-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-all">
+            <button className="w-10 h-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-all cursor-pointer">
               3
             </button>
-            <button className="w-10 h-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-all flex items-center justify-center">
+            <button className="w-10 h-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer">
               <svg
                 className="w-5 h-5 text-slate-600"
                 fill="none"

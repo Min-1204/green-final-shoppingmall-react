@@ -126,7 +126,7 @@ const CartComponent = () => {
           </p>
           <button
             onClick={() => navigate("/")}
-            className="px-8 py-3 bg-blue-400 text-white rounded-full hover:bg-blue-500 transition-all shadow-md shadow-blue-100"
+            className="px-8 py-3 bg-blue-400 text-white rounded-full hover:bg-blue-500 transition-all shadow-md shadow-blue-100 cursor-pointer"
           >
             쇼핑하러 가기
           </button>
@@ -243,7 +243,7 @@ const CartComponent = () => {
                   <td className="text-center p-5">
                     <div className="inline-flex items-center bg-white border border-blue-100 rounded-full p-1 shadow-sm">
                       <button
-                        className="w-8 h-8 rounded-full hover:bg-blue-50 flex items-center justify-center transition-colors text-blue-300"
+                        className="w-8 h-8 rounded-full hover:bg-blue-50 flex items-center justify-center transition-colors text-blue-300 cursor-pointer"
                         onClick={() => handleChangeQty(item, -1)}
                       >
                         <Minus className="w-3.5 h-3.5" />
@@ -252,7 +252,7 @@ const CartComponent = () => {
                         {item.quantity}
                       </span>
                       <button
-                        className="w-8 h-8 rounded-full hover:bg-blue-50 flex items-center justify-center transition-colors text-blue-300"
+                        className="w-8 h-8 rounded-full hover:bg-blue-50 flex items-center justify-center transition-colors text-blue-300 cursor-pointer"
                         onClick={() => handleChangeQty(item, +1)}
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -267,7 +267,7 @@ const CartComponent = () => {
 
                   <td className="text-center p-5">
                     <button
-                      className="p-2 text-slate-300 hover:text-rose-400 hover:bg-rose-50 rounded-xl transition-all"
+                      className="p-2 text-slate-300 hover:text-rose-400 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
                       onClick={() => removeItem(item.id)}
                     >
                       <Trash2 className="w-5 h-5" />
@@ -309,14 +309,14 @@ const CartComponent = () => {
 
         <div className="flex flex-col sm:flex-row gap-4">
           <button
-            className="flex-1 py-4 bg-white border-2 border-blue-200 rounded-2xl text-blue-400 font-bold hover:bg-blue-50 transition-all shadow-sm"
+            className="flex-1 py-4 bg-white border-2 border-blue-200 rounded-2xl text-blue-400 font-bold hover:bg-blue-50 transition-all shadow-sm cursor-pointer"
             onClick={handleOrderSelected}
           >
             선택상품 주문하기
           </button>
 
           <button
-            className="flex-1 py-4 bg-gradient-to-r from-blue-300 to-blue-400 text-white rounded-2xl font-bold hover:from-blue-400 hover:to-blue-500 transition-all shadow-md shadow-blue-200 flex items-center justify-center gap-2"
+            className="flex-1 py-4 bg-gradient-to-r from-blue-300 to-blue-400 text-white rounded-2xl font-bold hover:from-blue-400 hover:to-blue-500 transition-all shadow-md shadow-blue-200 flex items-center justify-center gap-2 cursor-pointer"
             onClick={handleOrderAll}
           >
             <Sparkles className="w-5 h-5 text-white/80" />

@@ -194,10 +194,10 @@ export default function CouponSearch() {
 
           {/* Action Buttons */}
           <div className="flex justify-center gap-2">
-            <button className="px-8 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+            <button className="px-8 py-2 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer">
               검색
             </button>
-            <button className="px-8 py-2 border rounded hover:bg-gray-50">
+            <button className="px-8 py-2 border rounded hover:bg-gray-50 cursor-pointer">
               초기화
             </button>
           </div>
@@ -270,13 +270,13 @@ export default function CouponSearch() {
               <tr key={coupon.id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-3 text-center">
                   <div className="flex gap-1 justify-center">
-                    <button className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700">
+                    <button className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 cursor-pointer">
                       수정
                     </button>
-                    <button className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700">
+                    <button className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 cursor-pointer">
                       삭제
                     </button>
-                    <button className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700">
+                    <button className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 cursor-pointer">
                       발급
                     </button>
                   </div>
@@ -326,17 +326,19 @@ export default function CouponSearch() {
 
       {/* Pagination */}
       <div className="flex justify-center items-center gap-2 p-6">
-        <button className="p-2 border rounded hover:bg-gray-50">
+        <button className="p-2 border rounded hover:bg-gray-50 cursor-pointer">
           <ChevronsLeft size={16} />
         </button>
-        <button className="p-2 border rounded hover:bg-gray-50">
+        <button className="p-2 border rounded hover:bg-gray-50 cursor-pointer">
           <ChevronLeft size={16} />
         </button>
-        <button className="px-3 py-1 bg-green-500 text-white rounded">1</button>
-        <button className="p-2 border rounded hover:bg-gray-50">
+        <button className="px-3 py-1 bg-green-500 text-white rounded cursor-pointer">
+          1
+        </button>
+        <button className="p-2 border rounded hover:bg-gray-50 cursor-pointer">
           <ChevronRight size={16} />
         </button>
-        <button className="p-2 border rounded hover:bg-gray-50">
+        <button className="p-2 border rounded hover:bg-gray-50 cursor-pointer">
           <ChevronsRight size={16} />
         </button>
       </div>

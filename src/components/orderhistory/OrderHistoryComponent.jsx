@@ -351,7 +351,7 @@ export default function OrderHistoryComponent() {
               className={`px-5 py-2 text-sm transition-all ${
                 selectedPeriod === `${m}개월`
                   ? "bg-black text-white"
-                  : "bg-white text-gray-700 border border-gray-400 hover:border-gray-500"
+                  : "bg-white text-gray-700 border border-gray-400 hover:border-gray-500 cursor-pointer"
               }`}
             >
               {`${m}개월`}
@@ -453,7 +453,7 @@ export default function OrderHistoryComponent() {
 
           {/* 조회 버튼 */}
           <button
-            className="ml-4 px-6 py-2 bg-black text-white text-sm hover:bg-gray-800 transition-colors"
+            className="ml-4 px-6 py-2 bg-black text-white text-sm hover:bg-gray-800 transition-colors cursor-pointer"
             onClick={() => handleSearch()}
           >
             조회
@@ -510,7 +510,7 @@ export default function OrderHistoryComponent() {
                           {orderStatusMap[item.orderProductStatus] ===
                             "배송완료" && (
                             <button
-                              className="text-xs px-3 py-1 border bg-black text-white hover:bg-gray-800 transition-colors w-full"
+                              className="text-xs px-3 py-1 border bg-black text-white hover:bg-gray-800 transition-colors w-full cursor-pointer"
                               onClick={() => {
                                 setConfirmPurchaseModal(true);
                                 setSelectedOrder(order);
@@ -563,7 +563,7 @@ export default function OrderHistoryComponent() {
                             orderStatusMap[item.orderProductStatus] ===
                               "배송완료") && (
                             <button
-                              className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors"
+                              className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
                               onClick={() => {
                                 setDeliveryModal(!deliveryModal);
                                 setSelectedItem(item);
@@ -575,7 +575,7 @@ export default function OrderHistoryComponent() {
                           {orderStatusMap[item.orderProductStatus] ===
                             "구매확정" && (
                             <button
-                              className="text-xs px-3 py-1 bg-black text-white hover:bg-gray-800 transition-colors"
+                              className="text-xs px-3 py-1 bg-black text-white hover:bg-gray-800 transition-colors cursor-pointer"
                               onClick={() => {
                                 setSelectedProduct({
                                   ...item,
@@ -596,7 +596,7 @@ export default function OrderHistoryComponent() {
                             orderStatusMap[item.orderProductStatus] ===
                               "결제완료") && (
                             <button
-                              className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full"
+                              className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full cursor-pointer"
                               onClick={() => {
                                 setCancleModal(!cancleModal);
                                 setSelectedItem(item);
@@ -610,7 +610,7 @@ export default function OrderHistoryComponent() {
                           {orderStatusMap[item.orderProductStatus] ===
                             "배송완료" && (
                             <button
-                              className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full"
+                              className="text-xs px-3 py-1 border border-gray-300 hover:bg-gray-50 transition-colors w-full cursor-pointer"
                               onClick={() => {
                                 setReturnModal(true);
                                 setSelectedItem(item);

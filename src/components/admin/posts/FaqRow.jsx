@@ -59,13 +59,13 @@ export default function FaqRow({ faq, onEdit, onDelete }) {
         <div className="flex justify-center gap-2">
           <button
             onClick={() => onEdit(faq)}
-            className="px-3 py-1 text-xs text-blue-600 font-bold hover:underline"
+            className="px-3 py-1 text-xs text-blue-600 font-bold hover:underline cursor-pointer"
           >
             수정
           </button>
           <button
             onClick={() => onDelete(faq.id)}
-            className="px-3 py-1 text-xs text-red-600 font-bold hover:underline"
+            className="px-3 py-1 text-xs text-red-600 font-bold hover:underline cursor-pointer"
           >
             삭제
           </button>

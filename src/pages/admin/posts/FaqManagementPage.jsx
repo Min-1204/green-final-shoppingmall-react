@@ -143,7 +143,7 @@ export default function FaqManagementPage() {
         </div>
         <button
           onClick={handleAddNew}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md font-bold text-sm hover:bg-blue-700"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md font-bold text-sm hover:bg-blue-700 cursor-pointer"
         >
           + FAQ 추가
         </button>
@@ -152,7 +152,7 @@ export default function FaqManagementPage() {
       <div className="flex gap-6 border-b mb-6 overflow-x-auto">
         <button
           onClick={() => setSelectedCategory("전체")}
-          className={`pb-3 text-sm whitespace-nowrap ${
+          className={`pb-3 text-sm whitespace-nowrap cursor-pointer ${
             selectedCategory === "전체"
               ? "border-b-2 border-blue-600 text-blue-600 font-bold"
               : "text-gray-400 hover:text-gray-600"
@@ -164,7 +164,7 @@ export default function FaqManagementPage() {
           <button
             key={type.value}
             onClick={() => setSelectedCategory(type.label)}
-            className={`pb-3 text-sm whitespace-nowrap ${
+            className={`pb-3 text-sm whitespace-nowrap cursor-pointer ${
               selectedCategory === type.label
                 ? "border-b-2 border-blue-600 text-blue-600 font-bold"
                 : "text-gray-400 hover:text-gray-600"

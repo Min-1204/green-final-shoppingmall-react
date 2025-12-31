@@ -79,13 +79,13 @@ export default function HelpInquiryForm() {
         <div className="mt-6 flex gap-3">
           <button
             onClick={() => navigate("/helpcenter")}
-            className="px-6 py-2 rounded bg-slate-900 text-white text-sm hover:bg-slate-800"
+            className="px-6 py-2 rounded bg-slate-900 text-white text-sm hover:bg-slate-800 cursor-pointer"
           >
             고객센터 홈으로
           </button>
           <button
             onClick={() => navigate("/mypage/inquiries")}
-            className="px-6 py-2 rounded border border-slate-300 text-sm hover:bg-slate-50"
+            className="px-6 py-2 rounded border border-slate-300 text-sm hover:bg-slate-50 cursor-pointer"
           >
             1:1 문의내역으로 이동
           </button>
@@ -240,7 +240,7 @@ export default function HelpInquiryForm() {
           <button
             type="button"
             onClick={() => navigate("/mypage/inquiries")}
-            className="px-6 py-2 rounded-sm border border-slate-200 text-sm text-slate-700 hover:bg-slate-50"
+            className="px-6 py-2 rounded-sm border border-slate-200 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer"
             disabled={submitted}
           >
             목록으로
@@ -248,7 +248,7 @@ export default function HelpInquiryForm() {
           <button
             type="submit"
             disabled={submitted}
-            className="px-6 py-2 rounded-sm bg-slate-900 text-white text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 rounded-sm bg-slate-900 text-white text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {submitted ? "등록 중..." : "문의 등록"}
           </button>

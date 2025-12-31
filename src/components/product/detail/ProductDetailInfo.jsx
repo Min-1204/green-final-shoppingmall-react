@@ -36,7 +36,7 @@ export default function ProductDetailInfo({ detailImages }) {
           <div className="absolute bottom-8 left-0 right-0 flex justify-center z-20">
             <button
               onClick={() => setIsExpanded(true)}
-              className="px-32 py-4 bg-white border-2 border-gray-900 rounded-lg text-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-all shadow-lg flex items-center justify-center gap-2"
+              className="px-32 py-4 bg-white border-2 border-gray-900 rounded-lg text-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>더보기</span>
               <ChevronDown className="w-5 h-5" />
@@ -63,7 +63,7 @@ export default function ProductDetailInfo({ detailImages }) {
           <div className="mt-12 flex justify-center">
             <button
               onClick={() => setIsExpanded(false)}
-              className="px-32 py-4 bg-white border-2 border-gray-900 rounded-lg text-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-all shadow-lg flex items-center justify-center gap-2"
+              className="px-32 py-4 bg-white border-2 border-gray-900 rounded-lg text-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>접기</span>
               <ChevronUp className="w-5 h-5" />

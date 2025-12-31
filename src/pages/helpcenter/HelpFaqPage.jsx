@@ -122,7 +122,7 @@ export default function HelpFaqPage() {
                     {faq.title}
                   </span>
                 </button>
-                <div className="flex items-center gap-2 ml-4">
+                <div className="flex items-center gap-2 ml-4 cursor-pointer">
                   <span
                     className={`text-xl text-gray-400 transition-transform ${
                       active === faq.id ? "rotate-180" : ""

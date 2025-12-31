@@ -19,13 +19,13 @@ export const CouponConfirmModal = ({ onClose, onConfirm, coupon }) => {
         <div className="flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors duration-200"
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
           >
             취소
           </button>
           <button
             onClick={() => onConfirm(coupon)}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-red-300 transition-colors duration-200"
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-red-300 transition-colors duration-200 cursor-pointer"
           >
             삭제
           </button>

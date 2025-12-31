@@ -210,19 +210,19 @@ export default function CouponSearchList({
       </div>
 
       <div className="flex justify-center items-center gap-2 py-6 border-t border-gray-200">
-        <button className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition">
+        <button className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition cursor-pointer">
           <ChevronsLeft size={16} className="text-gray-600" />
         </button>
-        <button className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition">
+        <button className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition cursor-pointer">
           <ChevronLeft size={16} className="text-gray-600" />
         </button>
-        <button className="px-3 py-1 bg-blue-600 text-white rounded font-semibold shadow-sm">
+        <button className="px-3 py-1 bg-blue-600 text-white rounded font-semibold shadow-sm cursor-pointer">
           {currentPage}
         </button>
-        <button className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition">
+        <button className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition cursor-pointer">
           <ChevronRight size={16} className="text-gray-600" />
         </button>
-        <button className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition">
+        <button className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition cursor-pointer">
           <ChevronsRight size={16} className="text-gray-600" />
         </button>
       </div>

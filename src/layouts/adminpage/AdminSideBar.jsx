@@ -97,7 +97,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
               <ul className="bg-[#22385F]  ">
                 <li>
                   <button
-                    className={`${baseSubMenuClass} ${
+                    className={`cursor-pointer ${baseSubMenuClass} ${
                       activeTab === "product-search" ? activeSubMenuClass : ""
                     }`}
                     onClick={(e) =>
@@ -109,7 +109,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
                 </li>
                 <li>
                   <button
-                    className={`${baseSubMenuClass} ${
+                    className={`cursor-pointer ${baseSubMenuClass} ${
                       activeTab === "product-add" ? activeSubMenuClass : ""
                     }`}
                     onClick={(e) =>
@@ -160,7 +160,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
               <ul className="bg-[#22385F]  ">
                 <li>
                   <button
-                    className={`${baseSubMenuClass} ${
+                    className={`cursor-pointer ${baseSubMenuClass} ${
                       activeTab === "order-history" ? activeSubMenuClass : ""
                     }`}
                     onClick={(e) =>
@@ -197,7 +197,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
               <ul className="bg-[#22385F]  ">
                 <li>
                   <button
-                    className={`${baseSubMenuClass} ${
+                    className={`cursor-pointer ${baseSubMenuClass} ${
                       activeTab === "user-search" ? activeSubMenuClass : ""
                     }`}
                     onClick={(e) =>
@@ -230,7 +230,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
               <ul className="bg-[#22385F]  ">
                 <li>
                   <button
-                    className={`${baseSubMenuClass} ${
+                    className={`cursor-pointer ${baseSubMenuClass} ${
                       activeTab === "coupon-search" ? activeSubMenuClass : ""
                     }`}
                     onClick={(e) =>
@@ -246,7 +246,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
                 </li>
                 <li>
                   <button
-                    className={`${baseSubMenuClass} ${
+                    className={`cursor-pointer ${baseSubMenuClass} ${
                       activeTab === "coupon-register" ? activeSubMenuClass : ""
                     }`}
                     onClick={(e) =>
@@ -283,7 +283,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
               <ul className="bg-[#22385F]">
                 <li>
                   <button
-                    className={`${baseSubMenuClass} ${
+                    className={`cursor-pointer ${baseSubMenuClass} ${
                       activeTab === "faq-management" ? activeSubMenuClass : ""
                     }`}
                     onClick={(e) =>
@@ -299,7 +299,7 @@ const AdminSideBar = ({ activeTab, onTabClick }) => {
                 </li>
                 <li>
                   <button
-                    className={`${baseSubMenuClass} ${
+                    className={`cursor-pointer ${baseSubMenuClass} ${
                       activeTab === "inquiry-management"
                         ? activeSubMenuClass
                         : ""

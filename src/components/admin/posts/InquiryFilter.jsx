@@ -28,7 +28,7 @@ export default function InquiryFilter({
               <button
                 key={key}
                 onClick={() => setSelectedStatus(key)}
-                className={`px-4 py-1.5 text-sm rounded-md transition-all ${
+                className={`px-4 py-1.5 text-sm rounded-md transition-all cursor-pointer ${
                   selectedStatus === key
                     ? "bg-white text-blue-600 shadow-sm font-bold"
                     : "text-gray-500"
@@ -48,7 +48,7 @@ export default function InquiryFilter({
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
           >
             <option value="전체">전체 유형</option>
             {Object.values(INQUIRY_TYPES).map((type) => (
@@ -82,7 +82,7 @@ export default function InquiryFilter({
             />
             <button
               onClick={onResetDate}
-              className="ml-2 text-xs text-gray-500 hover:underline"
+              className="ml-2 text-xs text-gray-500 hover:underline cursor-pointer"
             >
               초기화
             </button>

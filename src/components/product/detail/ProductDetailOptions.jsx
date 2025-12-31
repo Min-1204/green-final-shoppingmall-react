@@ -112,7 +112,7 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex justify-between items-center px-5 py-4 bg-white border border-gray-300 rounded-lg hover:border-gray-400 transition-all focus:outline-none focus:ring-2 focus:ring-gray-200"
+          className="w-full flex justify-between items-center px-5 py-4 bg-white border border-gray-300 rounded-lg hover:border-gray-400 transition-all focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer"
         >
           <span className="text-gray-700 font-medium">옵션을 선택해주세요</span>
           <ChevronDown
@@ -191,7 +191,7 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
 
                   {option.currentStock === 0 && !auth.isLoggedIn && (
                     <button
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-600 bg-white border border-green-300 rounded-md hover:bg-green-50 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-600 bg-white border border-green-300 rounded-md hover:bg-green-50 transition-colors cursor-pointer"
                       onClick={(e) => applyRestockMessage(e, option.id)}
                     >
                       <Bell className="w-3.5 h-3.5" />
@@ -203,7 +203,7 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
                     auth.isLoggedIn &&
                     optionNotiStatus[option.id] !== "WAITING" && (
                       <button
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-600 bg-white border border-green-300 rounded-md hover:bg-green-50 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-600 bg-white border border-green-300 rounded-md hover:bg-green-50 transition-colors cursor-pointer"
                         onClick={(e) => applyRestockMessage(e, option.id)}
                       >
                         <Bell className="w-3.5 h-3.5" />
@@ -215,7 +215,7 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
                     auth.isLoggedIn &&
                     optionNotiStatus[option.id] === "WAITING" && (
                       <button
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 bg-white border border-orange-300 rounded-md hover:bg-orange-50 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 bg-white border border-orange-300 rounded-md hover:bg-orange-50 transition-colors cursor-pointer"
                         onClick={(e) => cancelRestockMessage(e, option.id)}
                       >
                         <Bell className="w-3.5 h-3.5" />
@@ -259,16 +259,16 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
               <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
                 <button
                   onClick={() => handleQtyChange(option, -1)}
-                  className="w-9 h-9 flex justify-center items-center text-gray-700 hover:bg-gray-100 transition-colors font-medium"
+                  className="w-9 h-9 flex justify-center items-center text-gray-700 hover:bg-gray-100 transition-colors font-medium cursor-pointer"
                 >
                   -
                 </button>
-                <span className="w-11 h-9 flex justify-center items-center text-sm font-semibold text-gray-900 border-x border-gray-300">
+                <span className="w-11 h-9 flex justify-center items-center text-sm font-semibold text-gray-900 border-x border-gray-300 cursor-pointer">
                   {option.qty}
                 </span>
                 <button
                   onClick={() => handleQtyChange(option, +1)}
-                  className="w-9 h-9 flex justify-center items-center text-gray-700 hover:bg-gray-100 transition-colors font-medium"
+                  className="w-9 h-9 flex justify-center items-center text-gray-700 hover:bg-gray-100 transition-colors font-medium cursor-pointer"
                 >
                   +
                 </button>
@@ -284,7 +284,7 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
               {/* 삭제 버튼 */}
               <button
                 onClick={() => handleRemoveOption(option)}
-                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-all flex-shrink-0"
+                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-all flex-shrink-0 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>

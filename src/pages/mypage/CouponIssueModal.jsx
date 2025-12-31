@@ -93,7 +93,7 @@ export default function CouponIssueModal({ isOpen, onClose, onRegister }) {
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-3 border border-zinc-300 text-zinc-700 rounded-lg hover:bg-zinc-50 transition-colors"
+              className="flex-1 px-4 py-3 border border-zinc-300 text-zinc-700 rounded-lg hover:bg-zinc-50 transition-colors cursor-pointer"
               disabled={isLoading}
             >
               취소
@@ -101,7 +101,7 @@ export default function CouponIssueModal({ isOpen, onClose, onRegister }) {
             <button
               type="button"
               onClick={handleSubmit}
-              className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-zinc-300 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-zinc-300 disabled:cursor-not-allowed cursor-pointer"
               disabled={isLoading}
             >
               {isLoading ? "등록 중..." : "등록하기"}

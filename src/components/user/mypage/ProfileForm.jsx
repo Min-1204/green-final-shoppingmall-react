@@ -23,7 +23,7 @@ export default function ProfileForm() {
     addressDetail: profileData?.addressDetail || "",
     smsAgreement: profileData?.smsAgreement || false,
     emailAgreement: profileData?.emailAgreement || false,
-    password: ""
+    password: "",
   });
 
   // prettier-ignore
@@ -49,7 +49,7 @@ export default function ProfileForm() {
     const { name, value, type, checked } = e.target;
     setModifyForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -69,7 +69,7 @@ export default function ProfileForm() {
     const finalModifyData = {
       ...modifyForm,
       loginId: user.loginId,
-      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber)
+      phoneNumber: unformatPhoneNumber(modifyForm.phoneNumber),
     };
 
     try {
@@ -96,7 +96,7 @@ export default function ProfileForm() {
         ...modifyForm,
         postalCode: data.zonecode,
         address: data.address,
-        addressDetail: ""
+        addressDetail: "",
       });
     });
   };
@@ -164,7 +164,7 @@ export default function ProfileForm() {
           <button
             type="button"
             onClick={handleAddressSearch}
-            className="inline-flex items-center justify-center px-4 h-11 rounded-lg bg-zinc-900 text-white text-sm hover:bg-zinc-800"
+            className="inline-flex items-center justify-center px-4 h-11 rounded-lg bg-zinc-900 text-white text-sm hover:bg-zinc-800 cursor-pointer"
           >
             주소찾기
           </button>
@@ -233,7 +233,7 @@ export default function ProfileForm() {
       <div className="pt-2">
         <button
           type="submit"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 text-white rounded-lg text-sm hover:bg-zinc-800"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 text-white rounded-lg text-sm hover:bg-zinc-800 cursor-pointer"
         >
           저장
         </button>
