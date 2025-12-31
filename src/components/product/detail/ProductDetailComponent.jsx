@@ -15,9 +15,11 @@ export default function ProductDetailComponent() {
   const navigate = useNavigate();
 
   // 장바구니에 담는 기능
-  const { changeCart } = useCustomCart();
+  const { changeCart, refreshCart } = useCustomCart();
   // user의 id가 필요해서 redux에서 user 정보 가져옴
   const { user } = useSelector((state) => state.authSlice);
+  const cartItems = useSelector((state) => state.cartSlice);
+  console.log("cartItems", cartItems);
   const { id } = useParams();
   const [product, setProduct] = useState({});
 
@@ -29,6 +31,13 @@ export default function ProductDetailComponent() {
   // 선택된 옵션
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect(() => {
+    // console.log("여기 호출됨");
+    if (user?.id) {
+      refreshCart(user.id);
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -137,17 +146,42 @@ export default function ProductDetailComponent() {
     });
   };
 
+  const checkStockAvailable = (option, addQty, stock) => {
+    const existingItem = cartItems.find(
+      (item) => item.productOptionId === option.id
+    );
+    const currentInCartQty = existingItem ? existingItem.quantity : 0;
+
+    if (currentInCartQty + addQty > stock) {
+      alert(
+        `이미 장바구니에 ${option.optionName} 옵션 상품이 ${currentInCartQty}개가 담겨 있습니다.\n` +
+          `추가하면 재고(${stock}개)를 초과하여 더 담을 수 없습니다.`
+      );
+      return false;
+    }
+    return true;
+  };
+
   const handleAddCartOption = (selectedItems) => {
     if (!checkLogin()) return;
-    if (
-      product.options &&
-      product.options.length > 0 &&
-      selectedItems.length === 0
-    )
+    if (product.options?.length > 0 && selectedItems.length === 0) {
       return alert("옵션을 선택해주세요.");
+    }
 
-    // console.log("selectedItems", selectedItems);
+    console.log("selectedItems", selectedItems);
     // console.log("user", user);
+
+    // 모든 선택 항목이 재고가 충분한지 조사
+    const isAllAvailable = selectedItems.every((option) => {
+      const originalOption = product.options.find((o) => o.id === option.id);
+      return checkStockAvailable(
+        option,
+        option.qty,
+        originalOption.currentStock
+      );
+    });
+
+    if (!isAllAvailable) return; // 하나라도 재고 부족시 중단
 
     selectedItems.forEach((option) => {
       const cartProductDTO = {
@@ -167,10 +201,19 @@ export default function ProductDetailComponent() {
   const handleAddCart = (product) => {
     if (!checkLogin()) return;
     // console.log("product", product);
+
+    const targetOption = product?.options[0];
+    if (!targetOption) return;
+
+    // 재고 체크 (현재 상세페이지의 수량 qty와 장바구니 수량 합산)
+    if (!checkStockAvailable(targetOption, qty, targetOption.currentStock)) {
+      return;
+    }
+
     const cartProductDTO = {
       userId: user?.id,
       id: null,
-      productOptionId: product?.options[0]?.id,
+      productOptionId: targetOption.id,
       quantity: qty,
     };
     // console.log("cartProductDTO", cartProductDTO);

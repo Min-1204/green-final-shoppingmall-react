@@ -55,14 +55,27 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
   };
 
   const handleQtyChange = (option, delta) => {
-    // console.log("selectedItems", selectedItems);
+    // console.log("option", option);
     setSelectedItems((prev) => {
       // console.log("prev", prev);
       return prev.map((item) => {
         // console.log("item", item);
-        return item.id === option.id
-          ? { ...item, qty: Math.max(1, item.qty + delta) }
-          : item;
+        if (item.id === option.id) {
+          const newQty = item.qty + delta;
+          if (delta < 0 && newQty < 1) {
+            return item;
+          }
+          if (delta > 0 && newQty > item.currentStock) {
+            alert(
+              `죄송합니다. 현재 해당 옵션의 남은 재고는 ${item.currentStock}개입니다.`
+            );
+            return item;
+          }
+
+          return { ...item, qty: newQty };
+        }
+
+        return item;
       });
     });
   };

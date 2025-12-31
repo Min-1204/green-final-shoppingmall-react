@@ -1,9 +1,23 @@
 import React from "react";
 
 const ProductDetailQuantity = ({ qty, setQty, option }) => {
+  // console.log("option", option);
   const handleChangeQty = (delta) => {
     // 로직 유지
-    setQty((prev) => Math.max(1, prev + delta));
+    setQty((prev) => {
+      const nextQty = prev + delta;
+
+      // 1. 최소 수량 체크 (1 미만 방지)
+      if (nextQty < 1) return 1;
+
+      // 2. 재고 수량 체크
+      if (nextQty > option.currentStock) {
+        alert(`죄송합니다. 현재 남은 재고는 ${option.currentStock}개입니다.`);
+        return prev;
+      }
+
+      return nextQty;
+    });
   };
 
   return (
