@@ -17,6 +17,7 @@ import ConfirmPurchaseCompleteModal from "./ConfirmPurchaseCompleteModal";
 import DeliveryModal from "./DeliveryModal";
 import ReturnModal from "./ReturnModal";
 import { refundPayment } from "../../api/payment/paymentApi";
+import dayjs from "dayjs";
 
 export default function OrderHistoryComponent() {
   const statusClass = (s) =>
@@ -79,23 +80,34 @@ export default function OrderHistoryComponent() {
   const [hasSearched, setHasSearched] = useState(false);
 
   // 오늘 날짜 가져오기
-  const today = new Date();
+  const today = dayjs();
+  const oneMonthAgo = dayjs().subtract(1, "month");
 
-  //오늘 날짜의 연, 월, 일 저장
-  const todayYear = today.getFullYear();
-  // 0부터 시작하므로 +1 해줘야함
-  const todayMonth = today.getMonth() + 1;
-  const todayDay = today.getDate();
+  // //오늘 날짜의 연, 월, 일 저장
+  // const todayYear = today.getFullYear();
+  // // 0부터 시작하므로 +1 해줘야함
+  // const todayMonth = today.getMonth() + 1;
+  // const todayDay = today.getDate();
 
   // 시작 날짜 상태
-  const [startYear, setStartYear] = useState(todayYear);
-  const [startMonth, setStartMonth] = useState(todayMonth - 1);
-  const [startDay, setStartDay] = useState(todayDay);
+  const [startYear, setStartYear] = useState(oneMonthAgo.year());
+  const [startMonth, setStartMonth] = useState(oneMonthAgo.month() + 1);
+  const [startDay, setStartDay] = useState(oneMonthAgo.date());
 
   // 종료 날짜 상태
-  const [endYear, setEndYear] = useState(todayYear);
-  const [endMonth, setEndMonth] = useState(todayMonth);
-  const [endDay, setEndDay] = useState(todayDay);
+  const [endYear, setEndYear] = useState(today.year());
+  const [endMonth, setEndMonth] = useState(today.month() + 1);
+  const [endDay, setEndDay] = useState(today.date());
+
+  const handleSelectPeriod = (month) => {
+    const past = dayjs().subtract(month, "month");
+
+    setStartYear(past.year());
+    setStartMonth(past.month() + 1);
+    setStartDay(past.date());
+
+    setSelectedPeriod(`${month}개월`);
+  };
 
   const { user } = useSelector((state) => state.authSlice);
 
@@ -180,18 +192,18 @@ export default function OrderHistoryComponent() {
     fetchOrderStatusSummary();
   }, [orderList]);
 
-  const handleSelectPeriod = (month) => {
-    const now = new Date();
-    const past = new Date();
+  // const handleSelectPeriod = (month) => {
+  //   const now = new Date();
+  //   const past = new Date();
 
-    past.setMonth(past.getMonth() - month);
+  //   past.setMonth(past.getMonth() - month);
 
-    setStartYear(past.getFullYear());
-    setStartMonth(past.getMonth() + 1);
-    setStartDay(past.getDate());
+  //   setStartYear(past.getFullYear());
+  //   setStartMonth(past.getMonth() + 1);
+  //   setStartDay(past.getDate());
 
-    setSelectedPeriod(`${month}개월`);
-  };
+  //   setSelectedPeriod(`${month}개월`);
+  // };
 
   const handleSearch = async () => {
     const page = 1;
@@ -486,7 +498,11 @@ export default function OrderHistoryComponent() {
                           rowSpan={order.orderProducts.length}
                           className="text-center align-top p-5 border-r border-gray-400 bg-white"
                         >
-                          <div className="text-sm mb-1">{order.orderDate}</div>
+                          <div className="text-sm mb-1">
+                            {order.orderDate[0]}
+                            {String(order.orderDate[1]).padStart(2, "0")}
+                            {String(order.orderDate[2]).padStart(2, "0")}
+                          </div>
                           <div className="text-xs text-gray-400">
                             {order.orderNumber}
                           </div>
