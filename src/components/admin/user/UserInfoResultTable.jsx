@@ -17,6 +17,7 @@ const UserInfoResultTable = ({ users, setUsers, onSort }) => {
     "선택",
     "번호",
     "아이디",
+    "이름",
     "이메일",
     "핸드폰",
     "권한",
@@ -162,6 +163,7 @@ const UserInfoResultTable = ({ users, setUsers, onSort }) => {
               <col style={{ width: "30px" }} />
               <col style={{ width: "30px" }} />
               <col style={{ width: "100px" }} />
+              <col style={{ width: "70px" }} />
               <col style={{ width: "200px" }} />
               <col style={{ width: "200px" }} />
               <col style={{ width: "100px" }} />
@@ -210,6 +212,9 @@ const UserInfoResultTable = ({ users, setUsers, onSort }) => {
 
                     {/* 아이디 */}
                     <td>{user.loginId}</td>
+
+                    {/* 이름 */}
+                    <td>{user.name}</td>
 
                     {/* 이메일 */}
                     <td>{user.email}</td>
