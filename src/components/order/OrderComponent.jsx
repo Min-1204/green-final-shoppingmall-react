@@ -304,7 +304,30 @@ const OrderComponent = () => {
       );
     } catch (error) {
       console.error("주문 생성 중 오류:", error);
-      alert("주문 처리 중 오류가 발생했습니다.");
+      // 1. 서버에서 응답한 에러 메시지가 있는지 확인
+      if (error.originalError.response && error.originalError.response.data) {
+        const serverMessage = error.originalError.response.data.message;
+
+        // 재고 부족 메시지가 포함되어 있다면 사용자에게 그대로 전달
+        if (serverMessage && serverMessage.includes("재고가 부족합니다")) {
+          if (
+            confirm(
+              `${serverMessage}\n장바구니로 돌아가 수량을 수정하시겠습니까?`
+            )
+          ) {
+            navigate("/cart");
+          }
+          return;
+        }
+
+        // 그 외 서버가 정의한 에러 메시지가 있다면 출력
+        alert(`주문 실패: ${serverMessage || "서버 오류가 발생했습니다."}`);
+      } else {
+        // 2. 네트워크 에러 등 아예 응답을 못 받은 경우
+        alert(
+          "서버와 통신 중 오류가 발생했습니다. 네트워크 상태를 확인해 주세요."
+        );
+      }
     }
   };
 
