@@ -54,7 +54,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
         ...signUpForm,
         postalCode: data.zonecode,
         address: data.address,
-        addressDetail: ""
+        addressDetail: "",
       });
     });
   };
@@ -203,16 +203,45 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
           </div>
 
           <div>
-            <Input
-              label="이메일 입력"
-              required
+            {/* 라벨과 체크박스를 같은 줄에 배치 */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">
+                이메일 입력 <b className="text-rose-600">*</b>
+              </span>
+              <div className="flex items-center gap-2">
+                <input
+                  id="emailAgreement"
+                  type="checkbox"
+                  className="h-4 w-4 rounded accent-emerald-500 focus:ring-emerald-300"
+                  checked={!!signUpForm.emailAgreement}
+                  onChange={(e) =>
+                    onChange({
+                      ...signUpForm,
+                      emailAgreement: e.target.checked,
+                    })
+                  }
+                />
+                <label
+                  htmlFor="emailAgreement"
+                  className="text-sm whitespace-nowrap"
+                >
+                  이메일 수신 동의 (선택)
+                </label>
+              </div>
+            </div>
+
+            {/* 이메일 입력 필드 */}
+            <input
               type="email"
+              required
               value={signUpForm.email || ""}
               onChange={(e) =>
                 onChange({ ...signUpForm, email: e.target.value })
               }
               placeholder="name@example.com"
-              error={errors.email}
+              className={`h-11 w-full px-3 rounded-md border outline-none focus:ring-2 focus:ring-emerald-600 text-sm transition ${
+                errors.email ? "border-rose-600" : "border-zinc-300"
+              }`}
             />
             {errors.email && (
               <p className="text-xs text-rose-600 mt-1">{errors.email}</p>
@@ -220,62 +249,57 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
           </div>
         </div>
 
-        {/* 이메일 수신 동의: 정렬 및 바인딩 분리 */}
-        <div className="flex items-center gap-3">
-          <input
-            id="emailAgreement"
-            type="checkbox"
-            className="h-4 w-4 rounded accent-emerald-500 focus:ring-emerald-300"
-            checked={!!signUpForm.emailAgreement}
-            onChange={(e) =>
-              onChange({ ...signUpForm, emailAgreement: e.target.checked })
-            }
-          />
-          <label htmlFor="emailAgreement" className="text-sm">
-            이메일 수신 동의 (선택)
-          </label>
-        </div>
-
         {/* 휴대전화 / 생년월일   입력란  */}
         <div className="grid md:grid-cols-2 gap-5">
           <div>
-            <Input
-              label="휴대전화 입력 (숫자만)"
-              maxLength={11}
+            {/* 라벨과 체크박스를 같은 줄에 배치 */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">
+                휴대전화 입력 (숫자만) <b className="text-rose-600">*</b>
+              </span>
+              <div className="flex items-center gap-2">
+                <input
+                  id="smsAgreement"
+                  type="checkbox"
+                  className="h-4 w-4 rounded accent-emerald-500 focus:ring-emerald-300"
+                  checked={!!signUpForm.smsAgreement}
+                  onChange={(e) =>
+                    onChange({ ...signUpForm, smsAgreement: e.target.checked })
+                  }
+                />
+                <label
+                  htmlFor="smsAgreement"
+                  className="text-sm whitespace-nowrap"
+                >
+                  SMS 수신 동의 (선택)
+                </label>
+              </div>
+            </div>
+
+            {/* 휴대전화 입력 필드 */}
+            <input
+              type="text"
               required
+              maxLength={11}
               value={signUpForm.phoneNumber || ""}
               onChange={(e) =>
                 onChange({
                   ...signUpForm,
-                  phoneNumber: e.target.value.replace(/\D/g, "")
+                  phoneNumber: e.target.value.replace(/\D/g, ""),
                 })
               }
               placeholder="01012345678"
-              error={errors.phoneNumber}
+              className={`h-11 w-full px-3 rounded-md border outline-none focus:ring-2 focus:ring-emerald-600 text-sm transition ${
+                errors.phoneNumber ? "border-rose-600" : "border-zinc-300"
+              }`}
             />
             {errors.phoneNumber && (
               <p className="text-xs text-rose-600 mt-1">{errors.phoneNumber}</p>
             )}
-
-            {/* SMS 수신 동의: 이메일 동의와 동일한 스타일로 정렬 */}
-            <div className="flex items-center gap-3 mt-2">
-              <input
-                id="smsAgreement"
-                type="checkbox"
-                className="h-4 w-4 rounded accent-emerald-500 focus:ring-emerald-300"
-                checked={!!signUpForm.smsAgreement}
-                onChange={(e) =>
-                  onChange({ ...signUpForm, smsAgreement: e.target.checked })
-                }
-              />
-              <label htmlFor="smsAgreement" className="text-sm">
-                SMS 수신 동의 (선택)
-              </label>
-            </div>
           </div>
 
           <div className="pb-8">
-            <span className="text-sm font-medium mb-2">생년월일</span>
+            <span className="text-sm font-medium block mb-2">생년월일</span>
 
             <div className="grid grid-cols-3 gap-3 mt-2">
               <input
@@ -285,7 +309,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...signUpForm,
-                    birthY: e.target.value.replace(/\D/g, "")
+                    birthY: e.target.value.replace(/\D/g, ""),
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
@@ -298,7 +322,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...signUpForm,
-                    birthM: e.target.value.replace(/\D/g, "")
+                    birthM: e.target.value.replace(/\D/g, ""),
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
@@ -311,7 +335,7 @@ export default function InfoStep({ signUpForm, onChange, onPrev, onSubmit }) {
                 onChange={(e) =>
                   onChange({
                     ...signUpForm,
-                    birthD: e.target.value.replace(/\D/g, "")
+                    birthD: e.target.value.replace(/\D/g, ""),
                   })
                 }
                 className="h-11 px-3 rounded-md border focus:ring-2 focus:ring-emerald-600 text-sm"
