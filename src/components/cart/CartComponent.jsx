@@ -57,15 +57,23 @@ const CartComponent = () => {
   };
 
   const handleChangeQty = (item, delta) => {
-    // console.log("handleChangeQty 함수 발생 : item => ", item);
-    const newQuantity = item.quantity + delta;
-    if (newQuantity < 1) return;
+    console.log("handleChangeQty 함수 발생 : item => ", item);
+    const { quantity, currentStock, id, productOptionId } = item;
+    const nextQuantity = quantity + delta;
+    if (nextQuantity < 1) return;
+    if (delta > 0 && nextQuantity > currentStock) {
+      alert(
+        `재고가 부족합니다. 현재 선택하신 옵션은 최대 ${currentStock}개까지 구매하실 수 있습니다.`
+      );
+      return;
+    }
     const dto = {
       userId: user.id,
-      id: item.id,
-      productOptionId: item.productOptionId,
-      quantity: newQuantity,
+      id,
+      productOptionId,
+      quantity: nextQuantity,
     };
+
     changeCart(dto);
   };
 
