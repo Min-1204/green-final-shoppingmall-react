@@ -503,11 +503,7 @@ export default function OrderHistoryComponent() {
                           rowSpan={order.orderProducts.length}
                           className="text-center align-top p-5 border-r border-gray-400 bg-white"
                         >
-                          <div className="text-sm mb-1">
-                            {order.orderDate[0]}
-                            {String(order.orderDate[1]).padStart(2, "0")}
-                            {String(order.orderDate[2]).padStart(2, "0")}
-                          </div>
+                          <div className="text-sm mb-1">{order.orderDate}</div>
                           <div className="text-xs text-gray-400">
                             {order.orderNumber}
                           </div>
