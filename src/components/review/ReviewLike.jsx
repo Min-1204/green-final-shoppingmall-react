@@ -5,9 +5,11 @@ import {
 } from "../../api/review/reviewLikeApi";
 import { useSelector } from "react-redux";
 
-const ReviewLike = ({ reviewId }) => {
+const ReviewLike = ({ reviewId, reviewUserId }) => {
   const [likeCount, setLikeCount] = useState(0); // 좋아요 개수
   const { user } = useSelector((state) => state.authSlice);
+
+  const isMyReview = user && user.id === reviewUserId;
 
   //리뷰 좋아요(도움이 돼요) 토글
   const reviewLikeToggleHandler = async () => {
@@ -16,6 +18,10 @@ const ReviewLike = ({ reviewId }) => {
       return;
     }
 
+    alert("본인의 리뷰에는 좋아요를 누를 수 없습니다.");
+    if (isMyReview) {
+      return; //본인 리뷰는 무시
+    }
     try {
       await reviewLikeToggleTrueFalse(reviewId);
 
