@@ -28,7 +28,7 @@ export default function InquiryAnswerModal({
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 cursor-pointer"
           >
             ✕
           </button>
@@ -75,13 +75,13 @@ export default function InquiryAnswerModal({
         <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-5 py-2 text-sm text-gray-500 hover:bg-gray-200 rounded-lg"
+            className="px-5 py-2 text-sm text-gray-500 hover:bg-gray-200 rounded-lg cursor-pointer"
           >
             취소
           </button>
           <button
             onClick={onSave}
-            className="px-5 py-2 text-sm font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+            className="px-5 py-2 text-sm font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all cursor-pointer"
           >
             {inquiry.answered ? "수정 완료" : "답변 등록"}
           </button>

@@ -340,13 +340,13 @@ export default function ProductDetailComponent() {
             {product?.options?.length > 1 ? (
               <>
                 <button
-                  className="flex-1 py-4 rounded-xl border-2 border-gray-900 text-gray-900 font-semibold hover:bg-gray-900 hover:text-white transition-all duration-300 active:scale-95"
+                  className="flex-1 py-4 rounded-xl border-2 border-gray-900 text-gray-900 font-semibold hover:bg-gray-900 hover:text-white transition-all duration-300 active:scale-95 cursor-pointer"
                   onClick={() => handleAddCartOption(selectedItems)}
                 >
                   장바구니
                 </button>
                 <button
-                  className="flex-1 py-4 rounded-xl bg-gray-900 text-white font-semibold hover:bg-black transition-all duration-300 active:scale-95 shadow-lg hover:shadow-xl"
+                  className="flex-1 py-4 rounded-xl bg-gray-900 text-white font-semibold hover:bg-black transition-all duration-300 active:scale-95 shadow-lg hover:shadow-xl cursor-pointer"
                   onClick={() => handleClickOrderOption()}
                 >
                   바로구매
@@ -355,13 +355,13 @@ export default function ProductDetailComponent() {
             ) : (
               <>
                 <button
-                  className="flex-1 py-4 rounded-xl border-2 border-gray-900 text-gray-900 font-semibold hover:bg-gray-900 hover:text-white transition-all duration-300 active:scale-95"
+                  className="flex-1 py-4 rounded-xl border-2 border-gray-900 text-gray-900 font-semibold hover:bg-gray-900 hover:text-white transition-all duration-300 active:scale-95 cursor-pointer"
                   onClick={() => handleAddCart(product)}
                 >
                   장바구니
                 </button>
                 <button
-                  className="flex-1 py-4 rounded-xl bg-gray-900 text-white font-semibold hover:bg-black transition-all duration-300 active:scale-95 shadow-lg hover:shadow-xl"
+                  className="flex-1 py-4 rounded-xl bg-gray-900 text-white font-semibold hover:bg-black transition-all duration-300 active:scale-95 shadow-lg hover:shadow-xl cursor-pointer"
                   onClick={() => handleClickOrder()}
                 >
                   바로구매
@@ -370,7 +370,7 @@ export default function ProductDetailComponent() {
             )}
             <button
               onClick={() => setLiked(!liked)}
-              className="p-4 rounded-xl border-2 border-gray-200 hover:border-red-400 hover:bg-red-50 transition-all duration-300 active:scale-95"
+              className="p-4 rounded-xl border-2 border-gray-200 hover:border-red-400 hover:bg-red-50 transition-all duration-300 active:scale-95 cursor-pointer"
             >
               {liked ? (
                 <AiFillHeart className="w-6 h-6 text-red-500" />
@@ -405,7 +405,7 @@ export default function ProductDetailComponent() {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex-1 min-w-[100px] py-5 text-base font-bold transition-all relative ${
+              className={`flex-1 min-w-[100px] py-5 text-base font-bold transition-all cursor-pointer relative ${
                 tab === t.key
                   ? "text-gray-900"
                   : "text-gray-400 hover:text-gray-600"

@@ -22,7 +22,7 @@ export default function CouponManagement() {
         <div className="flex items-center gap-2">
           <h1 className="text-lg font-semibold">쿠폰 관리</h1>
         </div>
-        <button className="px-6 py-2 bg-gray-800 text-white text-sm">
+        <button className="px-6 py-2 bg-gray-800 text-white text-sm cursor-pointer">
           저장
         </button>
       </div>
@@ -596,22 +596,22 @@ export default function CouponManagement() {
                 <span>~</span>
                 <input type="text" className="w-40 px-3 py-2 border rounded" />
                 <div className="flex gap-1 ml-2">
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     1일
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     1주
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     15일
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     1개월
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     3개월
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     6개월
                   </button>
                 </div>
@@ -629,22 +629,22 @@ export default function CouponManagement() {
                 <span>~</span>
                 <input type="text" className="w-40 px-3 py-2 border rounded" />
                 <div className="flex gap-1 ml-2">
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     1일
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     1주
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     15일
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     1개월
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     3개월
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm">
+                  <button className="px-3 py-1 border rounded text-sm cursor-pointer">
                     6개월
                   </button>
                 </div>

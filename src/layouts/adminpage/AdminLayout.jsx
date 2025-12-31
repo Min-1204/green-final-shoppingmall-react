@@ -76,7 +76,7 @@ const AdminLayout = ({ children }) => {
           {user?.loginId ? (
             <>
               <button
-                className="px-3 py-1 bg-[#8399C5] rounded text-white hover:bg-[#6A82B0] transition-colors duration-200"
+                className="px-3 py-1 bg-[#8399C5] rounded text-white hover:bg-[#6A82B0] transition-colors duration-200 cursor-pointer"
                 onClick={handleLogoutClick}
               >
                 로그아웃
@@ -84,7 +84,7 @@ const AdminLayout = ({ children }) => {
             </>
           ) : (
             <button
-              className="px-3 py-1 bg-blue-500  rounded hover:bg-blue-600 transition-colors duration-200"
+              className="px-3 py-1 bg-blue-500  rounded hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
               onClick={handleLoginClick}
             >
               로그인

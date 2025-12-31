@@ -61,7 +61,7 @@ export default function HelpCenterPage() {
               (점심 12:00~14:00) <br />
               주말/공휴일 휴무
             </p>
-            <button className="mt-4 w-full border border-gray-300 text-xs py-1.5 rounded hover:bg-white">
+            <button className="mt-4 w-full border border-gray-300 text-xs py-1.5 rounded hover:bg-white cursor-pointer">
               고객 불만 처리절차
             </button>
           </div>

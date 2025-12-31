@@ -5,7 +5,7 @@ export default function InquiryTable({
   loading,
   onOpenModal,
   onDelete,
-  INQUIRY_TYPES
+  INQUIRY_TYPES,
 }) {
   console.log(inquiries);
   return (
@@ -147,13 +147,13 @@ export default function InquiryTable({
                     <div className="flex justify-center gap-3">
                       <button
                         onClick={() => onOpenModal(inquiry)}
-                        className="text-sm font-bold text-indigo-600 hover:underline"
+                        className="text-sm font-bold text-indigo-600 hover:underline cursor-pointer"
                       >
                         {inquiry.answered ? "수정" : "답변"}
                       </button>
                       <button
                         onClick={() => onDelete(inquiry.id)}
-                        className="text-sm font-medium text-gray-400 hover:text-red-500"
+                        className="text-sm font-medium text-gray-400 hover:text-red-500 cursor-pointer"
                       >
                         삭제
                       </button>

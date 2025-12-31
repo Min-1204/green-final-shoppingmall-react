@@ -66,7 +66,7 @@ export default function UserWithdrawForm() {
         </label>
         <select
           name="reason"
-          className="w-full border border-gray-400 rounded-lg h-10 px-3"
+          className="w-full border border-gray-400 rounded-lg h-10 px-3 cursor-pointer"
           value={withdrawalForm.reason}
           onChange={handleChange}
         >
@@ -91,7 +91,7 @@ export default function UserWithdrawForm() {
       </div>
       <button
         type="submit"
-        className="px-5 py-2 rounded-lg bg-red-500 text-white text-sm hover:bg-red-600"
+        className="px-5 py-2 rounded-lg bg-red-500 text-white text-sm hover:bg-red-600 cursor-pointer"
       >
         탈퇴하기
       </button>

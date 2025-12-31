@@ -197,7 +197,7 @@ const ProductAddPage = () => {
             <button
               type="button"
               onClick={onReset}
-              className="px-6 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 transition-colors"
+              className="px-6 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 transition-colors cursor-pointer"
             >
               초기화
             </button>
@@ -205,7 +205,7 @@ const ProductAddPage = () => {
               type="button"
               onClick={submitHandler}
               // disabled={isLoading}
-              className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+              className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors cursor-pointer"
             >
               상품 등록
             </button>

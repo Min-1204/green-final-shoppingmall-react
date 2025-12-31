@@ -124,7 +124,7 @@ if (!passwordRegex.test(pwForm.newPassword)) {
       </div>
       <button
         type="submit"
-        className="px-5 py-2 bg-zinc-900 text-white rounded-lg text-sm"
+        className="px-5 py-2 bg-zinc-900 text-white rounded-lg text-sm cursor-pointer"
       >
         비밀번호 변경
       </button>

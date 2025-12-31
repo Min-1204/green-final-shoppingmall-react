@@ -36,7 +36,7 @@ const ProductDetailQuantity = ({ qty, setQty, option }) => {
           <div className="flex items-center border border-gray-300 rounded-md overflow-hidden bg-white">
             <button
               onClick={() => handleChangeQty(-1)}
-              className="w-8 h-8 flex justify-center items-center text-base text-gray-700 border-r border-gray-300 hover:bg-gray-50 transition-colors"
+              className="w-8 h-8 flex justify-center items-center text-base text-gray-700 border-r border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
             >
               -
             </button>
@@ -45,7 +45,7 @@ const ProductDetailQuantity = ({ qty, setQty, option }) => {
             </span>
             <button
               onClick={() => handleChangeQty(+1)}
-              className="w-8 h-8 flex justify-center items-center text-base text-gray-700 border-l border-gray-300 hover:bg-gray-50 transition-colors"
+              className="w-8 h-8 flex justify-center items-center text-base text-gray-700 border-l border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
             >
               +
             </button>
