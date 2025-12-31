@@ -1,6 +1,11 @@
 import { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import {
   changeOrderProductStatus,
   confirmOrder,
@@ -523,18 +528,24 @@ export default function OrderHistoryComponent() {
                       )}
 
                       <td className="py-5 px-3">
-                        <div className="w-14 h-14 bg-gray-100 overflow-hidden">
+                        <Link
+                          to={`/product/${item.productId}`}
+                          className="block w-14 h-14 bg-gray-100 overflow-hidden hover:opacity-80 transition-opacity"
+                        >
                           <img
                             src={item.imageUrl}
                             className="w-full h-full object-cover"
                             alt={item.productName}
                           />
-                        </div>
+                        </Link>
                       </td>
                       <td className="py-5 text-left">
-                        <p className="text-sm text-gray-800">
+                        <Link
+                          to={`/product/${item.productId}`}
+                          className="text-sm text-gray-800 hover:underline hover:text-blue-600 transition-colors"
+                        >
                           {item.productName} - {item.productOptionName}
-                        </p>
+                        </Link>
                       </td>
                       <td className="text-center text-gray-700">
                         {item.quantity}
