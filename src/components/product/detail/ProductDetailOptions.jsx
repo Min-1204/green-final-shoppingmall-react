@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import {
   applyRestockAlarm,
   cancelRestockAlarm,
-  isAppliedRestockAlarm,
+  fetchRestockNotiStatusesByOption,
 } from "../../../api/admin/product/productApi";
 
 const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
@@ -23,7 +23,10 @@ const ProductDetailOptions = ({ product, selectedItems, setSelectedItems }) => {
     .map((o) => o.id);
 
   const loadRestockAlarm = async () => {
-    const data = await isAppliedRestockAlarm(auth?.user?.id, soldOutOprionIds);
+    const data = await fetchRestockNotiStatusesByOption(
+      auth?.user?.id,
+      soldOutOprionIds
+    );
 
     console.log("loadRestockAlarm : ", data);
     setOptionNotiStatus(data.optionNotiStatus);

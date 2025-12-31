@@ -1,9 +1,9 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import AdminIndex from "../pages/admin/AdminIndex";
 import adminRouter from "./adminRouter";
 import mypageRouter from "./mypageRouter";
 import helpRouter from "./helpRouter";
+import { ProtectedAdminLayout } from "./ProtectedLayout";
 
 const Main = lazy(() => import("../pages/mainpage/MainPage"));
 const LoginPage = lazy(() => import("../pages/user/LoginPage"));
@@ -123,7 +123,7 @@ const root = createBrowserRouter([
     path: "admin",
     element: (
       <Suspense fallback={Loading}>
-        <AdminIndex />
+        <ProtectedAdminLayout />
       </Suspense>
     ),
     children: adminRouter(),

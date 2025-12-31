@@ -7,7 +7,7 @@ export const API_SERVER = "https://moisture-village.kro.kr";
 
 export const axiosInstance = axios.create({
   baseURL: API_SERVER,
-  withCredentials: true
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -104,7 +104,7 @@ axiosInstance.interceptors.response.use(
       return Promise.reject({
         status: status || error.response.status,
         message: message || "오류가 발생했습니다.",
-        originalError: error
+        originalError: error,
       });
     }
 
@@ -112,7 +112,7 @@ axiosInstance.interceptors.response.use(
     return Promise.reject({
       status: 0,
       message: "네트워크 오류가 발생했습니다.",
-      originalError: error
+      originalError: error,
     });
   }
 );

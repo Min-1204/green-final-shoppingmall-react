@@ -186,7 +186,7 @@ export const cancelRestockAlarm = async (userId, optionId) => {
   return res.data;
 };
 
-export const isAppliedRestockAlarm = async (userId, optionIds) => {
+export const fetchRestockNotiStatusesByOption = async (userId, optionIds) => {
   const params = new URLSearchParams();
   params.append("userId", userId);
   optionIds.forEach((id) => {
