@@ -20,7 +20,7 @@ const ReviewSee = ({ closeModal, review }) => {
 
   const rating = review?.rating ?? 0;
   const content = review?.content ?? "";
-  const images = review?.imageUrl ?? [];
+  const images = review?.imageUrls ?? [];
 
   const productImage = product?.mainImages?.[0]?.imageUrl;
   const productName = product?.basicInfo?.productName;
