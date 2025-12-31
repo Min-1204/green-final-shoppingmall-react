@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import SocialLoginButtons from "../signup/SocialLoginButtons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   loginAsyncThunk,
   getUserProfileThunk,
-  clearError
+  clearError,
 } from "../../../redux/slices/features/user/authSlice";
 
 // prettier-ignore
@@ -143,7 +142,7 @@ const LoginComponent = () => {
           </>
 
           {/* 아이디/비번/회원가입 링크 */}
-          <div className="mt-5 mb-5 flex items-center justify-between text-xs text-gray-500">
+          <div className="mt-5 flex items-center justify-evenly text-xs text-gray-500">
             <button
               onClick={findIdBtn}
               className="hover:text-gray-900 cursor-pointer"
@@ -165,9 +164,6 @@ const LoginComponent = () => {
               회원가입
             </button>
           </div>
-
-          {/* 하단 라인 SNS 로그인 */}
-          <SocialLoginButtons className="mt-8" />
         </div>
       </div>
     </div>
