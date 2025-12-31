@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -14,6 +14,21 @@ import { getUserProfileThunk } from "../../redux/slices/features/user/authSlice"
 // Helper function to format price with commas and '원'
 const formatPrice = (price) => {
   return `${Number(price).toLocaleString()}원`;
+};
+
+const calculateCouponDiscount = (totalPrice, selectedCoupon) => {
+  if (!selectedCoupon) return 0;
+
+  const { coupon } = selectedCoupon;
+  if (coupon.discountType === "FIXED") {
+    return coupon.fixedDiscountAmount;
+  }
+
+  let discount = (totalPrice * coupon.discountPercentage) / 100;
+  if (coupon.hasLimitMaxDiscount) {
+    discount = Math.min(discount, coupon.maxDiscountAmount);
+  }
+  return Math.floor(discount);
 };
 
 const OrderComponent = () => {
@@ -146,12 +161,12 @@ const OrderComponent = () => {
 
   // console.log("shippingFee", shippingFee);
 
-  const couponDiscount = selectedCoupon
-    ? (selectedCoupon.coupon.discountType = "FIXED"
-        ? selectedCoupon.coupon.fixedDiscountAmount
-        : (totalPrice * selectedCoupon.coupon.discountPercentage) / 100)
-    : 0;
-  // console.log("couponDiscount", couponDiscount);
+  const couponDiscount = useMemo(
+    () => calculateCouponDiscount(totalPrice, selectedCoupon),
+    [totalPrice, selectedCoupon]
+  );
+
+  console.log("couponDiscount", couponDiscount);
   // 최종 결제금액 계산: (총 상품금액 + 배송비) - 쿠폰할인 - 포인트사용
   const finalPrice = totalPrice + shippingFee - couponDiscount - usePoint;
   // console.log("finalPrice", finalPrice);

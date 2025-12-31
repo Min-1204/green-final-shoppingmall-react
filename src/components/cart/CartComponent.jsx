@@ -57,15 +57,15 @@ const CartComponent = () => {
   };
 
   const handleChangeQty = (item, delta) => {
-    console.log("handleChangeQty 함수 발생 : item => ", item);
+    // console.log("handleChangeQty 함수 발생 : item => ", item);
     const newQuantity = item.quantity + delta;
+    if (newQuantity < 1) return;
     const dto = {
       userId: user.id,
       id: item.id,
       productOptionId: item.productOptionId,
       quantity: newQuantity,
     };
-
     changeCart(dto);
   };
 
