@@ -30,12 +30,21 @@ const CartComponent = () => {
   const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
-    if (user?.id) {
-      refreshCart(user.id);
-    } else {
-      navigate("/login");
-    }
-  }, []);
+    const fetchCart = async () => {
+      if(user?.id) {
+        try {
+          await refreshCart(user.id);
+        } catch (error) {
+          console.error("장바구니 로딩 실패:",error);
+          alert("장바구니 데이터를 불러오는 데 실패했습니다.");
+        }
+      } else {
+        navigate("/login")
+      }
+    };
+    
+    fetchCart();
+  }, [user]);
 
   useEffect(() => {
     setSelectedItems(cart.map((item) => item.id));
@@ -56,7 +65,7 @@ const CartComponent = () => {
     );
   };
 
-  const handleChangeQty = (item, delta) => {
+  const handleChangeQty = async (item, delta) => {
     console.log("handleChangeQty 함수 발생 : item => ", item);
     const { quantity, currentStock, id, productOptionId } = item;
     const nextQuantity = quantity + delta;
@@ -74,7 +83,13 @@ const CartComponent = () => {
       quantity: nextQuantity,
     };
 
-    changeCart(dto);
+    try {
+      await changeCart(dto);
+      console.log("수량 변경 성공");
+    } catch (error) {
+      alert("수량 변경에 실패했습니다.");
+    }
+    
   };
 
   const selectedCartItems = cart.filter((item) =>
@@ -112,6 +127,14 @@ const CartComponent = () => {
     //주문 페이지 이동 시 장바구니 전체 비우기
     // removeAll(1);
   };
+
+  const handleRemoveItem = async (id) => {
+    try {
+      await removeItem(id);
+    } catch (error) {
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+  }
 
   // 빈 장바구니 UI
   if (cart.length === 0) {
@@ -276,7 +299,7 @@ const CartComponent = () => {
                   <td className="text-center p-5">
                     <button
                       className="p-2 text-slate-300 hover:text-rose-400 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => handleRemoveItem(item.id)}
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
