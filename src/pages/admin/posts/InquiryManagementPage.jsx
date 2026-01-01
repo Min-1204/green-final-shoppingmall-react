@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import InquiryFilter from "../../../components/admin/posts/InquiryFilter";
 import InquiryAnswerModal from "../../../components/admin/posts/InquiryAnswerModal";
-import InquiryTable from "../../../components/admin/posts/InquiryTable"; // 새로 만든 테이블 컴포넌트
-import { getAdminInquiries } from "../../../api/admin/posts/adminInquiryApi";
+import InquiryTable from "../../../components/admin/posts/InquiryTable";
+import {
+  getAdminInquiries,
+  createAnswer,
+  updateAnswer,
+  deleteInquiry
+} from "../../../api/admin/posts/adminInquiryApi";
 
 const INQUIRY_TYPES = {
   DELIVERY: "배송문의",
@@ -26,10 +31,15 @@ export default function InquiryManagementPage() {
   const [answerModalOpen, setAnswerModalOpen] = useState(false);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [answerContent, setAnswerContent] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     fetchInquiries();
-  }, [selectedStatus, selectedType, startDate, endDate]);
+  }, [selectedStatus, selectedType]);
+
+  const handleSearch = () => {
+    fetchInquiries();
+  };
 
   const fetchInquiries = async () => {
     setLoading(true);
@@ -37,24 +47,66 @@ export default function InquiryManagementPage() {
       const filters = {
         status: selectedStatus,
         type: selectedType,
-        keyword: searchKeyword
+        keyword: searchKeyword.trim()
       };
 
       const data = await getAdminInquiries(filters);
-
-      // data가 곧, 서버에서 이미 필터링된 데이터
       setInquiries(data.inquiries || []);
     } catch (error) {
-      console.error("문의 목록 조회 실패 : ", error);
+      console.error("문의 목록 조회 실패:", error);
       alert("문의 목록을 불러오는데 실패했습니다");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("삭제하시겠습니까?")) {
-      setInquiries((prev) => prev.filter((i) => i.id !== id));
+  const handleOpenModal = (inquiry) => {
+    setSelectedInquiry(inquiry);
+    setAnswerContent(inquiry.answerContent || "");
+    setAnswerModalOpen(true);
+  };
+
+  const handleSaveAnswer = async () => {
+    if (!selectedInquiry) return;
+
+    setIsSaving(true);
+    try {
+      if (selectedInquiry.answered) {
+        await updateAnswer(selectedInquiry.id, answerContent);
+        alert("답변이 수정되었습니다.");
+      } else {
+        await createAnswer(selectedInquiry.id, answerContent);
+        alert("답변이 등록되었습니다.");
+      }
+
+      setAnswerModalOpen(false);
+      setSelectedInquiry(null);
+      setAnswerContent("");
+      fetchInquiries();
+    } catch (error) {
+      console.error("답변 저장 실패:", error);
+      alert(error.message || "답변 저장에 실패했습니다.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (
+      !window.confirm(
+        "정말 삭제하시겠습니까?\n삭제된 문의는 복구할 수 없습니다."
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await deleteInquiry(id);
+      alert("문의가 삭제되었습니다.");
+      fetchInquiries();
+    } catch (error) {
+      console.error("삭제 실패:", error);
+      alert("문의 삭제에 실패했습니다.");
     }
   };
 
@@ -64,7 +116,7 @@ export default function InquiryManagementPage() {
         <h1 className="text-2xl font-bold text-gray-800">1:1 문의 관리</h1>
         <p className="text-sm text-gray-500 mt-1">
           전체 검색 결과:
-          <span className="font-semibold text-blue-600">
+          <span className="font-semibold text-blue-600 ml-1">
             {inquiries.length}
           </span>
           건
@@ -88,31 +140,29 @@ export default function InquiryManagementPage() {
           setStartDate("");
           setEndDate("");
         }}
+        onSearch={handleSearch}
       />
 
       <InquiryTable
         inquiries={inquiries}
         loading={loading}
-        onOpenModal={(inq) => {
-          setSelectedInquiry(inq);
-          setAnswerContent(inq.answerContent || "");
-          setAnswerModalOpen(true);
-        }}
+        onOpenModal={handleOpenModal}
         onDelete={handleDelete}
         INQUIRY_TYPES={INQUIRY_TYPES}
       />
 
       <InquiryAnswerModal
         isOpen={answerModalOpen}
-        onClose={() => setAnswerModalOpen(false)}
+        onClose={() => {
+          setAnswerModalOpen(false);
+          setSelectedInquiry(null);
+          setAnswerContent("");
+        }}
         inquiry={selectedInquiry}
         answerContent={answerContent}
         setAnswerContent={setAnswerContent}
-        onSave={() => {
-          alert("답변이 저장되었습니다.");
-          setAnswerModalOpen(false);
-          fetchInquiries();
-        }}
+        onSave={handleSaveAnswer}
+        isSaving={isSaving}
       />
     </div>
   );

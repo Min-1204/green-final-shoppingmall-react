@@ -42,10 +42,6 @@ axiosInstance.interceptors.response.use(
 
     // 1. 401 에러 처리 (인증 관련)
     if (error.response?.status === 401) {
-      // 401 에러일경우
-
-      if (isCurrentUser) return Promise.reject(error); // 해당요청은 그냥 실패
-
       if (isRefreshRequest) {
         // 해당 요청이 있을때
         console.error("토큰 갱신 실패 - 재로그인 필요");
@@ -86,7 +82,7 @@ axiosInstance.interceptors.response.use(
           refreshError.response?.status,
           refreshError.response?.data
         );
-        // window.location.href = "/login";
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
@@ -104,7 +100,7 @@ axiosInstance.interceptors.response.use(
       return Promise.reject({
         status: status || error.response.status,
         message: message || "오류가 발생했습니다.",
-        originalError: error,
+        originalError: error
       });
     }
 
@@ -112,7 +108,7 @@ axiosInstance.interceptors.response.use(
     return Promise.reject({
       status: 0,
       message: "네트워크 오류가 발생했습니다.",
-      originalError: error,
+      originalError: error
     });
   }
 );

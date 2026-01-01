@@ -6,7 +6,7 @@ const INQUIRY_TYPES = {
   RETURN: "반품/교환/취소",
   MEMBER_INFO: "회원정보",
   MEMBER_POINT: "적립금/쿠폰",
-  ETC: "기타문의",
+  ETC: "기타문의"
 };
 
 export default function InquiryAnswerModal({
@@ -16,8 +16,17 @@ export default function InquiryAnswerModal({
   answerContent,
   setAnswerContent,
   onSave,
+  isSaving
 }) {
   if (!isOpen || !inquiry) return null;
+
+  const handleSave = () => {
+    if (!answerContent.trim()) {
+      alert("답변 내용을 입력해주세요.");
+      return;
+    }
+    onSave();
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -28,7 +37,8 @@ export default function InquiryAnswerModal({
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 cursor-pointer"
+            disabled={isSaving}
+            className="text-gray-400 hover:text-gray-600 cursor-pointer disabled:cursor-not-allowed"
           >
             ✕
           </button>
@@ -41,6 +51,9 @@ export default function InquiryAnswerModal({
                 {INQUIRY_TYPES[inquiry.inquiryType]}
               </span>
               <div className="text-right text-[11px] text-gray-400 space-y-0.5">
+                <p>
+                  작성자: {inquiry.userName} ({inquiry.loginId})
+                </p>
                 <p>문의 작성: {new Date(inquiry.createdAt).toLocaleString()}</p>
                 {inquiry.answerCreatedAt && (
                   <p className="text-blue-500 font-medium">
@@ -56,6 +69,24 @@ export default function InquiryAnswerModal({
             <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
               {inquiry.content}
             </p>
+
+            {/* 알림 동의 정보 */}
+            <div className="mt-3 pt-3 border-t flex gap-4 text-xs">
+              <span
+                className={
+                  inquiry.emailAgreement ? "text-blue-600" : "text-gray-400"
+                }
+              >
+                이메일 알림 {inquiry.emailAgreement ? "동의" : "미동의"}
+              </span>
+              <span
+                className={
+                  inquiry.smsAgreement ? "text-green-600" : "text-gray-400"
+                }
+              >
+                SMS 알림 {inquiry.smsAgreement ? "동의" : "미동의"}
+              </span>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -66,24 +97,39 @@ export default function InquiryAnswerModal({
               value={answerContent}
               onChange={(e) => setAnswerContent(e.target.value)}
               rows={8}
-              className="w-full border-2 border-gray-100 rounded-xl p-4 text-sm focus:border-blue-500 outline-none resize-none transition-all"
+              disabled={isSaving}
+              className="w-full border-2 border-gray-100 rounded-xl p-4 text-sm focus:border-blue-500 outline-none resize-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
               placeholder="고객님께 정중한 답변을 남겨주세요..."
             />
+            <p className="text-xs text-gray-400 ml-1">
+              {answerContent.length} / 2000자
+            </p>
           </div>
         </div>
 
         <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-5 py-2 text-sm text-gray-500 hover:bg-gray-200 rounded-lg cursor-pointer"
+            disabled={isSaving}
+            className="px-5 py-2 text-sm text-gray-500 hover:bg-gray-200 rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           >
             취소
           </button>
           <button
-            onClick={onSave}
-            className="px-5 py-2 text-sm font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all cursor-pointer"
+            onClick={handleSave}
+            disabled={isSaving}
+            className="px-5 py-2 text-sm font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-2"
           >
-            {inquiry.answered ? "수정 완료" : "답변 등록"}
+            {isSaving ? (
+              <>
+                <span className="animate-spin">⏳</span>
+                처리중...
+              </>
+            ) : inquiry.answered ? (
+              "수정 완료"
+            ) : (
+              "답변 등록"
+            )}
           </button>
         </div>
       </div>

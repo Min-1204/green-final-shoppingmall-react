@@ -28,3 +28,39 @@ export const getAdminInquiries = async (filters = {}) => {
     throw error;
   }
 };
+
+export const createAnswer = async (inquiryId, answerContent) => {
+  try {
+    const response = await axiosInstance.post(
+      `${ADMIN_INQUIRY_API}/inquiries/${inquiryId}/answer`,
+      { answerContent }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("답변 등록 실패:", error);
+    throw error;
+  }
+};
+
+export const updateAnswer = async (inquiryId, answerContent) => {
+  try {
+    const response = await axiosInstance.put(
+      `${ADMIN_INQUIRY_API}/inquiries/${inquiryId}/answer`,
+      { answerContent }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("답변 수정 실패:", error);
+    throw error;
+  }
+};
+
+export const deleteInquiry = async (inquiryId) => {
+  try {
+    await axiosInstance.delete(`${ADMIN_INQUIRY_API}/inquiries/${inquiryId}`);
+    return { success: true };
+  } catch (error) {
+    console.error("문의 삭제 실패:", error);
+    throw error;
+  }
+};

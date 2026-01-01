@@ -1,17 +1,14 @@
-// src/components/admin/posts/FaqRow.jsx
 import React from "react";
 
-// ========== 문의 유형 라벨 매핑 ==========
 const INQUIRY_TYPE_LABELS = {
   DELIVERY: "배송문의",
   ORDER: "주문/결제",
   RETURN: "반품/교환/취소",
   MEMBER_INFO: "회원정보",
   MEMBER_POINT: "적립금/쿠폰",
-  ETC: "기타문의",
+  ETC: "기타문의"
 };
 
-// ========== 날짜 포맷팅 함수 ==========
 const formatDate = (dateString) => {
   if (!dateString) return "-";
 
@@ -25,7 +22,6 @@ const formatDate = (dateString) => {
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
-// ========== FaqRow 컴포넌트 ==========
 export default function FaqRow({ faq, onEdit, onDelete }) {
   return (
     <tr className="hover:bg-gray-50 transition-colors">
@@ -39,22 +35,18 @@ export default function FaqRow({ faq, onEdit, onDelete }) {
         </span>
       </td>
 
-      {/* 제목 */}
       <td className="px-4 py-5">
         <div className="text-sm font-semibold text-gray-800">{faq.title}</div>
       </td>
 
-      {/* 작성일 */}
       <td className="px-4 py-5 text-center text-xs text-gray-500">
         {formatDate(faq.createdAt)}
       </td>
 
-      {/* 수정일 */}
       <td className="px-4 py-5 text-center text-xs text-gray-500">
         {formatDate(faq.updatedAt)}
       </td>
 
-      {/* 관리 버튼 */}
       <td className="px-4 py-5 text-center">
         <div className="flex justify-center gap-2">
           <button

@@ -1,4 +1,3 @@
-// src/pages/admin/posts/FaqManagementPage.jsx
 import React, { useState, useEffect } from "react";
 import FaqRow from "../../../components/admin/posts/FaqRow";
 import FaqEditForm from "../../../components/admin/posts/FaqEditForm";
@@ -7,7 +6,7 @@ import {
   faqAddApi,
   faqDeleteApi,
   faqListApi,
-  faqModifyApi,
+  faqModifyApi
 } from "../../../api/admin/posts/faqApi";
 
 const INQUIRY_TYPE_OPTIONS = [
@@ -16,7 +15,7 @@ const INQUIRY_TYPE_OPTIONS = [
   { value: "RETURN", label: "반품/교환/취소" },
   { value: "MEMBER_INFO", label: "회원정보" },
   { value: "MEMBER_POINT", label: "적립금/쿠폰" },
-  { value: "ETC", label: "기타문의" },
+  { value: "ETC", label: "기타문의" }
 ];
 
 const getInquiryTypeLabel = (value) => {
@@ -34,7 +33,7 @@ export default function FaqManagementPage() {
   const [formData, setFormData] = useState({
     inquiryType: "DELIVERY",
     title: "",
-    answer: "",
+    answer: ""
   });
 
   useEffect(() => {
@@ -77,7 +76,7 @@ export default function FaqManagementPage() {
     setFormData({
       inquiryType: faq.inquiryType,
       title: faq.title,
-      answer: faq.answer,
+      answer: faq.answer
     });
   };
 

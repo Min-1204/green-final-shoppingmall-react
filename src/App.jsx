@@ -9,7 +9,6 @@ function App() {
   const dispatch = useDispatch();
   const { isLoggedId, user } = useSelector((state) => state.authSlice);
 
-  // ⭐️ Local Storage에서 로그인 정보 복구하는 기능입니다.
   useEffect(() => {
     if (!isLoggedId && !user) {
       console.log("로그인 정보가 없어 초기 인증을 시도합니다");
