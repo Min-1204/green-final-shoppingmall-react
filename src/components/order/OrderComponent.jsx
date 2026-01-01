@@ -47,11 +47,11 @@ const OrderComponent = () => {
 
   const {removeAll} = useCustomCart();
 
-  const [cartItems, setCartItems] = useState(
+  const [orderItems, setOrderItems] = useState(
     passedItems.length > 0 ? passedItems : []
   );
 
-  // console.log("cartItems", cartItems);
+  // console.log("orderItems", orderItems);
 
   // 쿠폰모달
   const [showCouponModal, setShowCouponModal] = useState(false);
@@ -142,16 +142,16 @@ const OrderComponent = () => {
 
   useEffect(() => {
     // 포인트는 가격의 1%를 합산하여 구함
-    const sumPoints = cartItems.reduce(
+    const sumPoints = orderItems.reduce(
       (sum, item) =>
         sum +
         Math.floor(Number(item.sellingPrice) * Number(item.quantity) * 0.01),
       0
     );
     setEarnedPoints(sumPoints);
-  }, [cartItems]);
+  }, [orderItems]);
 
-  const totalPrice = cartItems.reduce(
+  const totalPrice = orderItems.reduce(
     (sum, item) => sum + Number(item.sellingPrice) * Number(item.quantity),
     0
   );
@@ -159,9 +159,9 @@ const OrderComponent = () => {
   // console.log("totalPrice", totalPrice);
 
   const shippingFee =
-    totalPrice >= cartItems[0]?.deliveryPolicy?.freeConditionAmount
+    totalPrice >= orderItems[0]?.deliveryPolicy?.freeConditionAmount
       ? 0
-      : cartItems[0]?.deliveryPolicy?.basicDeliveryFee;
+      : orderItems[0]?.deliveryPolicy?.basicDeliveryFee;
 
   // console.log("shippingFee", shippingFee);
 
@@ -221,7 +221,7 @@ const OrderComponent = () => {
     }
 
     try {
-      const orderProducts = cartItems.map((item) => ({
+      const orderProducts = orderItems.map((item) => ({
         productOptionId: item.productOptionId,
         quantity: item.quantity,
       }));
@@ -270,9 +270,9 @@ const OrderComponent = () => {
           merchant_uid: resultOrder.orderNumber, // 주문 고유 번호
           digital: true,
           name:
-            cartItems.length > 1
-              ? `${cartItems[0].productName} 외 ${cartItems.length - 1}건`
-              : cartItems[0].productName,
+            orderItems.length > 1
+              ? `${orderItems[0].productName} 외 ${orderItems.length - 1}건`
+              : orderItems[0].productName,
 
           amount: 1, // 최종 결제 금액
           buyer_email: "user@example.com", //실제 사용자 이메일로 변경 필요
@@ -411,7 +411,7 @@ const OrderComponent = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#f5f9ff]">
-                    {cartItems.map((item) => (
+                    {orderItems.map((item) => (
                       <tr
                         key={item.id}
                         className="hover:bg-[#fafcfe] transition-colors"
