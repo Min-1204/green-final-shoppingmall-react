@@ -15,7 +15,7 @@ const useCustomCart = () => {
     // console.log("refreshCart");
   };
   const changeCart = (cartProductDTO) => {
-    dispatch(postChangeCartItemAsync(cartProductDTO));
+    return dispatch(postChangeCartItemAsync(cartProductDTO)).unwrap();
     // console.log("changeCart");
   };
   const removeItem = (id) => {
