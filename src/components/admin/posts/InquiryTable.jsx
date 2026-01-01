@@ -5,37 +5,37 @@ export default function InquiryTable({
   loading,
   onOpenModal,
   onDelete,
-  INQUIRY_TYPES,
+  INQUIRY_TYPES
 }) {
   console.log(inquiries);
   return (
     <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1200px] table-auto">
+        <table className="w-full min-w-[1400px] table-auto">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase w-16">
+              <th className="px-4 py-4 text-center text-xs font-bold text-gray-500 uppercase w-20">
                 번호
               </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase w-28">
+              <th className="px-4 py-4 text-center text-xs font-bold text-gray-500 uppercase w-32">
                 유형
               </th>
               <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">
                 문의내용
               </th>
-              <th className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase w-36">
+              <th className="px-4 py-4 text-center text-xs font-bold text-gray-500 uppercase w-32">
                 알림 동의
               </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase w-32">
+              <th className="px-4 py-4 text-center text-xs font-bold text-gray-500 uppercase w-28">
                 작성자
               </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase w-48">
+              <th className="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase w-52">
                 일자 정보
               </th>
-              <th className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase w-28">
+              <th className="px-4 py-4 text-center text-xs font-bold text-gray-500 uppercase w-24">
                 상태
               </th>
-              <th className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase w-32">
+              <th className="px-4 py-4 text-center text-xs font-bold text-gray-500 uppercase w-40">
                 관리
               </th>
             </tr>
@@ -65,14 +65,19 @@ export default function InquiryTable({
                   key={inquiry.id}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  {/* 번호 */}
+                  <td className="px-4 py-4 text-sm text-gray-500 text-center">
                     {inquiry.id}
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center justify-center px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-[11px] font-bold border border-indigo-100 whitespace-nowrap min-w-[70px]">
+
+                  {/* 유형 */}
+                  <td className="px-4 py-4 text-center">
+                    <span className="inline-flex items-center justify-center px-3 py-1 bg-indigo-50 text-indigo-700 rounded-md text-[11px] font-bold border border-indigo-100 whitespace-nowrap">
                       {INQUIRY_TYPES[inquiry.inquiryType]}
                     </span>
                   </td>
+
+                  {/* 문의내용 */}
                   <td className="px-6 py-4">
                     <div className="flex flex-col max-w-xs md:max-w-md">
                       <span className="text-sm font-semibold text-gray-800 truncate">
@@ -83,10 +88,12 @@ export default function InquiryTable({
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-center">
+
+                  {/* 알림 동의 - whitespace-nowrap 추가 */}
+                  <td className="px-4 py-4 text-center">
                     <div className="flex flex-col items-center gap-1">
                       <span
-                        className={`text-[10px] font-bold ${
+                        className={`text-[10px] font-bold whitespace-nowrap ${
                           inquiry.emailAgreement
                             ? "text-blue-600"
                             : "text-gray-300"
@@ -95,7 +102,7 @@ export default function InquiryTable({
                         이메일 {inquiry.emailAgreement ? "O" : "X"}
                       </span>
                       <span
-                        className={`text-[10px] font-bold ${
+                        className={`text-[10px] font-bold whitespace-nowrap ${
                           inquiry.smsAgreement
                             ? "text-green-600"
                             : "text-gray-300"
@@ -105,36 +112,58 @@ export default function InquiryTable({
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+
+                  {/* 작성자 - whitespace-nowrap 추가 */}
+                  <td className="px-4 py-4 text-center">
                     <div className="flex flex-col text-sm">
-                      <span className="font-semibold text-gray-700">
+                      <span className="font-semibold text-gray-700 whitespace-nowrap">
                         {inquiry.userName}
                       </span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-gray-400 whitespace-nowrap">
                         {inquiry.loginId}
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-[11px]">
-                    <p className="text-gray-600">
-                      작성: {new Date(inquiry.createdAt).toLocaleString()}
+
+                  {/* 일자 정보 - whitespace-nowrap 추가 및 날짜 포맷 변경 */}
+                  <td className="px-4 py-4 text-[11px]">
+                    <p className="text-gray-600 whitespace-nowrap mb-1">
+                      작성:{" "}
+                      {new Date(inquiry.createdAt).toLocaleString("ko-KR", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })}
                     </p>
                     <p
-                      className={
+                      className={`whitespace-nowrap ${
                         inquiry.answerCreatedAt
                           ? "text-blue-600"
                           : "text-gray-300"
-                      }
+                      }`}
                     >
                       답변:{" "}
                       {inquiry.answerCreatedAt
-                        ? new Date(inquiry.answerCreatedAt).toLocaleString()
+                        ? new Date(inquiry.answerCreatedAt).toLocaleString(
+                            "ko-KR",
+                            {
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit"
+                            }
+                          )
                         : "미등록"}
                     </p>
                   </td>
-                  <td className="px-6 py-4 text-center">
+
+                  {/* 상태 */}
+                  <td className="px-4 py-4 text-center">
                     <span
-                      className={`inline-block w-[65px] py-1 rounded-full text-[11px] font-bold border whitespace-nowrap text-center ${
+                      className={`inline-block px-3 py-1 rounded-full text-[11px] font-bold border whitespace-nowrap ${
                         inquiry.answered
                           ? "bg-green-50 text-green-700 border-green-200"
                           : "bg-red-50 text-red-600 border-red-200"
@@ -143,17 +172,19 @@ export default function InquiryTable({
                       {inquiry.answered ? "답변완료" : "미완료"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="flex justify-center gap-3">
+
+                  {/* 관리 - 버튼 디자인 변경 */}
+                  <td className="px-4 py-4 text-center">
+                    <div className="flex justify-center gap-2">
                       <button
                         onClick={() => onOpenModal(inquiry)}
-                        className="text-sm font-bold text-indigo-600 hover:underline cursor-pointer"
+                        className="px-3 py-1.5 text-xs font-bold bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition-colors cursor-pointer"
                       >
-                        {inquiry.answered ? "수정" : "답변"}
+                        {inquiry.answered ? "답변수정" : "답변등록"}
                       </button>
                       <button
                         onClick={() => onDelete(inquiry.id)}
-                        className="text-sm font-medium text-gray-400 hover:text-red-500 cursor-pointer"
+                        className="px-3 py-1.5 text-xs font-bold bg-gray-400 text-white rounded-md hover:bg-red-500 transition-colors cursor-pointer"
                       >
                         삭제
                       </button>

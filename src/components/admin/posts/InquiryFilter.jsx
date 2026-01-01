@@ -14,11 +14,17 @@ export default function InquiryFilter({
   ANSWER_STATUS,
   INQUIRY_TYPES,
   onResetDate,
+  onSearch
 }) {
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      onSearch();
+    }
+  };
+
   return (
     <div className="bg-white border rounded-xl p-5 mb-6 shadow-sm space-y-4">
       <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-        {/* 답변 상태 필터 */}
         <div className="flex items-center gap-4">
           <label className="text-sm font-semibold text-gray-700 w-20">
             답변 상태
@@ -40,7 +46,6 @@ export default function InquiryFilter({
           </div>
         </div>
 
-        {/* 문의 유형 필터 */}
         <div className="flex items-center gap-4">
           <label className="text-sm font-semibold text-gray-700 w-20">
             문의 유형
@@ -60,7 +65,6 @@ export default function InquiryFilter({
         </div>
       </div>
 
-      {/* 기간 및 검색어 필터 */}
       <div className="flex flex-wrap items-center gap-x-8 gap-y-4 border-t pt-4">
         <div className="flex items-center gap-4">
           <label className="text-sm font-semibold text-gray-700 w-20">
@@ -93,13 +97,22 @@ export default function InquiryFilter({
           <label className="text-sm font-semibold text-gray-700 w-20">
             검색어
           </label>
-          <input
-            type="text"
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            placeholder="제목, 내용, 작성자 검색..."
-            className="flex-1 border px-4 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-          />
+          <div className="flex-1 flex gap-2">
+            <input
+              type="text"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="제목, 내용, 작성자 검색..."
+              className="flex-1 border px-4 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <button
+              onClick={onSearch}
+              className="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
+            >
+              검색
+            </button>
+          </div>
         </div>
       </div>
     </div>
