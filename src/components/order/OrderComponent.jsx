@@ -72,8 +72,6 @@ const OrderComponent = () => {
   const [postalCode, setPostalCode] = useState("");
   // 상세주소
   const [detailedAddress, setDetailedAddress] = useState("");
-  //기본 배송지인지 여부
-  const [defaultAddress, setDefaultAddress] = useState(false);
   // 배송 요청 사항
   const [deliveryRequest, setDeliveryRequest] = useState("");
   const [customDeliveryRequest, setCustomDeliveryRequest] = useState("");
@@ -158,10 +156,10 @@ const OrderComponent = () => {
 
   // console.log("totalPrice", totalPrice);
 
-  const shippingFee =
-    totalPrice >= orderItems[0]?.deliveryPolicy?.freeConditionAmount
-      ? 0
-      : orderItems[0]?.deliveryPolicy?.basicDeliveryFee;
+  const freeConditionAmount = orderItems[0]?.deliveryPolicy?.freeConditionAmount;
+  const basicDeliveryFee = orderItems[0]?.deliveryPolicy?.basicDeliveryFee;
+
+  const shippingFee = totalPrice >= freeConditionAmount ? 0 : basicDeliveryFee;
 
   // console.log("shippingFee", shippingFee);
 
@@ -261,6 +259,10 @@ const OrderComponent = () => {
       }
 
       // SDK 초기화
+      // SDK(Software Development Kit)는 특정 소프트웨어나 서비스를 쉽게 사용할 수
+      // 있도록 미리 만들어진 도구 상자 같은 것임.
+      // 결제 시스템을 처음부터 끝까지 직접 만드는 것은 매우 복잡하고 보안상 위험하기 때문에,
+      // 아임포트 같은 전문 업체가 제공하는 도구(SDK)를 가져와서 사용하는 것임.
       IMP.init("imp62835818");
 
       IMP.request_pay(
@@ -299,11 +301,16 @@ const OrderComponent = () => {
           }
           if (response.success) {
             console.log("결제 성공(검증 전)! imp_uid:", response.imp_uid);
-            completeOrder(response.imp_uid, response.merchant_uid);
-            navigate("/order/complete", {
-              state: { orderId: resultOrderId },
-            });
-            removeAll(user.id);
+            try {
+              await completeOrder(response.imp_uid, response.merchant_uid);
+              navigate("/order/complete", {
+                state: { orderId: resultOrderId },
+              });
+              await removeAll(user.id);
+            } catch (error) {
+              console.error("주문 확정 처리 중 오류:", error);
+              alert("주문 확정 처리 중 문제가 발생했습니다.");ㄴ
+            }
           }
         }
       );
