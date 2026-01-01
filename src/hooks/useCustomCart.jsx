@@ -11,19 +11,19 @@ import { clearCart } from "../redux/slices/features/cart/cartSlice";
 const useCustomCart = () => {
   const dispatch = useDispatch();
   const refreshCart = (userId) => {
-    dispatch(getCartItemsAsync(userId));
+    return dispatch(getCartItemsAsync(userId)).unwrap();
     // console.log("refreshCart");
   };
   const changeCart = (cartProductDTO) => {
-    dispatch(postChangeCartItemAsync(cartProductDTO));
+    return dispatch(postChangeCartItemAsync(cartProductDTO)).unwrap();
     // console.log("changeCart");
   };
   const removeItem = (id) => {
-    dispatch(deleteCartItemAsync(id));
+    return dispatch(deleteCartItemAsync(id)).unwrap();
     // console.log("removeItem");
   };
   const removeAll = (userId) => {
-    dispatch(deleteAllAsync(userId));
+    return dispatch(deleteAllAsync(userId)).unwrap();
   };
 
   return { refreshCart, changeCart, removeItem, removeAll };

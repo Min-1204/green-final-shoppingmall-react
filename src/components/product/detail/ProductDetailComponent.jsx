@@ -162,7 +162,7 @@ export default function ProductDetailComponent() {
     return true;
   };
 
-  const handleAddCartOption = (selectedItems) => {
+  const handleAddCartOption = async (selectedItems) => {
     if (!checkLogin()) return;
     if (product.options?.length > 0 && selectedItems.length === 0) {
       return alert("옵션을 선택해주세요.");
@@ -183,22 +183,32 @@ export default function ProductDetailComponent() {
 
     if (!isAllAvailable) return; // 하나라도 재고 부족시 중단
 
-    selectedItems.forEach((option) => {
-      const cartProductDTO = {
-        userId: user?.id,
-        id: null,
-        productOptionId: option?.id,
-        quantity: option?.qty,
-      };
-
-      changeCart(cartProductDTO);
-    });
-    if (window.confirm("장바구니에 담았습니다. 장바구니로 이동하시겠습니까?")) {
-      navigate("/cart");
+    try {
+      
+      const promises = selectedItems.map((option) => {
+        const cartProductDTO = {
+          userId: user?.id,
+          id: null,
+          productOptionId: option?.id,
+          quantity: option?.qty,
+        };
+          return changeCart(cartProductDTO);
+        });
+      
+        // 모든 비동기 작업이 완료될 때까지 대기
+        await Promise.all(promises);
+      
+      // 모든 요청이 성공한 후 실행
+      if (window.confirm("장바구니에 담았습니다. 장바구니로 이동하시겠습니까?")) {
+        navigate("/cart");
+      }
+    } catch (error) {
+      console.error("장바구니 담기 실패:", error);
+      alert("장바구니에 담기에 실패했습니다. 다시 시도해 주세요.");
     }
   };
 
-  const handleAddCart = (product) => {
+  const handleAddCart = async (product) => {
     if (!checkLogin()) return;
     // console.log("product", product);
 
@@ -218,9 +228,15 @@ export default function ProductDetailComponent() {
     };
     // console.log("cartProductDTO", cartProductDTO);
 
-    changeCart(cartProductDTO);
-    if (window.confirm("장바구니에 담았습니다. 장바구니로 이동하시겠습니까?")) {
-      navigate("/cart");
+    try {
+      await changeCart(cartProductDTO);
+
+      if (window.confirm("장바구니에 담았습니다. 장바구니로 이동하시겠습니까?")) {
+        navigate("/cart");
+      }
+    } catch (error) {
+      console.error("장바구니 담기 실패:", error);
+      alert("장바구니에 담는 중 오류가 발생했습니다.");
     }
   };
 
