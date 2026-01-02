@@ -15,7 +15,6 @@ axiosInstance.interceptors.request.use((config) => {
   if (!(config.data instanceof FormData)) {
     config.headers["Content-Type"] = "application/json";
   }
-  // console.log("여기는 Request 인터셉터 :", config);
   return config;
 });
 
@@ -35,18 +34,16 @@ const processQueue = (error, token = null) => {
 axiosInstance.interceptors.response.use(
   (response) => response, // 응답은 그대로 보냄
   async (error) => {
-    // 에러 처리 비동기
+    console.log("✅인터셉터 Response 에러 발생 로그확인", error);
     const originalRequest = error.config; // 실패한 기존 요청에 대한 에러
-    const isCurrentUser = originalRequest?.url?.includes("/currentUser"); // 기존요청에 해당 경로가있는지 확인
-    const isRefreshRequest = originalRequest?.url?.includes("/refresh"); // 기존요청에 해당 경로가있는지 확인
+    const isCurrentUser = originalRequest?.url?.includes("/currentUser"); // 실패한요청에 해당 경로가있는지 확인
+    const isRefreshRequest = originalRequest?.url?.includes("/refresh"); // 실패한요청에 해당 경로가있는지 확인
 
-    // 1. 401 에러 처리 (인증 관련)
+    // 401 에러 처리 (인증 관련)
     if (error.response?.status === 401) {
-      if (isCurrentUser) return Promise.reject(error);
       if (isRefreshRequest) {
         // 해당 요청이 있을때
         console.error("토큰 갱신 실패 - 재로그인 필요");
-        window.location.href = "/login"; // 로그인페이지로 새로고침 후 이동
         return Promise.reject(error); // 에러 반환
       }
 
@@ -83,19 +80,18 @@ axiosInstance.interceptors.response.use(
           refreshError.response?.status,
           refreshError.response?.data
         );
-        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
 
-    // 2. 403 에러 처리
+    // 403 에러 처리
     if (error.response?.status === 403) {
       const errorMessage =
         error.response.data?.message || "접근 권한이 없습니다.";
       alert(errorMessage);
     }
 
-    // 3. 공통 에러 객체 생성
+    // 공통 에러 객체 생성
     if (error.response?.data) {
       const { status, message } = error.response.data;
       return Promise.reject({
@@ -105,7 +101,7 @@ axiosInstance.interceptors.response.use(
       });
     }
 
-    // 4. 네트워크 에러
+    // 네트워크 에러
     return Promise.reject({
       status: 0,
       message: "네트워크 오류가 발생했습니다.",
