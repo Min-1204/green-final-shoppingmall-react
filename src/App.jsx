@@ -9,12 +9,12 @@ function App() {
   const dispatch = useDispatch();
   const { isLoggedId, user } = useSelector((state) => state.authSlice);
 
-  useEffect(() => {
-    if (!isLoggedId && !user) {
-      console.log("로그인 정보가 없어 초기 인증을 시도합니다");
-      dispatch(getCurrentUserThunk());
-    }
-  }, [dispatch]);
+  // useEffect(() => {
+  //   if (!isLoggedId && !user) {
+  //     console.log("로그인 정보가 없어 초기 인증을 시도합니다");
+  //     dispatch(getCurrentUserThunk());
+  //   }
+  // }, [dispatch]);
 
   return <RouterProvider router={root} />;
 }
